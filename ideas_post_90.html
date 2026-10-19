@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Gestor de 90 ideas de post para Bookstagram y BookTok, con estados, fechas de publicación, checklist de producción, hashtags y notas.">
+<meta name="theme-color" content="#e8e3df" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#353436" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%9A%3C/text%3E%3C/svg%3E">
+<title>Ideas de post (Bookstagram / BookTok)</title>
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="ideas.css">
+<link rel="stylesheet" href="toc.css">
+<script src="theme.js"></script>
+</head>
+<body>
+<nav class="menu" aria-label="Principal">
+<a href="index.html">Inicio</a>
+<a href="resenia.html">Reseñas</a>
+<a href="ideas_post_90.html" aria-current="page">Ideas</a>
+<a href="calendario_ideas_90.html">Calendario</a>
+<a href="bingo.html">Bingo</a>
+<a href="sugerencias.html">Sugerencias</a>
+<a href="sobre_mi.html">Sobre mí</a>
+</nav>
+<header class="encabezado" id="inicio">
+<h1>Ideas de post para Bookstagram y BookTok</h1>
+<p class="total" id="total-ideas">Total: 90 ideas</p>
+<p class="stats" aria-live="polite">Marcadas (publicadas): <span id="contador">0</span> / <span id="total">0</span> | Favoritas: <span id="favoritas">0</span></p>
+<progress id="progreso" max="90" value="0" aria-label="Ideas publicadas"></progress>
+<p id="por-estado" class="por-estado"></p>
+<p id="sync-estado" class="sync-estado" role="status"></p>
+<p id="recordatorio" role="status"></p>
+</header>
+<nav class="toc toc-ideas" id="toc" aria-label="En esta página">
+<details id="toc-det">
+<summary class="toc-titulo">En esta página</summary>
+<ol>
+<li><a href="#inicio">Resumen</a></li>
+<li><a href="#guia">Cómo leer la lista</a></li>
+<li><a href="#respaldo">Progreso y respaldo</a></li>
+<li><a href="#conjuntos">Conjuntos de hashtags</a></li>
+<li><a href="#lista">Ideas por sección</a>
+<ol id="toc-secciones"></ol></li>
+</ol>
+</details>
+</nav>
+<main>
+
+<details class="guia" id="guia">
+<summary>Cómo leer esta lista</summary>
+<ul>
+<li>El formato sugerido va entre corchetes: [Post], [Carrusel] o [Reel].</li>
+<li>Las plantillas de varias preguntas funcionan muy bien como carrusel (una slide por pregunta) o como historias de Instagram.</li>
+<li>★ = inspirada en plantillas clásicas (&quot;Un libro que...&quot;, &quot;Mis favoritos&quot;, &quot;Top 5&quot;, &quot;Sobre mí&quot;, &quot;Favoritos de confort&quot;).</li>
+<li>◆ = inspirada en tendencias de Bookstagram y BookTok.</li>
+<li>Sin marca = idea original.</li>
+</ul>
+</details>
+
+<div class="barra" id="barra">
+<div class="barra-fila">
+<input type="search" id="buscar" placeholder="Buscar idea, libro o nota" aria-label="Buscar" autocomplete="off">
+<button type="button" id="btn-filtros" aria-expanded="false" aria-controls="panel-filtros">Filtros</button>
+</div>
+<div class="panel" id="panel-filtros" hidden>
+<label class="campo"><span>Estado</span>
+<select id="f-estado">
+<option value="todas">Todos</option>
+<option value="pendientes">Pendientes (sin publicar)</option>
+<option value="hechas">Hechas (publicadas)</option>
+<option value="idea">Idea</option>
+<option value="grabando">Grabando</option>
+<option value="editando">Editando</option>
+<option value="programada">Programada</option>
+<option value="descartada">Descartada</option>
+</select></label>
+<label class="campo"><span>Formato</span>
+<select id="f-formato">
+<option value="todos">Todos</option>
+<option value="Post">Post</option>
+<option value="Carrusel">Carrusel</option>
+<option value="Reel">Reel</option>
+</select></label>
+<label class="campo"><span>Fecha</span>
+<select id="f-fecha">
+<option value="todas">Todas</option>
+<option value="con">Con fecha</option>
+<option value="sin">Sin fecha</option>
+<option value="semana">Esta semana</option>
+<option value="vencidas">Vencidas (sin publicar)</option>
+</select></label>
+<label class="campo"><span>Ordenar</span>
+<select id="f-orden">
+<option value="original">Orden original</option>
+<option value="fecha">Por fecha (próximas primero)</option>
+<option value="prioridad">Mi prioridad (a mano)</option>
+</select></label>
+<label class="campo"><span>Producción</span>
+<select id="f-prod">
+<option value="todas">Todas</option>
+<option value="sin">Sin empezar</option>
+<option value="curso">En curso</option>
+<option value="completa">Completa (5/5)</option>
+</select></label>
+<label class="check"><input type="checkbox" id="f-fav"> Solo favoritas</label>
+<div class="botones">
+<button type="button" id="limpiar">Limpiar filtros</button>
+<button type="button" id="sorpresa-btn" class="primario">Sorpréndeme</button>
+</div>
+<div class="botones vista">
+<button type="button" id="abrir-secciones">Expandir secciones</button>
+<button type="button" id="cerrar-secciones">Contraer secciones</button>
+<button type="button" id="abrir-detalles">Abrir detalles de las ideas</button>
+<button type="button" id="cerrar-detalles">Cerrar detalles de las ideas</button>
+</div>
+</div>
+<p id="resultados" class="resultados" aria-live="polite"></p>
+<p id="sorpresa" aria-live="polite"></p>
+</div>
+
+<details class="herramientas" id="respaldo">
+<summary>Progreso y respaldo</summary>
+<div class="herramientas-cuerpo">
+<div class="botones">
+<button type="button" id="exportar" class="primario">Exportar progreso (JSON, respaldo)</button>
+<button type="button" id="exportar-csv">Exportar a CSV</button>
+<button type="button" id="exportar-ics">Exportar fechas a calendario (.ics)</button>
+<button type="button" id="sync-ahora" hidden>Sincronizar ahora</button>
+</div>
+<label class="campo"><span>Importar progreso</span>
+<input type="file" id="importar" accept="application/json,.json"></label>
+<div class="botones">
+<button type="button" id="reiniciar">Desmarcar todas las hechas</button>
+<button type="button" id="deshacer" hidden>Deshacer</button>
+</div>
+<p id="mensaje" role="status"></p>
+</div>
+</details>
+
+<details class="herramientas conjuntos" id="conjuntos">
+<summary>Conjuntos de hashtags</summary>
+<div class="herramientas-cuerpo">
+<p class="ayuda">Guarda grupos de hashtags y añádelos con un toque desde cada idea, dentro de «Libro, hashtags y notas».</p>
+<ul class="sets" id="lista-sets"></ul>
+<label class="campo"><span>Nombre del conjunto</span>
+<input type="text" id="set-nombre" maxlength="40" autocomplete="off"></label>
+<label class="campo"><span>Hashtags (separados por espacios)</span>
+<textarea id="set-tags" rows="2" maxlength="500"></textarea></label>
+<div class="botones">
+<button type="button" id="set-guardar" class="primario">Guardar conjunto</button>
+<button type="button" id="set-cancelar" hidden>Cancelar edición</button>
+</div>
+<p id="set-mensaje" role="status"></p>
+</div>
+</details>
+
+<details class="herramientas" id="panel-borradas" hidden>
+<summary id="resumen-borradas">Ideas borradas</summary>
+<div class="herramientas-cuerpo">
+<ul class="sets" id="lista-borradas"></ul>
+</div>
+</details>
+
+<div class="botones acciones-lista">
+<button type="button" id="nueva-idea" class="primario">＋ Nueva idea</button>
+</div>
+
+<div id="lista"></div>
+<noscript><p>Esta página necesita JavaScript para mostrar la lista de ideas.</p></noscript>
+
+<dialog id="dialogo" aria-labelledby="dialogo-texto">
+<p id="dialogo-texto"></p>
+<div class="botones">
+<button type="button" id="dialogo-no">Cancelar</button>
+<button type="button" id="dialogo-si" class="primario">Continuar</button>
+</div>
+</dialog>
+
+<dialog id="dialogo-idea" aria-labelledby="dialogo-idea-titulo">
+<h2 id="dialogo-idea-titulo">Nueva idea</h2>
+<div class="dialogo-form">
+<p class="aviso-privada">🔒 Las ideas que agregues aquí solo las verás tú; no son visibles para los demás. Si quieres que aparezcan para todos, envíalas desde el formulario de <a href="sugerencias.html">Sugerencias / Ideas</a>.</p>
+<label class="campo"><span>Idea</span>
+<textarea id="idea-texto" rows="4" maxlength="300"></textarea></label>
+<label class="campo"><span>Formato</span>
+<select id="idea-formato">
+<option value="Post">Post</option>
+<option value="Carrusel">Carrusel</option>
+<option value="Reel">Reel</option>
+</select></label>
+<label class="campo"><span>Sección</span>
+<select id="idea-seccion"></select></label>
+<label class="campo" id="idea-seccion-nueva-campo" hidden><span>Nombre de la nueva sección</span>
+<input type="text" id="idea-seccion-nueva" maxlength="60" autocomplete="off"></label>
+<p id="idea-error" role="alert"></p>
+</div>
+<div class="botones">
+<button type="button" id="idea-cancelar">Cancelar</button>
+<button type="button" id="idea-guardar" class="primario">Guardar</button>
+</div>
+</dialog>
+
+<dialog id="dialogo-copiar" aria-label="Copiar texto">
+<p>No se pudo copiar automáticamente. Selecciona el texto y cópialo:</p>
+<textarea id="copiar-texto" rows="6" readonly></textarea>
+<div class="botones">
+<button type="button" id="copiar-cerrar" class="primario">Cerrar</button>
+</div>
+</dialog>
+
+</main>
+<div id="copiado" class="solo-lector" role="status" aria-live="polite"></div>
+<footer>
+  <p>&copy; Diseñado e ideado por Paula Speciale, con la ayuda de Claude</p>
+</footer>
+<script src="datos-ideas.js"></script>
+<script src="app.js"></script>
+<script>
+(function () {
+  "use strict";
+  var toc = document.getElementById("toc");
+  var det = document.getElementById("toc-det");
+  var sub = document.getElementById("toc-secciones");
+  if (!toc || !det || !sub) return;
+
+  var links = [], pares = [];
+
+  // Un enlace por cada sección de ideas (los títulos los crea app.js).
+  // Se vuelve a llamar cuando app.js crea o quita una sección nueva.
+  function construirSecciones() {
+  sub.textContent = "";
+  Array.prototype.forEach.call(document.querySelectorAll("#lista > details[data-sec]"), function (d, k) {
+    d.id = "seccion-" + (k + 1);
+    var h = d.querySelector("summary h2");
+    var txt = h ? h.textContent.trim() : "Sección " + (k + 1);
+    var m = /^(\d+\.)\s*(.*)$/.exec(txt);
+    var num = m ? m[1] : "", t = m ? m[2] : txt;
+    if (t === t.toUpperCase()) t = t.charAt(0) + t.slice(1).toLowerCase();
+    var li = document.createElement("li"), a = document.createElement("a");
+    a.href = "#" + d.id;
+    if (num) { var s = document.createElement("span"); s.className = "ni"; s.textContent = num; a.appendChild(s); }
+    a.appendChild(document.createTextNode(t));
+    li.appendChild(a);
+    sub.appendChild(li);
+  });
+
+  links = Array.prototype.slice.call(toc.querySelectorAll("a"));
+  pares = links.map(function (a) {
+    return { a: a, t: document.getElementById(a.getAttribute("href").slice(1)) };
+  }).filter(function (p) { return p.t; });
+  }
+  construirSecciones();
+  document.addEventListener("secciones-cambiadas", function () { construirSecciones(); actualizar(); });
+
+  var mq = window.matchMedia ? window.matchMedia("(min-width: 80rem)") : null;
+  function ancho() { return !!(mq && mq.matches); }
+
+  // En pantalla ancha el menú está siempre abierto; en móvil es un panel plegable
+  var resumen = det.querySelector("summary");
+  function ajustar() {
+    det.open = ancho();
+    resumen.tabIndex = ancho() ? -1 : 0;
+  }
+  if (mq) { if (mq.addEventListener) mq.addEventListener("change", ajustar); else if (mq.addListener) mq.addListener(ajustar); }
+  det.addEventListener("toggle", function () { if (ancho() && !det.open) det.open = true; });
+  ajustar();
+
+  function marcar(a) {
+    links.forEach(function (l) {
+      if (l === a) l.setAttribute("aria-current", "location");
+      else l.removeAttribute("aria-current");
+    });
+    // Si el menú tiene scroll propio, deja visible el enlace activo
+    if (ancho() && a && toc.scrollHeight > toc.clientHeight) {
+      var r = a.getBoundingClientRect(), tr = toc.getBoundingClientRect();
+      if (r.top < tr.top + 8) toc.scrollTop -= tr.top + 8 - r.top;
+      else if (r.bottom > tr.bottom - 8) toc.scrollTop += r.bottom - tr.bottom + 8;
+    }
+  }
+
+  function actualizar() {
+    // Las secciones ocultas por filtros u orden también desaparecen del menú
+    var vis = pares.filter(function (p) {
+      var v = !p.t.hidden && p.t.getClientRects().length > 0;
+      p.a.parentNode.hidden = !v;
+      return v;
+    });
+    if (!vis.length) return;
+    var linea = window.innerHeight * 0.3, actual = vis[0];
+    vis.forEach(function (p) { if (p.t.getBoundingClientRect().top <= linea) actual = p; });
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) actual = vis[vis.length - 1];
+    marcar(actual.a);
+  }
+
+  var ticking = false;
+  function pedir() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () { ticking = false; actualizar(); });
+  }
+  window.addEventListener("scroll", pedir, { passive: true });
+  window.addEventListener("resize", pedir);
+  var lista = document.getElementById("lista");
+  if (lista && window.MutationObserver) {
+    new MutationObserver(pedir).observe(lista, { subtree: true, attributes: true, attributeFilter: ["hidden", "open"] });
+  }
+
+  // Al saltar a una sección o panel plegable, se abre
+  toc.addEventListener("click", function (e) {
+    var a = e.target.closest ? e.target.closest("a") : null;
+    if (!a) return;
+    var t = document.getElementById(a.getAttribute("href").slice(1));
+    if (t && t.tagName === "DETAILS") t.open = true;
+  });
+  actualizar();
+})();
+</script>
+</body>
+</html>

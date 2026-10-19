@@ -1,0 +1,128 @@
+/* ==========================================================================
+   calendario.css · Página de Calendario: cuadrícula mensual, eventos, puntos en móvil y detalle del día.
+   Requiere base.css (y toc.css para el menú «En esta página»).
+   ========================================================================== */
+
+/* ---------- Calendario (comparte este archivo) ---------- */
+.dia {
+  border-radius: .15rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
+  min-height: 5.5rem;
+  padding: .25rem;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: normal;
+  font-family: var(--serif);
+  border: 1px solid var(--borde);
+  background: var(--superficie);
+  overflow: hidden;
+}
+
+.cal-dow {
+  padding: .3rem 0;
+  text-align: center;
+  font: 600 .78rem var(--maquina);
+  color: var(--suave);
+}
+
+.cal-nav { display: flex; align-items: center; gap: .5rem; margin-top: 1rem; }
+
+.cal-nav h2 {
+  flex: 1;
+  margin: 0;
+  text-align: center;
+  font: 400 1.2rem/1.2 var(--serif);
+  font-variant: small-caps;
+  letter-spacing: .07em;
+  text-transform: capitalize;
+}
+
+.cal-nav button { flex: none; }
+
+.cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; margin-top: .75rem; }
+
+.dia.fuera { background: transparent; opacity: .45; }
+
+.dia.hoy .n { background: var(--acento); color: var(--sobre-acento); border-radius: 999px; }
+
+.dia.sel { outline: 3px solid var(--acento); outline-offset: -3px; }
+
+.dia .n { align-self: flex-start; min-width: 1.4rem; padding: 0 .3rem; font: 700 .8rem var(--maquina); text-align: center; }
+
+.ev {
+  display: block;
+  padding: 0 .3rem;
+  border-left: .25rem solid var(--cinta, var(--est-idea));
+  border-radius: .15rem;
+  background: var(--fondo);
+  font-size: .72rem;
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ev.f-Post { color: var(--f-post); }
+
+.ev.f-Carrusel { color: var(--f-carrusel); }
+
+.ev.f-Reel { color: var(--f-reel); }
+
+.ev.hecha { text-decoration: line-through; opacity: .65; }
+
+.mas { font-size: .72rem; color: var(--suave); }
+
+.puntos { display: none; gap: 3px; flex-wrap: wrap; margin-top: auto; }
+
+.punto { width: .5rem; height: .5rem; border-radius: 50%; background: currentColor; }
+
+.punto.f-Post { color: var(--f-post); }
+
+.punto.f-Carrusel { color: var(--f-carrusel); }
+
+.punto.f-Reel { color: var(--f-reel); }
+
+@media (max-width: 40rem) {
+  .dia { min-height: 3.4rem; }
+  .ev, .mas { display: none; }
+  .puntos { display: flex; }
+}
+
+.leyenda { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .75rem; }
+
+#detalle { margin-top: 1rem; }
+
+#detalle h3 {
+  margin: 0 0 .5rem;
+  font: 400 1.05rem/1.3 var(--serif);
+  font-variant: small-caps;
+  letter-spacing: .07em;
+  text-transform: capitalize;
+}
+
+.det-item {
+  --cinta: var(--est-idea);
+  padding: .6rem 0 .6rem .8rem;
+  border-left: .4rem solid var(--cinta);
+  border-bottom: 1px dotted var(--suave);
+}
+
+.det-item p { font: 1.02rem/1.45 var(--serif); }
+
+.det-item .meta { margin-top: .35rem; }
+
+/* Color de la cinta según el estado (el calendario solo marca data-est) */
+.ev[data-est="grabando"], .det-item[data-est="grabando"] { --cinta: var(--est-grabando); }
+
+.ev[data-est="editando"], .det-item[data-est="editando"] { --cinta: var(--est-editando); }
+
+.ev[data-est="programada"], .det-item[data-est="programada"] { --cinta: var(--est-programada); }
+
+.ev[data-est="publicada"], .det-item[data-est="publicada"] { --cinta: var(--est-publicada); }
+
+.ev[data-est="descartada"], .det-item[data-est="descartada"] { --cinta: var(--est-descartada); }
+
+#calendario, #leyenda, #detalle, #ayuda-datos { scroll-margin-top: 1rem; }

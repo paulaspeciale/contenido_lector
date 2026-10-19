@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Presentación de Paula Speciale, sus redes, su canal de YouTube y formas de apoyar el proyecto con donaciones.">
+<meta name="theme-color" content="#e8e3df" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#353436" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%9A%3C/text%3E%3C/svg%3E">
+<title>Sobre mí</title>
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="simples.css">
+<script src="theme.js"></script>
+</head>
+<body>
+<nav class="menu" aria-label="Principal">
+<a href="index.html">Inicio</a>
+<a href="resenia.html">Reseñas</a>
+<a href="ideas_post_90.html">Ideas</a>
+<a href="calendario_ideas_90.html">Calendario</a>
+<a href="bingo.html">Bingo</a>
+<a href="sugerencias.html">Sugerencias</a>
+<a href="sobre_mi.html" aria-current="page">Sobre mí</a>
+</nav>
+<header class="encabezado">
+<h1>Sobre mí</h1>
+</header>
+<main>
+<section class="bloque">
+<h2><span aria-hidden="true">👋</span> Hola</h2>
+<!-- Cuando tengas la foto: <img alt="Foto de Paula Speciale" src="foto.jpg" width="160" height="160"> -->
+<p>✨ ¡Hola! Soy Paula 🌷</p>
+<p>📚 Amo leer (sobre todo romantasy 🐉💕)</p>
+<p>💻 Y desarrollo aplicaciones que ayudan a crear contenido para lectores 📱🔖</p>
+
+<p class="enlaces"><a href="https://www.tiktok.com/@danaehan" target="_blank" rel="noopener">🎵 TikTok</a>
+<a href="https://www.instagram.com/hello_little_tornado/" target="_blank" rel="noopener">📸 Instagram</a></p>
+
+<p>💌 Si tienes comentarios, ideas o simplemente quieres saludar, usa el formulario de <a href="sugerencias.html">Sugerencias</a>: ¡leo todo! 🥰</p>
+</section>
+<section class="bloque">
+<h2><span aria-hidden="true">▶️</span> Apóyame en YouTube</h2>
+<p>🙏 La mejor forma de ayudarme es suscribiéndote a mi canal de YouTube. No cuesta nada y me ayuda muchísimo a seguir creando 🎬💜</p>
+<p><a href="https://www.youtube.com/@leerparasentir?sub_confirmation=1" rel="noopener" target="_blank">🔔 Suscríbete a @leerparasentir</a></p>
+</section>
+<section class="bloque">
+<h2><span aria-hidden="true">☕</span> Donaciones</h2>
+<p>🆓 Esta app es completamente gratuita y sin anuncios 🚫📢. Si además quieres apoyar el desarrollo con un aporte, ¡es muy bienvenido! 🎁</p>
+<div class="donaciones">
+<div class="donacion">
+<h3>💙 Mercado Pago</h3>
+<p>Transfiere por alias:</p>
+<div class="alias">
+<code id="alias-mp">paula.speciale</code>
+<button type="button" id="copiar-alias" aria-label="Copiar alias de Mercado Pago">Copiar</button>
+</div>
+<p id="alias-msg" class="ayuda" role="status"></p>
+</div>
+<div class="donacion">
+<h3>🅿️ PayPal</h3>
+<p>Envía tu aporte a esta cuenta de PayPal:</p>
+<div class="alias">
+<code id="alias-pp">silentstudybuddy@gmail.com</code>
+<button type="button" id="copiar-pp" aria-label="Copiar correo de PayPal">Copiar</button>
+</div>
+<p id="pp-msg" class="ayuda" role="status"></p>
+</div>
+<div class="donacion">
+<h3>☕ Cafecito</h3>
+<a href="https://cafecito.app/paulaspeciale" rel="noopener" target="_blank">
+<img srcset="https://cdn.cafecito.app/imgs/buttons/button_5.png 1x, https://cdn.cafecito.app/imgs/buttons/button_5_2x.png 2x, https://cdn.cafecito.app/imgs/buttons/button_5_3.75x.png 3.75x" src="https://cdn.cafecito.app/imgs/buttons/button_5.png" alt="Invítame un café en cafecito.app">
+</a>
+</div>
+</div>
+</section>
+<section class="bloque">
+<h2><span aria-hidden="true">🚀</span> Otros proyectos</h2>
+<p>🧩 Aquí encontrarás mis otros proyectos cuando estén listos.</p>
+<p class="proximamente">⏳ Próximamente…</p>
+</section>
+</main>
+<footer>
+  <p>&copy; Diseñado e ideado por Paula Speciale, con la ayuda de Claude</p>
+</footer>
+<script>
+(function () {
+  "use strict";
+  function copiable(idBtn, idTexto, idMsg, queCopia) {
+    var btn = document.getElementById(idBtn);
+    var msg = document.getElementById(idMsg);
+    var texto = document.getElementById(idTexto).textContent;
+    function aviso(ok) { msg.textContent = ok ? queCopia + " copiado." : "No se pudo copiar. Selecciónalo y cópialo a mano."; }
+    function respaldo() {
+      try {
+        var ta = document.createElement("textarea");
+        ta.value = texto;
+        ta.setAttribute("readonly", "");
+        ta.style.cssText = "position:fixed;top:0;left:0;opacity:0";
+        document.body.appendChild(ta);
+        ta.select();
+        ta.setSelectionRange(0, texto.length);
+        var ok = !!(document.execCommand && document.execCommand("copy"));
+        ta.remove();
+        aviso(ok);
+      } catch (err) { aviso(false); }
+    }
+    btn.addEventListener("click", function () {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(texto).then(function () { aviso(true); }, respaldo);
+      } else { respaldo(); }
+    });
+  }
+  copiable("copiar-alias", "alias-mp", "alias-msg", "Alias");
+  copiable("copiar-pp", "alias-pp", "pp-msg", "Correo");
+})();
+</script>
+</body>
+</html>

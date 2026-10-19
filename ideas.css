@@ -1,0 +1,564 @@
+/* ==========================================================================
+   ideas.css · Página de Ideas: barra de filtros, secciones, fichas de idea, producción,
+   hashtags, herramientas de respaldo y diálogos propios.
+   Requiere base.css (y toc.css para el menú «En esta página»).
+   Cada selector se define una sola vez (sin reglas que se pisen entre sí).
+   ========================================================================== */
+
+/* ---------- Cabecera: contadores y avisos ---------- */
+.total, .por-estado, .stats, .sync-estado {
+  color: var(--suave);
+  font-family: var(--maquina);
+  font-size: .78rem;
+  letter-spacing: .03em;
+}
+
+.stats { margin-top: .5rem; }
+
+.sync-estado { margin-top: .35rem; }
+
+.sync-estado.alerta { color: var(--aviso); }
+
+#recordatorio {
+  display: inline-block;
+  max-width: 100%;
+  margin-top: .75rem;
+  padding: .55rem .9rem;
+  border: 1px dashed var(--borde);
+  border-left: .3rem solid var(--est-publicada);
+  border-radius: 0;
+  background: var(--superficie);
+  font-family: var(--maquina);
+  font-size: .78rem;
+  text-align: left;
+}
+
+#recordatorio:empty { display: none; }
+
+/* Aviso de respaldo más visible */
+#recordatorio.alerta {
+  display: block;
+  margin-top: 1rem;
+  padding: .9rem 1rem;
+  border: 2px solid var(--aviso);
+  border-left-width: .5rem;
+  color: var(--texto);
+  font-size: .85rem;
+  line-height: 1.5;
+}
+
+#recordatorio.alerta button { display: block; margin-top: .7rem; }
+
+/* ---------- Paneles de herramientas ---------- */
+.herramientas {
+  margin-top: 1rem;
+  padding: 0 1.1rem;
+  border: 1px solid var(--borde);
+  border-radius: .15rem;
+  background: var(--superficie);
+  box-shadow: var(--marco);
+}
+
+.herramientas > summary {
+  display: flex;
+  align-items: center;
+  min-height: 2.75rem;
+  font: 400 .78rem/1.4 var(--maquina);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.herramientas > summary::after {
+  content: "+";
+  margin-left: auto;
+  padding-left: .75rem;
+  font-family: var(--maquina);
+  color: var(--acento);
+}
+
+.herramientas[open] > summary::after { content: "\2212"; }
+
+.herramientas-cuerpo {
+  display: grid;
+  gap: .75rem;
+  padding-bottom: .9rem;
+}
+
+.vista button {
+  min-height: 2.5rem;
+  padding: .35rem .75rem;
+}
+
+/* Botones pequeños, chips de conjuntos y botones de «vista»: misma tipografía */
+.vista button, .btn-chico, .chip-set {
+  border-radius: .15rem;
+  font-family: var(--maquina);
+  font-size: .76rem;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  background: transparent;
+}
+
+#mensaje, #set-mensaje, #sorpresa, .resultados {
+  color: var(--suave);
+  font-family: var(--maquina);
+  font-size: .78rem;
+}
+
+/* ---------- Barra fija ---------- */
+.barra {
+  position: sticky;
+  top: var(--tope);
+  z-index: 30;
+  margin-top: 1rem;
+  padding: .6rem 0 .5rem;
+  background: var(--fondo);
+  border-bottom: 3px double var(--borde);
+}
+
+.barra-fila {
+  display: flex;
+  gap: .5rem;
+}
+
+.barra-fila input { flex: 1; min-width: 0; }
+
+.barra-fila button { flex: none; }
+
+.panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: .6rem .75rem;
+  max-height: 55vh;
+  overflow-y: auto;
+  padding: .75rem 0 .25rem;
+}
+
+.panel .botones, .panel #sorpresa, .panel .check { grid-column: 1 / -1; }
+
+#sorpresa { margin-top: .3rem; }
+
+.resultados { margin-top: .4rem; }
+
+/* ---------- Secciones: capítulos ---------- */
+details[data-sec] { margin-top: 1.25rem; }
+
+details[data-sec] > summary {
+  position: sticky;
+  top: calc(var(--tope) + var(--alto-barra));
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  min-height: 2.75rem;
+  padding: .4rem 0;
+  background: var(--fondo);
+  border-bottom: 3px double var(--acento);
+  list-style: none;
+}
+
+details[data-sec] > summary::-webkit-details-marker { display: none; }
+
+details[data-sec] > summary::before {
+  content: "\2767\FE0E";
+  flex: none;
+  font-size: 1.15rem;
+  color: var(--acento);
+}
+
+details[data-sec][open] > summary::before { content: "\2766\FE0E"; }
+
+details[data-sec] > summary > h2 {
+  flex: 1;
+  margin: 0;
+  font: 400 1.12rem/1.3 var(--serif);
+  font-variant: small-caps;
+  letter-spacing: .07em;
+}
+
+.cuenta {
+  flex: none;
+  padding: .05rem .6rem;
+  border: 1px solid var(--borde);
+  border-radius: .15rem;
+  background: transparent;
+  font-family: var(--maquina);
+  font-size: .78rem;
+  color: var(--suave);
+  white-space: nowrap;
+}
+
+#lista > section > h2 {
+  margin: 1.25rem 0 .5rem;
+  font: 700 1.05rem/1.25 var(--serif);
+}
+
+#lista > section > p { font-size: .9rem; color: var(--suave); }
+
+/* ---------- Ideas: fichas de biblioteca ---------- */
+.ideas {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.idea {
+  --cinta: var(--est-idea);
+  padding: 1rem 0 .9rem 1rem;
+  border-bottom: 1px dotted var(--suave);
+  border-left: .4rem solid var(--cinta);
+  scroll-margin-top: calc(var(--tope) + var(--alto-barra) + 3.5rem);
+}
+
+.idea[data-est="grabando"] { --cinta: var(--est-grabando); }
+
+.idea[data-est="editando"] { --cinta: var(--est-editando); }
+
+.idea[data-est="programada"] { --cinta: var(--est-programada); }
+
+.idea[data-est="publicada"] { --cinta: var(--est-publicada); }
+
+.idea[data-est="descartada"] { --cinta: var(--est-descartada); }
+
+.idea.destacada {
+  outline: 3px solid var(--acento);
+  outline-offset: -3px;
+}
+
+.cabecera {
+  display: flex;
+  align-items: flex-start;
+  gap: .75rem;
+}
+
+.texto {
+  flex: 1;
+  min-width: 0;
+  padding-top: .1rem;
+  font: 1.08rem/1.6 var(--serif);
+}
+
+.num {
+  font-family: var(--maquina);
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--acento);
+}
+
+.idea.hecha .texto, .idea.hecha .meta { opacity: .6; }
+
+.idea.hecha .texto {
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+.idea[data-est="descartada"] .texto, .idea[data-est="descartada"] .meta { opacity: .55; }
+
+/* Casilla "hecha": círculo con ✓ (distinta del corazón de favorita) */
+input[data-id] {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: none;
+  display: grid;
+  place-content: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  margin: 0;
+  border: 2px solid var(--suave);
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[data-id]::before {
+  content: "\2713\FE0E";
+  font-size: 1.15rem;
+  line-height: 1;
+  color: var(--sobre-publicada);
+  transform: scale(0);
+}
+
+input[data-id]:checked {
+  border-color: var(--est-publicada);
+  background: var(--est-publicada);
+}
+
+input[data-id]:checked::before { transform: scale(1); }
+
+/* Estado y fecha */
+.campos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .25rem .75rem;
+  margin-top: .5rem;
+}
+
+/* Corazón de favorita, al final de la cabecera */
+.fav {
+  flex: none;
+  display: grid;
+  place-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin: -.45rem -.55rem 0 -.25rem;
+  cursor: pointer;
+}
+
+input[data-fav] {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  color: var(--suave);
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+input[data-fav]::before { content: "\2661\FE0E"; }
+
+input[data-fav]:checked::before {
+  content: "\2665\FE0E";
+  color: var(--corazon);
+}
+
+/* ---------- «Producción» y «Libro, hashtags y notas»: barra desplegable ---------- */
+.prod, .extra { margin-top: .6rem; }
+
+.prod > summary, .extra > summary {
+  display: flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 0 0 .85rem;
+  border: 1px solid var(--acento);
+  border-radius: .15rem;
+  background: var(--superficie);
+  color: var(--texto);
+  box-shadow: 0 2px 0 var(--borde);
+  font: 400 .78rem/1.4 var(--maquina);
+  letter-spacing: .04em;
+  transition: box-shadow .12s, transform .12s;
+}
+
+.prod > summary { gap: .6rem; }
+
+.extra > summary, .prod > summary > span:first-child { font-weight: 600; }
+
+.prod > summary:hover, .extra > summary:hover { border-color: var(--texto); }
+
+.prod > summary:active, .extra > summary:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+.prod[open] > summary, .extra[open] > summary {
+  border-bottom-style: dashed;
+  border-radius: .15rem .15rem 0 0;
+  box-shadow: none;
+}
+
+/* Flecha en una casilla propia, al final de la barra */
+.prod > summary::after, .extra > summary::after {
+  content: "\25BE\FE0E";
+  align-self: stretch;
+  display: grid;
+  place-content: center;
+  flex: none;
+  width: 2.75rem;
+  margin-left: auto;
+  padding: 0;
+  border-left: 1px solid var(--acento);
+  background: var(--acento);
+  color: var(--sobre-acento);
+  font-family: var(--maquina);
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.prod[open] > summary::after, .extra[open] > summary::after { content: "\25B4\FE0E"; }
+
+/* Contenido desplegado: queda dentro de un marco unido a la barra */
+.pasos, .extra-cuerpo {
+  padding: .75rem .85rem .85rem;
+  border: 1px solid var(--acento);
+  border-top: 0;
+  border-radius: 0 0 .15rem .15rem;
+  background: var(--superficie);
+}
+
+.pasos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+}
+
+.extra-cuerpo {
+  display: grid;
+  gap: .6rem;
+}
+
+.aviso-libro {
+  margin-top: -.25rem;
+  font-size: .85rem;
+  color: var(--aviso);
+}
+
+progress.mini {
+  flex: 0 0 5rem;
+  width: 5rem;
+  height: .45rem;
+  margin: 0;
+  max-width: none;
+}
+
+.prod-cuenta { font-variant-numeric: tabular-nums; }
+
+.paso {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  min-height: 2.5rem;
+  padding: .2rem .8rem .2rem .55rem;
+  border: 1px solid var(--borde);
+  border-radius: .15rem;
+  background: transparent;
+  cursor: pointer;
+  font: 400 .78rem/1.3 var(--maquina);
+  letter-spacing: .04em;
+}
+
+.paso input {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0;
+  accent-color: var(--acento);
+}
+
+.paso:has(input:checked) { border-color: var(--est-publicada); }
+
+/* ---------- Conjuntos de hashtags ---------- */
+.sets {
+  display: grid;
+  gap: .5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sets li {
+  display: grid;
+  gap: .3rem;
+  padding: .6rem .7rem;
+  border: 1px solid var(--borde);
+  border-radius: .15rem;
+  background: var(--superficie);
+}
+
+.sets li.vacio {
+  border-style: dashed;
+  color: var(--suave);
+  font-size: .9rem;
+}
+
+.sets li strong { font-family: var(--serif); font-size: 1.02rem; }
+
+.set-tags {
+  font-size: .9rem;
+  color: var(--suave);
+  overflow-wrap: anywhere;
+}
+
+.chips-sets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+}
+
+.chip-set {
+  min-height: 2.5rem;
+  padding: .25rem .85rem;
+  border: 1px solid var(--acento);
+  color: var(--acento);
+}
+
+/* ---------- Acciones de cada idea ---------- */
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin-top: .4rem;
+}
+
+.btn-chico {
+  min-height: 2.5rem;
+  padding: .3rem .8rem;
+}
+
+.btn-borrar {
+  border-color: var(--corazon);
+  color: var(--corazon);
+}
+
+.acciones-lista { margin-top: 1rem; }
+
+.chip.propia {
+  color: var(--acento);
+  border-color: var(--acento);
+}
+
+/* Orden a mano: solo se muestran las ideas y los botones para moverlas */
+.mover {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin-top: .6rem;
+}
+
+#lista.modo-prioridad .campos, #lista.modo-prioridad .prod, #lista.modo-prioridad .extra, #lista.modo-prioridad .acciones {
+  display: none;
+}
+
+/* ---------- Diálogos ---------- */
+.dialogo-form {
+  display: grid;
+  gap: .75rem;
+  margin-bottom: 1rem;
+}
+
+#dialogo-idea-titulo {
+  margin: 0 0 .75rem;
+  font: 400 1.15rem/1.3 var(--serif);
+  font-variant: small-caps;
+  letter-spacing: .07em;
+}
+
+#idea-error {
+  margin: 0;
+  font-size: .9rem;
+  color: var(--aviso);
+}
+
+#copiar-texto { margin-bottom: 1rem; }
+
+/* Aviso dentro de «Nueva idea» */
+.aviso-privada {
+  padding: .6rem .8rem;
+  border: 1px dashed var(--acento);
+  background: var(--fondo);
+  font-size: .9rem;
+  line-height: 1.5;
+}
+
+/* ---------- Anclas ---------- */
+#guia, #respaldo, #conjuntos, #lista, details[data-sec] {
+  scroll-margin-top: calc(var(--tope) + var(--alto-barra) + .5rem);
+}
+
+/* Pantallas más anchas: va DESPUÉS de .idea para que no lo anule */
+@media (min-width: 40rem) {
+  .idea { padding-right: .5rem; }
+}

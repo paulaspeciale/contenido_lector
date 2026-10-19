@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Formulario para enviar ideas o comentarios, y otras formas de contacto por redes y correo.">
+<meta name="theme-color" content="#e8e3df" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#353436" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%9A%3C/text%3E%3C/svg%3E">
+<title>Sugerencias / Ideas</title>
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="simples.css">
+<script src="theme.js"></script>
+</head>
+<body>
+<nav class="menu" aria-label="Principal">
+<a href="index.html">Inicio</a>
+<a href="resenia.html">Reseñas</a>
+<a href="ideas_post_90.html">Ideas</a>
+<a href="calendario_ideas_90.html">Calendario</a>
+<a href="bingo.html">Bingo</a>
+<a href="sugerencias.html" aria-current="page">Sugerencias</a>
+<a href="sobre_mi.html">Sobre mí</a>
+</nav>
+<header class="encabezado">
+<h1>Sugerencias / Ideas</h1>
+</header>
+<main>
+  <section class="bloque" id="otros-contactos">
+<h2><span aria-hidden="true">💌</span> Otras formas de contacto</h2>
+<p>Si no quieres utilizar el formulario que se encuentra debajo y  prefieres escribirme por otro medio , puedes utilizar:</p>
+<p class="enlaces">
+<a href="https://www.tiktok.com/@danaehan" target="_blank" rel="noopener">🎵 TikTok</a>
+<a href="https://www.instagram.com/hello_little_tornado/" target="_blank" rel="noopener">📸 Instagram</a>
+
+</p>
+<p>O copia mi email y escríbeme desde tu correo:</p>
+<div class="botones">
+<button type="button" id="copiar-email" aria-label="Copiar email de contacto">Copiar email</button>
+</div>
+<p id="email-msg" class="ayuda" role="status"></p>
+</section>
+<section class="bloque">
+<h2>¿Tienes alguna idea para incluir?</h2>
+<form class="formulario" id="form-sugerencias" action="https://formsubmit.co/silentstudybuddy@gmail.com" method="post">
+<input type="hidden" name="_subject" value="Nueva sugerencia desde la web">
+<input type="hidden" name="_captcha" value="false">
+<input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
+<p class="ayuda">Los campos marcados con <span aria-hidden="true">*</span><span class="solo-lector">asterisco</span> son obligatorios.</p>
+<div class="campo">
+<label for="name">Nombre <span aria-hidden="true">*</span></label>
+<input type="text" id="name" name="name" maxlength="60" autocomplete="name" required>
+</div>
+<div class="campo">
+<label for="email">Email <span aria-hidden="true">*</span></label>
+<input type="email" id="email" name="email" maxlength="80" autocomplete="email" required>
+</div>
+<p class="ayuda">🔒 Tu email no se comparte con nadie y se usa solo para responderte.</p>
+<div class="campo">
+<label for="message">Mensaje <span aria-hidden="true">*</span></label>
+<textarea id="message" name="message" rows="6" required></textarea>
+</div>
+<button type="submit" class="primario" id="btn-enviar">Enviar</button>
+<p id="form-error" class="ayuda" role="alert"></p>
+</form>
+<div id="form-pronto" class="vacio-msg" role="status" hidden>
+<p>El formulario todavía no está activo, así que por ahora no puedo recibir mensajes por aquí.</p>
+<p>Mientras tanto, escríbeme por <a href="https://www.instagram.com/hello_little_tornado/" target="_blank" rel="noopener">Instagram</a> o <a href="https://www.tiktok.com/@danaehan" target="_blank" rel="noopener">TikTok</a>.</p>
+</div>
+<div id="form-exito" class="vacio-msg" role="status" tabindex="-1" hidden>
+<p>✅ ¡Tu mensaje ha sido enviado! Gracias por escribirme 💌</p>
+<p><a href="index.html">Volver al inicio</a></p>
+</div>
+</section>
+</main>
+<footer>
+  <p>&copy; Diseñado e ideado por Paula Speciale, con la ayuda de Claude</p>
+</footer>
+<script>
+(function () {
+  "use strict";
+  // Servicio de formularios: FormSubmit (se usa la ruta /ajax/ para poder enviar con fetch).
+  // Con la URL vacía el formulario se oculta y se muestra un aviso (no se simula el envío).
+  var ENDPOINT = "https://formsubmit.co/ajax/silentstudybuddy@gmail.com";
+  var form = document.getElementById("form-sugerencias");
+  var exito = document.getElementById("form-exito");
+  var error = document.getElementById("form-error");
+  var btn = document.getElementById("btn-enviar");
+  var pronto = document.getElementById("form-pronto");
+
+  // Sin ENDPOINT no se puede enviar nada: se avisa en vez de simular que el mensaje salió.
+  if (!ENDPOINT) { form.hidden = true; pronto.hidden = false; }
+
+  function terminar() {
+    form.hidden = true;
+    exito.hidden = false;
+    exito.focus();
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    error.textContent = "";
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    if (!ENDPOINT) return;
+    btn.disabled = true;
+    btn.textContent = "Enviando…";
+    fetch(ENDPOINT, { method: "POST", body: new FormData(form), headers: { "Accept": "application/json" } })
+      .then(function (r) { if (!r.ok) throw new Error("http"); terminar(); })
+      .catch(function () {
+        error.textContent = "⚠ No se pudo enviar el mensaje. Revisa tu conexión e inténtalo de nuevo.";
+        btn.disabled = false;
+        btn.textContent = "Enviar";
+      });
+  });
+  (function () {
+    var btn = document.getElementById("copiar-email");
+    var msg = document.getElementById("email-msg");
+    if (!btn || !msg) return;
+    function direccion() { return ["silentstudybuddy", "gmail.com"].join("@"); }
+    function aviso(ok) {
+      msg.textContent = ok ? "Email copiado." : "No se pudo copiar. Usa el formulario o las redes de arriba.";
+    }
+    function respaldo(texto) {
+      try {
+        var ta = document.createElement("textarea");
+        ta.value = texto;
+        ta.setAttribute("readonly", "");
+        ta.style.cssText = "position:fixed;top:0;left:0;opacity:0";
+        document.body.appendChild(ta);
+        ta.select();
+        ta.setSelectionRange(0, texto.length);
+        var ok = !!(document.execCommand && document.execCommand("copy"));
+        ta.remove();
+        aviso(ok);
+      } catch (err) { aviso(false); }
+    }
+    btn.addEventListener("click", function () {
+      var texto = direccion();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(texto).then(function () { aviso(true); }, function () { respaldo(texto); });
+      } else { respaldo(texto); }
+    });
+  })();
+})();
+</script>
+</body>
+</html>

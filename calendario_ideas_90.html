@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Calendario mensual con las ideas de post que tienen fecha de publicación, con su formato y estado.">
+<meta name="theme-color" content="#e8e3df" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#353436" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%9A%3C/text%3E%3C/svg%3E">
+<title>Calendario de publicaciones</title>
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="calendario.css">
+<link rel="stylesheet" href="toc.css">
+<script src="theme.js"></script>
+</head>
+<body>
+<nav class="menu" aria-label="Principal">
+<a href="index.html">Inicio</a>
+<a href="resenia.html">Reseñas</a>
+<a href="ideas_post_90.html">Ideas</a>
+<a href="calendario_ideas_90.html" aria-current="page">Calendario</a>
+<a href="bingo.html">Bingo</a>
+<a href="sugerencias.html">Sugerencias</a>
+<a href="sobre_mi.html">Sobre mí</a>
+</nav>
+<header class="encabezado" id="inicio">
+<h1>Calendario de publicaciones</h1>
+<p class="intro">Aquí aparecen las ideas a las que les pusiste fecha en <a href="ideas_post_90.html">Ideas</a>.</p>
+<p id="resumen-mes" class="ayuda" aria-live="polite"></p>
+</header>
+<nav class="toc" id="toc" aria-label="En esta página">
+<p class="toc-titulo">En esta página</p>
+<ol>
+<li><a href="#calendario">Calendario</a></li>
+<li><a href="#leyenda">Leyenda</a></li>
+<li><a href="#detalle">Detalle del día</a></li>
+<li><a href="#ayuda-datos">Ver un respaldo</a></li>
+</ol>
+</nav>
+<main>
+<section id="calendario" aria-label="Calendario mensual">
+<div class="cal-nav">
+<button type="button" id="mes-ant" aria-label="Mes anterior">‹</button>
+<h2 id="mes-titulo" aria-live="polite"></h2>
+<button type="button" id="mes-sig" aria-label="Mes siguiente">›</button>
+</div>
+<div class="botones centrado"><button type="button" id="mes-hoy">Ir a hoy</button></div>
+<div class="cal-grid" id="cal-grid"></div>
+</section>
+
+<section id="leyenda" aria-label="Leyenda">
+<div class="leyenda">
+<span class="chip formato-post">Post</span>
+<span class="chip formato-carrusel">Carrusel</span>
+<span class="chip formato-reel">Reel</span>
+<span class="ev" data-est="idea">Idea</span>
+<span class="ev" data-est="grabando">Grabando</span>
+<span class="ev" data-est="editando">Editando</span>
+<span class="ev" data-est="programada">Programada</span>
+<span class="ev" data-est="publicada">Publicada</span>
+<span class="ev" data-est="descartada">Descartada</span>
+</div>
+</section>
+
+<section id="detalle" aria-live="polite"></section>
+
+<details class="guia" id="ayuda-datos">
+<summary>Ver un respaldo</summary>
+<div style="padding-bottom:.9rem">
+<p class="ayuda">Puedes cargar un respaldo JSON (el que se descarga en Ideas) solo para verlo. No cambia tu progreso.</p>
+<label class="campo" style="margin-top:.6rem"><span>Archivo de respaldo</span>
+<input type="file" id="importar" accept="application/json,.json"></label>
+<div class="botones" style="margin-top:.6rem"><button type="button" id="volver-mios" hidden>Volver a mis datos</button></div>
+<p id="msg" class="ayuda" role="status" style="margin-top:.6rem"></p>
+</div>
+</details>
+</main>
+<footer>
+  <p>&copy; Diseñado e ideado por Paula Speciale, con la ayuda de Claude</p>
+</footer>
+<script src="datos-ideas.js"></script>
+<script>
+(function () {
+  "use strict";
+  var KEY = "ideas_post_90_v1";
+  var FORMATOS = ["Post", "Carrusel", "Reel"];
+  var ESTADOS = { idea: 1, grabando: 1, editando: 1, programada: 1, publicada: 1, descartada: 1 };
+  var DOW = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
+  var MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+  var NOMBRES_EST = { idea: "Idea", grabando: "Grabando", editando: "Editando", programada: "Programada", publicada: "Publicada", descartada: "Descartada" };
+
+  var base = Object.create(null);
+  ((window.BT && window.BT.SECCIONES) || []).forEach(function (s) {
+    s.ideas.forEach(function (i) { base[i.id] = { texto: i.texto, formato: i.formato }; });
+  });
+
+  function tiene(o, k) { return Object.prototype.hasOwnProperty.call(o, k); }
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+  function isoDe(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+  function deIso(s) { var p = s.split("-").map(Number); return new Date(p[0], p[1] - 1, p[2]); }
+  function fechaValida(s) {
+    if (typeof s !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+    var d = deIso(s);
+    return isoDe(d) === s;
+  }
+  function el(tag, cls, txt) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (txt !== undefined) n.textContent = txt;
+    return n;
+  }
+  function partir(t) {
+    return String(t).replace(/^[★◆]\s*/, "").replace(/\s*\[(?:Post|Carrusel|Reel)\]\s*$/, "");
+  }
+
+  var hoyIso = isoDe(new Date());
+  var vistaA = new Date().getFullYear(), vistaM = new Date().getMonth();
+  var sel = hoyIso;
+  var fuente = null;   // respaldo cargado solo para ver
+
+  var elGrid = document.getElementById("cal-grid");
+  var elTitulo = document.getElementById("mes-titulo");
+  var elDetalle = document.getElementById("detalle");
+  var elResumen = document.getElementById("resumen-mes");
+  var elMsg = document.getElementById("msg");
+  var btnVolver = document.getElementById("volver-mios");
+
+  function leerDatos() {
+    if (fuente) return fuente;
+    try {
+      var o = JSON.parse(localStorage.getItem(KEY));
+      return o && typeof o === "object" ? o : null;
+    } catch (e) { return null; }
+  }
+
+  // Devuelve { "AAAA-MM-DD": [ {num, texto, formato, est, fav, propia} ] }
+  function recopilar() {
+    var o = leerDatos() || {};
+    var datos = o.datos && typeof o.datos === "object" && !Array.isArray(o.datos) ? o.datos : {};
+    var hechas = Object.create(null);
+    (Array.isArray(o.hechas) ? o.hechas : []).forEach(function (id) { hechas[String(id)] = true; });
+    var ids = Object.keys(base);
+    Object.keys(datos).forEach(function (id) { if (!base[id]) ids.push(id); });
+    var mapa = {}, total = 0;
+    ids.forEach(function (id) {
+      var d = datos[id];
+      if (!d || typeof d !== "object") return;
+      if (d.borrada === true || !fechaValida(d.fecha)) return;
+      var b = base[id];
+      if (!b && d.propia !== true) return;
+      var texto = typeof d.texto === "string" && d.texto.trim() ? d.texto : (b ? b.texto : "");
+      if (!texto) return;
+      var formato = FORMATOS.indexOf(d.formato) !== -1 ? d.formato : (b && FORMATOS.indexOf(b.formato) !== -1 ? b.formato : "Post");
+      var est = hechas[id] ? "publicada" : (typeof d.estado === "string" && tiene(ESTADOS, d.estado) && d.estado !== "publicada" ? d.estado : "idea");
+      (mapa[d.fecha] = mapa[d.fecha] || []).push({
+        num: b ? id : "", texto: partir(texto), formato: formato, est: est, fav: d.fav === true, propia: !b
+      });
+      total++;
+    });
+    mapa.__total = total;
+    return mapa;
+  }
+
+  function etiquetaDia(f, n) {
+    return f.getDate() + " de " + MESES[f.getMonth()] + ": " + (n ? n + " publicación" + (n === 1 ? "" : "es") : "sin publicaciones");
+  }
+
+  function render() {
+    var mapa = recopilar();
+    elTitulo.textContent = MESES[vistaM] + " " + vistaA;
+    elGrid.textContent = "";
+    DOW.forEach(function (h) { elGrid.appendChild(el("div", "cal-dow", h)); });
+
+    var off = (new Date(vistaA, vistaM, 1).getDay() + 6) % 7;
+    var dias = new Date(vistaA, vistaM + 1, 0).getDate();
+    var celdas = Math.ceil((off + dias) / 7) * 7;
+    for (var i = 0; i < celdas; i++) {
+      var f = new Date(vistaA, vistaM, 1 - off + i);
+      var key = isoDe(f);
+      var lista = mapa[key] || [];
+      var b = el("button", "dia" + (f.getMonth() !== vistaM ? " fuera" : "") + (key === hoyIso ? " hoy" : "") + (key === sel ? " sel" : ""));
+      b.type = "button";
+      b.setAttribute("data-fecha", key);
+      b.setAttribute("aria-pressed", String(key === sel));
+      b.setAttribute("aria-label", etiquetaDia(f, lista.length));
+      b.appendChild(el("span", "n", String(f.getDate())));
+      lista.slice(0, 2).forEach(function (it) {
+        var e = el("span", "ev f-" + it.formato + (it.est === "publicada" ? " hecha" : ""), it.texto);
+        e.setAttribute("data-est", it.est);
+        e.setAttribute("aria-hidden", "true");
+        b.appendChild(e);
+      });
+      if (lista.length > 2) b.appendChild(el("span", "mas", "+" + (lista.length - 2) + " más"));
+      if (lista.length) {
+        var pt = el("span", "puntos");
+        pt.setAttribute("aria-hidden", "true");
+        lista.slice(0, 6).forEach(function (it) { pt.appendChild(el("span", "punto f-" + it.formato)); });
+        b.appendChild(pt);
+      }
+      elGrid.appendChild(b);
+    }
+
+    // Resumen del mes
+    var pref = vistaA + "-" + pad(vistaM + 1) + "-", n = 0, pub = 0;
+    Object.keys(mapa).forEach(function (k) {
+      if (k.indexOf(pref) !== 0) return;
+      mapa[k].forEach(function (it) { n++; if (it.est === "publicada") pub++; });
+    });
+    elResumen.textContent = mapa.__total
+      ? "Este mes: " + n + " publicación" + (n === 1 ? "" : "es") + ", " + pub + " publicada" + (pub === 1 ? "" : "s") + "." + (fuente ? " (Mostrando un respaldo, solo lectura.)" : "")
+      : "Todavía no hay ideas con fecha. Asigna una desde Ideas y aparecerá aquí.";
+
+    renderDetalle(mapa);
+  }
+
+  function renderDetalle(mapa) {
+    elDetalle.textContent = "";
+    if (!sel) {
+      elDetalle.appendChild(el("p", "vacio-msg", "Toca un día para ver sus publicaciones."));
+      return;
+    }
+    var f = deIso(sel);
+    elDetalle.appendChild(el("h3", "", f.toLocaleDateString("es", { weekday: "long", day: "numeric", month: "long", year: "numeric" })));
+    var lista = mapa[sel] || [];
+    if (!lista.length) {
+      elDetalle.appendChild(el("p", "vacio-msg", "No hay publicaciones este día."));
+      return;
+    }
+    lista.forEach(function (it) {
+      var d = el("div", "det-item");
+      d.setAttribute("data-est", it.est);
+      d.appendChild(el("p", "", (it.num ? it.num + ". " : "") + it.texto));
+      var m = el("div", "meta");
+      m.appendChild(el("span", "chip formato-" + it.formato.toLowerCase(), it.formato));
+      m.appendChild(el("span", "chip origen", NOMBRES_EST[it.est]));
+      if (it.fav) m.appendChild(el("span", "chip origen", "♥ Favorita"));
+      if (it.propia) m.appendChild(el("span", "chip propia", "Mía"));
+      d.appendChild(m);
+      elDetalle.appendChild(d);
+    });
+  }
+
+  function irA(f) { vistaA = f.getFullYear(); vistaM = f.getMonth(); }
+
+  function mover(delta) {
+    var f = new Date(vistaA, vistaM + delta, 1);
+    irA(f);
+    if (sel && (deIso(sel).getMonth() !== vistaM || deIso(sel).getFullYear() !== vistaA)) sel = null;
+    render();
+  }
+  document.getElementById("mes-ant").addEventListener("click", function () { mover(-1); });
+  document.getElementById("mes-sig").addEventListener("click", function () { mover(1); });
+  document.getElementById("mes-hoy").addEventListener("click", function () {
+    hoyIso = isoDe(new Date());
+    sel = hoyIso;
+    irA(new Date());
+    render();
+  });
+
+  elGrid.addEventListener("click", function (e) {
+    var b = e.target.closest ? e.target.closest(".dia") : null;
+    if (!b) return;
+    sel = b.getAttribute("data-fecha");
+    irA(deIso(sel));
+    render();
+    var nuevo = elGrid.querySelector('[data-fecha="' + sel + '"]');
+    if (nuevo) nuevo.focus({ preventScroll: true });
+  });
+
+  // Respaldo solo para ver
+  document.getElementById("importar").addEventListener("change", function (ev) {
+    var input = ev.target, archivo = input.files && input.files[0];
+    if (!archivo) return;
+    var lector = new FileReader();
+    lector.onload = function () {
+      var o = null;
+      try { o = JSON.parse(lector.result); } catch (err) { o = null; }
+      var ok = o && typeof o === "object" && (Array.isArray(o.hechas) || (o.datos && typeof o.datos === "object"));
+      input.value = "";
+      if (!ok) { elMsg.textContent = "El archivo no parece un respaldo de Ideas. No se cambió nada."; return; }
+      fuente = o;
+      btnVolver.hidden = false;
+      elMsg.textContent = "Mostrando el respaldo. Tu progreso no se modificó.";
+      render();
+    };
+    lector.onerror = function () { elMsg.textContent = "No se pudo leer el archivo."; input.value = ""; };
+    lector.readAsText(archivo);
+  });
+  btnVolver.addEventListener("click", function () {
+    fuente = null;
+    btnVolver.hidden = true;
+    elMsg.textContent = "Mostrando tus datos.";
+    render();
+  });
+
+  // Se actualiza si cambian los datos en otra pestaña o al volver a esta
+  window.addEventListener("storage", function (e) { if (e.key === null || e.key === KEY) render(); });
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden) { hoyIso = isoDe(new Date()); render(); }
+  });
+  render();
+})();
+</script>
+</body>
+</html>

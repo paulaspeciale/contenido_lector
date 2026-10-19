@@ -1,0 +1,58 @@
+/* ==========================================================================
+   simples.css · Sugerencias y Sobre mí: formulario, donaciones y enlaces de redes.
+   Requiere base.css.
+   ========================================================================== */
+
+input[type="email"] {
+  display: block;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: .5rem .65rem;
+  border: 1px solid var(--borde);
+  border-radius: .15rem;
+  background: var(--superficie);
+  font: 1rem var(--serif);
+}
+
+.formulario {
+  display: grid;
+  gap: .9rem;
+  margin-top: 1rem;
+  padding: 1.25rem;
+  border: 1px solid var(--borde);
+  border-radius: .15rem;
+  background: var(--superficie);
+  box-shadow: var(--marco);
+}
+
+.formulario input, .formulario textarea { background: var(--fondo); }
+
+.formulario button[type="submit"] { justify-self: start; }
+
+.donaciones { display: grid; gap: 1rem; margin-top: 1rem; }
+
+.donacion {
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--borde);
+  border-radius: .15rem;
+  background: var(--superficie);
+  box-shadow: var(--marco);
+}
+
+.donacion h3 { margin: 0 0 .5rem; font: 400 .85rem/1.4 var(--maquina); letter-spacing: .1em; text-transform: uppercase; }
+
+.donacion img { display: block; max-width: 100%; height: auto; }
+
+.alias { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; margin-top: .5rem; }
+
+.alias code {
+  padding: .35rem .6rem;
+  border: 1px dashed var(--borde);
+  background: var(--fondo);
+  font-family: var(--maquina);
+}
+
+/* Enlaces de redes en «Sobre mí» */
+.enlaces { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; }
+
+.enlaces a { display: inline-flex; align-items: center; min-height: 2.75rem; }
