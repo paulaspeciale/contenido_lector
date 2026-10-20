@@ -220,18 +220,19 @@
       elDetalle.appendChild(el("p", "vacio-msg", "Toca un día para ver sus publicaciones."));
       return;
     }
-    var f = deIso(sel);
-    elDetalle.appendChild(el("h3", "", f.toLocaleDateString("es", { weekday: "long", day: "numeric", month: "long", year: "numeric" })));
-    var lista = mapa[sel] || [];
+    let f = deIso(sel);
+    let titulo = f.toLocaleDateString("es", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+elDetalle.appendChild(el("h3", "", titulo.charAt(0).toUpperCase() + titulo.slice(1)));
+    let lista = mapa[sel] || [];
     if (!lista.length) {
       elDetalle.appendChild(el("p", "vacio-msg", "No hay publicaciones este día."));
       return;
     }
     lista.forEach(function (it) {
-      var d = el("div", "det-item");
+      let d = el("div", "det-item");
       d.setAttribute("data-est", it.est);
       d.appendChild(el("p", "", (it.num ? it.num + ". " : "") + it.texto));
-      var m = el("div", "meta");
+      let m = el("div", "meta");
       m.appendChild(el("span", "chip formato-" + it.formato.toLowerCase(), it.formato));
       m.appendChild(el("span", "chip origen", NOMBRES_EST[it.est]));
       if (it.fav) m.appendChild(el("span", "chip origen", "♥ Favorita"));

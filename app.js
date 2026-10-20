@@ -76,7 +76,10 @@
   const MAX_TEXTO = 300;
   const MAX_SECCION = 60;   // largo máximo del nombre de una sección nueva
   const CUSTOM_RE = /^c[a-z0-9]{6,24}$/;   // ids de las ideas que creas tú
-
+const FECHA_MIN = "2000-01-01", FECHA_MAX = "2100-12-31";
+function fechaAceptable(v) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(v) && fechaReal(v) && v >= FECHA_MIN && v <= FECHA_MAX;
+}
   // Pasos de producción de cada idea (checklist)
   const PASOS = [
     ["guion", "Guion"],
@@ -193,7 +196,9 @@
   }
 
   function unirHashtags(actual, extra) {
-    return tagsATexto(partirTags(actual + " " + extra), MAX_HASHTAGS);
+   const todosTags = partirTags(elSetTags.value);
+const tags = tagsATexto(todosTags, MAX_HASHTAGS);
+const recortados = todosTags.length - partirTags(tags).length;
   }
 
   // ---- Estado ----
@@ -206,7 +211,7 @@
     if (!d || typeof d !== "object") return limpio;
     if (d.fav === true) limpio.fav = true;
     if (!hecha && typeof d.estado === "string" && INTERMEDIOS.indexOf(d.estado) !== -1) limpio.estado = d.estado;
-    if (typeof d.fecha === "string" && /^\d{4}-\d{2}-\d{2}$/.test(d.fecha) && fechaReal(d.fecha)) limpio.fecha = d.fecha;
+    if (typeof d.fecha === "string" && fechaAceptable(d.fecha)) limpio.fecha = d.fecha; limpio.fecha = d.fecha;
     if (typeof d.libro === "string" && d.libro.trim()) limpio.libro = d.libro.slice(0, MAX_LIBRO);
     if (typeof d.hashtags === "string" && d.hashtags.trim()) limpio.hashtags = d.hashtags.slice(0, MAX_HASHTAGS);
     if (typeof d.nota === "string" && d.nota) limpio.nota = d.nota.slice(0, MAX_NOTA);
@@ -665,7 +670,7 @@
 
   const seccionesBase = secRefs.slice();
   let extraRefs = [];
-  let firmaExtra = "";
+  let firmaExtra = null;
 
   // Crea, renombra o quita las secciones nuevas y las deja SIEMPRE al final de la lista.
   // secRefs queda con las base primero y las nuevas después (el índice coincide con idea.sec).
@@ -736,7 +741,7 @@
 
     const labFecha = el("label", { "class": "campo" });
     labFecha.appendChild(el("span", { text: "Fecha de publicación" }));
-    const fecha = el("input", { type: "date", "data-fecha": id });
+    const fecha = el("input", { type: "date", "data-fecha": id, min: FECHA_MIN, max: FECHA_MAX });
     labFecha.appendChild(fecha);
     campos.appendChild(labFecha);
     li.appendChild(campos);
@@ -1002,7 +1007,7 @@
     elRecordatorio.textContent = txt;
     const alerta = txt.indexOf("⚠") === 0;
     elRecordatorio.classList.toggle("alerta", alerta);
-    if (alerta && hayAlmacenamiento) {
+    if (alerta && !hayCorrupto) {
       // Botón directo en el aviso: un toque descarga el respaldo (JSON).
       const bExp = el("button", { type: "button", "class": "primario", text: "Descargar respaldo ahora" });
       bExp.addEventListener("click", function () { document.getElementById("exportar").click(); });
@@ -1020,13 +1025,20 @@
   }
 
   // ---- Deshacer (reinicio o importación) ----
-  function crearSnapshot(accion) {
-    const s = serializar();
-    s.accion = accion;
-    s.fecha = new Date().toISOString();
-    escribir(KEY_DESHACER, s);
-    actualizarDeshacer();
-  }
+function crearSnapshot(accion) {
+  const s = serializar();
+  s.accion = accion;
+  s.fecha = new Date().toISOString();
+  const ok = escribir(KEY_DESHACER, s);
+  if (!ok) borrar(KEY_DESHACER);   // no dejar una copia vieja que engañe
+  actualizarDeshacer();
+  return ok;
+}
+
+function prepararDeshacer(accion) {
+  if (crearSnapshot(accion)) return Promise.resolve(true);
+  return confirmar("No hay espacio en el navegador para guardar una copia, así que no podrás deshacer esta acción. Si quieres conservar tu progreso actual, cancela y expórtalo primero. ¿Continuar de todos modos?");
+}
 
   function leerSnapshot() {
     const s = leer(KEY_DESHACER);
@@ -1148,7 +1160,9 @@
     cancelarEdicionSet();
     persistirSets();
     renderSets();
-    avisoSet("Conjunto «" + nombre + "» guardado.");
+   avisoSet("Conjunto «" + nombre + "» guardado." + (recortados
+  ? " Ojo: se omitieron los últimos " + recortados + " hashtags por el límite de " + MAX_HASHTAGS + " caracteres."
+  : ""));
   });
 
   btnSetCancelar.addEventListener("click", function () {
@@ -1156,17 +1170,23 @@
     avisoSet("");
   });
 
-  function aplicarSet(id, k) {
-    const s = state.sets[k];
-    if (!s) return;
-    const actual = (state.datos[id] || {}).hashtags || "";
-    const nuevo = unirHashtags(actual, s.tags);
-    if (nuevo === actual) return;
-    refs[id].hashtags.value = nuevo;
-    setDato(id, "hashtags", nuevo);
-    actualizarResumen(id);
+function aplicarSet(id, k, boton) {
+  const s = state.sets[k];
+  if (!s) return;
+  const actual = (state.datos[id] || {}).hashtags || "";
+  const deseados = partirTags(actual + " " + s.tags);
+  const nuevo = tagsATexto(deseados, MAX_HASHTAGS);
+  const perdidos = deseados.length - partirTags(nuevo).length;
+  if (perdidos > 0) {
+    const msg = "Límite de " + MAX_HASHTAGS + " caracteres: no se añadieron " + perdidos + " hashtag" + (perdidos === 1 ? "" : "s") + ".";
+    anunciar(msg);
+    if (boton) parpadeo(boton, "Sin espacio");
   }
-
+  if (nuevo === actual) return;
+  refs[id].hashtags.value = nuevo;
+  setDato(id, "hashtags", nuevo);
+  actualizarResumen(id);
+}
   // ---- Filtros y orden ----
   function cmpOrden(a, b) {
     if (a.orden !== b.orden) return a.orden - b.orden;
@@ -1378,7 +1398,12 @@
     } else if (idFav) {
       setDato(idFav, "fav", t.checked);
     } else if (idFecha) {
-      setDato(idFecha, "fecha", t.value);
+      if (t.value && !fechaAceptable(t.value)) {
+    t.value = (state.datos[idFecha] || {}).fecha || "";   // se restaura la anterior
+    anunciar("Fecha no válida: usa un año entre 2000 y 2100.");
+    return;
+  }
+  setDato(idFecha, "fecha", t.value);
     } else if (paso) {
       setPaso(t.getAttribute("data-pid"), paso, t.checked);
     }
@@ -1408,7 +1433,7 @@
     const accion = b.getAttribute("data-accion");
     const mov = b.getAttribute("data-mover");
     if (b.hasAttribute("data-set")) {
-      aplicarSet(id, Number(b.getAttribute("data-set")));
+      aplicarSet(id, Number(b.getAttribute("data-set")),b);
     } else if (accion && id && refs[id]) {
       if (accion === "copiar") copiarIdea(id, b);
       else if (accion === "editar") abrirFormIdea(id);
@@ -1561,17 +1586,19 @@
     renderBorradas();
   }
 
-  document.getElementById("reiniciar").addEventListener("click", function () {
-    confirmar("¿Desmarcar todas las ideas hechas? Tus favoritas, fechas, libros, notas y conjuntos se mantienen. Podrás deshacerlo después.").then(function (ok) {
-      if (!ok) return;
-      crearSnapshot("reinicio");
+document.getElementById("reiniciar").addEventListener("click", function () {
+  confirmar("¿Desmarcar todas las ideas hechas? Tus favoritas, fechas, libros, notas y conjuntos se mantienen. Podrás deshacerlo después.").then(function (ok) {
+    if (!ok) return;
+    return prepararDeshacer("reinicio").then(function (seguir) {
+      if (!seguir) return;
       const nuevo = limpiarEstado(serializar());
       nuevo.hechas = {};
       aplicarEstadoCompleto(nuevo);
       refrescarTodo();
-      aviso("Se desmarcaron todas las ideas hechas. Puedes usar el botón «Deshacer».");
+      aviso("Se desmarcaron todas las ideas hechas." + (btnDeshacer.hidden ? "" : " Puedes usar el botón «Deshacer»."));
     });
   });
+});
 
   btnDeshacer.addEventListener("click", function () {
     const snap = leerSnapshot();
@@ -1631,13 +1658,15 @@
         nuevo.sets.length + " conjuntos de hashtags" +
         (ignoradas ? "; " + ignoradas + " entradas del archivo no se reconocieron y se omitirán" : "") +
         ". Esto reemplazará tu progreso actual (" + actuales + " ideas con datos). Podrás deshacerlo. ¿Continuar?").then(function (ok) {
-        input.value = "";
-        if (!ok) return;
-        crearSnapshot("importación");
-        aplicarEstadoCompleto(nuevo);
-        refrescarTodo();
-        aviso("Progreso importado. Puedes usar el botón «Deshacer» si te equivocaste de archivo.");
-      });
+    input.value = "";
+    if (!ok) return;
+    return prepararDeshacer("importación").then(function (seguir) {
+      if (!seguir) return;
+      aplicarEstadoCompleto(nuevo);
+      refrescarTodo();
+      aviso("Progreso importado." + (btnDeshacer.hidden ? "" : " Puedes usar el botón «Deshacer» si te equivocaste de archivo."));
+    });
+  });
     };
     lector.onerror = function () {
       aviso("No se pudo leer el archivo.");

@@ -1,7 +1,4 @@
-/* ==========================================================================
-   toc.css · Menú «En esta página» (Ideas y Calendario): columna fija en pantallas anchas,
-   panel plegable en móvil. Requiere base.css; cárgalo DESPUÉS del css de la página.
-   ========================================================================== */
+
 
 #inicio { scroll-margin-top: 1rem; }
 

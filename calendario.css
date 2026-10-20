@@ -1,7 +1,3 @@
-/* ==========================================================================
-   calendario.css · Página de Calendario: cuadrícula mensual, eventos, puntos en móvil y detalle del día.
-   Requiere base.css (y toc.css para el menú «En esta página»).
-   ========================================================================== */
 
 /* ---------- Calendario (comparte este archivo) ---------- */
 .dia {
@@ -87,7 +83,7 @@
 
 @media (max-width: 40rem) {
   .dia { min-height: 3.4rem; }
-  .ev, .mas { display: none; }
+  .cal-grid .ev, .cal-grid .mas { display: none; }
   .puntos { display: flex; }
 }
 
@@ -96,11 +92,10 @@
 #detalle { margin-top: 1rem; }
 
 #detalle h3 {
-  margin: 0 0 .5rem;
+ margin: 0 0 .5rem;
   font: 400 1.05rem/1.3 var(--serif);
   font-variant: small-caps;
   letter-spacing: .07em;
-  text-transform: capitalize;
 }
 
 .det-item {

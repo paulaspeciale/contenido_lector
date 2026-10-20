@@ -29,23 +29,20 @@
 <main>
   <section class="bloque" id="otros-contactos">
 <h2><span aria-hidden="true">💌</span> Otras formas de contacto</h2>
-<p>Si no quieres utilizar el formulario que se encuentra debajo y  prefieres escribirme por otro medio , puedes utilizar:</p>
+<p>Si prefieres no usar el formulario que está debajo, puedes escribirme por mis redes:</p>
 <p class="enlaces">
 <a href="https://www.tiktok.com/@danaehan" target="_blank" rel="noopener">🎵 TikTok</a>
 <a href="https://www.instagram.com/hello_little_tornado/" target="_blank" rel="noopener">📸 Instagram</a>
 
 </p>
-<p>O copia mi email y escríbeme desde tu correo:</p>
-<div class="botones">
-<button type="button" id="copiar-email" aria-label="Copiar email de contacto">Copiar email</button>
-</div>
-<p id="email-msg" class="ayuda" role="status"></p>
 </section>
 <section class="bloque">
 <h2>¿Tienes alguna idea para incluir?</h2>
-<form class="formulario" id="form-sugerencias" action="https://formsubmit.co/silentstudybuddy@gmail.com" method="post">
+<!-- El destino (action) lo pone el script desde FORM_URL: así el correo nunca aparece en el HTML.
+     El captcha de FormSubmit queda ACTIVADO (no se envía _captcha=false). -->
+<form class="formulario" id="form-sugerencias" method="post">
 <input type="hidden" name="_subject" value="Nueva sugerencia desde la web">
-<input type="hidden" name="_captcha" value="false">
+<input type="hidden" name="_next" id="form-next" value="">
 <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
 <p class="ayuda">Los campos marcados con <span aria-hidden="true">*</span><span class="solo-lector">asterisco</span> son obligatorios.</p>
 <div class="campo">
@@ -80,68 +77,54 @@
 <script>
 (function () {
   "use strict";
-  // Servicio de formularios: FormSubmit (se usa la ruta /ajax/ para poder enviar con fetch).
-  // Con la URL vacía el formulario se oculta y se muestra un aviso (no se simula el envío).
-  var ENDPOINT = "https://formsubmit.co/ajax/silentstudybuddy@gmail.com";
+  // Dirección del formulario en FormSubmit. NO pongas aquí tu correo: usa la dirección con código
+  // aleatorio que te da FormSubmit al activar el formulario (formato https://formsubmit.co/el/CODIGO).
+  // Con la dirección vacía el formulario se oculta y se muestra un aviso (no se simula el envío).
+  var FORM_URL = "";
   var form = document.getElementById("form-sugerencias");
   var exito = document.getElementById("form-exito");
   var error = document.getElementById("form-error");
   var btn = document.getElementById("btn-enviar");
   var pronto = document.getElementById("form-pronto");
+  var siguiente = document.getElementById("form-next");
+  var abierto = Date.now();
 
-  // Sin ENDPOINT no se puede enviar nada: se avisa en vez de simular que el mensaje salió.
-  if (!ENDPOINT) { form.hidden = true; pronto.hidden = false; }
+  if (FORM_URL) { form.setAttribute("action", FORM_URL); }
+  else { form.hidden = true; pronto.hidden = false; }
 
-  function terminar() {
+  // Tras enviar, FormSubmit (con su captcha) vuelve aquí con ?enviado=1
+  if (/^https?:$/.test(location.protocol)) {
+    siguiente.value = location.origin + location.pathname + "?enviado=1";
+  } else {
+    siguiente.disabled = true;
+  }
+  if (/[?&]enviado=1(&|$)/.test(location.search)) {
     form.hidden = true;
+    pronto.hidden = true;
     exito.hidden = false;
     exito.focus();
   }
 
   form.addEventListener("submit", function (e) {
-    e.preventDefault();
     error.textContent = "";
-    if (!form.checkValidity()) { form.reportValidity(); return; }
-    if (!ENDPOINT) return;
+    var trampa = form.elements["_honey"];
+    if (trampa && trampa.value) { e.preventDefault(); return; }          // un robot rellenó el campo oculto
+    if (!form.checkValidity()) { e.preventDefault(); form.reportValidity(); return; }
+    if (!FORM_URL) { e.preventDefault(); return; }
+    if (Date.now() - abierto < 3000) {                                    // envío demasiado rápido
+      e.preventDefault();
+      error.textContent = "Espera unos segundos antes de enviar.";
+      return;
+    }
     btn.disabled = true;
     btn.textContent = "Enviando…";
-    fetch(ENDPOINT, { method: "POST", body: new FormData(form), headers: { "Accept": "application/json" } })
-      .then(function (r) { if (!r.ok) throw new Error("http"); terminar(); })
-      .catch(function () {
-        error.textContent = "⚠ No se pudo enviar el mensaje. Revisa tu conexión e inténtalo de nuevo.";
-        btn.disabled = false;
-        btn.textContent = "Enviar";
-      });
   });
-  (function () {
-    var btn = document.getElementById("copiar-email");
-    var msg = document.getElementById("email-msg");
-    if (!btn || !msg) return;
-    function direccion() { return ["silentstudybuddy", "gmail.com"].join("@"); }
-    function aviso(ok) {
-      msg.textContent = ok ? "Email copiado." : "No se pudo copiar. Usa el formulario o las redes de arriba.";
-    }
-    function respaldo(texto) {
-      try {
-        var ta = document.createElement("textarea");
-        ta.value = texto;
-        ta.setAttribute("readonly", "");
-        ta.style.cssText = "position:fixed;top:0;left:0;opacity:0";
-        document.body.appendChild(ta);
-        ta.select();
-        ta.setSelectionRange(0, texto.length);
-        var ok = !!(document.execCommand && document.execCommand("copy"));
-        ta.remove();
-        aviso(ok);
-      } catch (err) { aviso(false); }
-    }
-    btn.addEventListener("click", function () {
-      var texto = direccion();
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(texto).then(function () { aviso(true); }, function () { respaldo(texto); });
-      } else { respaldo(texto); }
-    });
-  })();
+
+  // Si se vuelve atrás desde la página del captcha, el botón no debe quedar bloqueado
+  window.addEventListener("pageshow", function () {
+    btn.disabled = false;
+    btn.textContent = "Enviar";
+  });
 })();
 </script>
 </body>

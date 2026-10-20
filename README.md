@@ -75,11 +75,11 @@ Plantilla de reseña con índice de enlaces internos. Permite alternar entre ver
 
 ### Sugerencias (`sugerencias.html`)
 
-Formulario con validación nativa del navegador. En el script hay una constante `ENDPOINT`: si pegas ahí la URL de un servicio de formularios (Formspree, Formsubmit, etc.), el mensaje se envía. Con la URL vacía el formulario se oculta y se muestra un aviso con enlaces a las redes (no se simula el envío).
+Formulario con validación nativa del navegador, que se envía con un POST normal a FormSubmit con su **captcha activado**. En el script hay una constante `FORM_URL`: pega ahí la dirección con código aleatorio que da FormSubmit (`https://formsubmit.co/el/CODIGO`), **nunca tu correo**. Protecciones extra: campo trampa `_honey` y rechazo de envíos en menos de 3 s. Tras enviar, FormSubmit vuelve a la página con `?enviado=1` y se muestra el mensaje de éxito. Con `FORM_URL` vacía el formulario se oculta y se muestra un aviso con enlaces a las redes (no se simula el envío). No se muestra ningún correo en la página.
 
 ### Sobre mí (`sobre_mi.html`)
 
-Presentación, enlaces a TikTok, Instagram y YouTube, y donaciones por Mercado Pago, PayPal (con botones para copiar alias y correo) y Cafecito.
+Presentación, enlaces a TikTok, Instagram y YouTube, y donaciones por Mercado Pago (alias con botón de copiar) y Cafecito. PayPal está retirado hasta tener un enlace PayPal.me, para no exponer un correo personal.
 
 ### Tema claro / oscuro (`theme.js`)
 
@@ -156,7 +156,7 @@ Estética de **librería antigua (cottagecore)**: papel con grano generado con u
 - **Una sola fuente de ideas**: tanto Ideas como Calendario leen `datos-ideas.js`, así que no hay nada más que actualizar.
 - **Cambiar estados o pasos de producción**: modifica `ESTADOS` y `PASOS` en `app.js` y los colores correspondientes en `base.css`.
 - **Colores**: están en las variables de `:root` al inicio de `base.css`.
-- **Formulario de sugerencias**: pega la URL del servicio en `ENDPOINT`.
+- **Formulario de sugerencias**: pega en `FORM_URL` la dirección con código aleatorio de FormSubmit (no el correo).
 - **Versiones coherentes**: `app.js` comprueba al iniciar que el HTML tenga todos los elementos que necesita. Si copias un archivo nuevo sin el otro, muestra un aviso en lugar de fallar en silencio. Tu progreso no se toca.
 
 ## Límites conocidos
@@ -168,5 +168,6 @@ Estética de **librería antigua (cottagecore)**: papel con grano generado con u
 - El botón de exportar espera a que se resuelva la capacidad `downloads`, pero sin tiempo límite ni aviso si tarda o falla.
 - Las ideas propias son privadas; para que otros las vean hay que enviarlas por Sugerencias.
 - Inicio y Bingo están pendientes de contenido.
-- El formulario de Sugerencias muestra un aviso en lugar del formulario hasta configurar `ENDPOINT`.
+- El formulario de Sugerencias muestra un aviso en lugar del formulario hasta configurar `FORM_URL`.
+- Privacidad: ningún archivo debe contener correos personales. Si la web se publica, revisa también el historial de versiones anteriores, que pudo exponerlo.
 - «Sobre mí» no tiene foto todavía (hay un comentario en el HTML con la etiqueta lista).
