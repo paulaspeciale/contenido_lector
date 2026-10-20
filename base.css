@@ -410,6 +410,8 @@ input[type="search"], input[type="text"], input[type="date"], select, textarea {
 
 .origen { font-weight: 400; }
 
+.chip.propia { color: var(--acento); border-color: var(--acento); }
+
 .menu {
   display: flex;
   flex-wrap: nowrap;          /* siempre en una sola línea */

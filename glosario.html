@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Glosario bookish para Bookstagram y BookTok: siglas como TBR, DNF o ARC y tropos como enemies to lovers, explicados en español con ejemplos.">
+<meta name="theme-color" content="#e8e3df" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#353436" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%9A%3C/text%3E%3C/svg%3E">
+<title>Glosario bookish (Bookstagram / BookTok)</title>
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="glosario.css">
+<link rel="stylesheet" href="toc.css">
+<script src="theme.js"></script>
+</head>
+<body>
+<nav class="menu" aria-label="Principal">
+<a href="index.html">Inicio</a>
+<a href="resenia.html">Reseñas</a>
+<a href="ideas_post_90.html">Ideas</a>
+<a href="calendario_ideas_90.html">Calendario</a>
+<a href="glosario.html" aria-current="page">Glosario</a>
+<a href="bingo.html">Bingo</a>
+<a href="sugerencias.html">Sugerencias</a>
+<a href="sobre_mi.html">Sobre mí</a>
+</nav>
+<header class="encabezado" id="inicio">
+<h1>Glosario bookish</h1>
+<p class="intro">Siglas, tropos y géneros que se usan en Bookstagram y BookTok, del inglés al español, con un ejemplo para usarlos en tus captions.</p>
+<p id="total-glosario" class="ayuda" aria-live="polite"></p>
+</header>
+<nav class="toc" id="toc" aria-label="En esta página">
+<p class="toc-titulo">En esta página</p>
+<ol>
+<li><a href="#guia">Cómo leer el glosario</a></li>
+<li><a href="#buscador">Buscar</a></li>
+<li><a href="#siglas">Siglas</a></li>
+<li><a href="#tropos">Tropos y géneros</a></li>
+</ol>
+</nav>
+<main id="glosario">
+<details class="guia" id="guia">
+<summary>Cómo leer el glosario</summary>
+<ul>
+<li>Cada término muestra su significado en inglés, la traducción al español y una explicación breve.</li>
+<li>Muchos términos no tienen una traducción única: la comunidad hispana usa tanto la versión en español como la original en inglés.</li>
+<li>El ejemplo es una idea de cómo usarlo en un caption o guion; adáptalo a tu estilo.</li>
+<li>El botón «Copiar» deja el término con su significado listo para pegar.</li>
+</ul>
+</details>
+
+<div class="filtros" id="buscador">
+<label class="campo"><span>Buscar un término</span>
+<input type="search" id="buscar" placeholder="Por ejemplo: TBR, picante, enemigos" autocomplete="off"></label>
+<label class="campo"><span>Categoría</span>
+<select id="f-cat">
+<option value="todas">Todas</option>
+<option value="siglas">Siglas</option>
+<option value="tropos">Tropos y géneros</option>
+</select></label>
+<label class="campo"><span>Tipo</span>
+<select id="f-tipo">
+<option value="todos">Todos</option>
+<option value="Sigla">Sigla</option>
+<option value="Tropo">Tropo</option>
+<option value="Género">Género</option>
+<option value="Contenido">Contenido</option>
+</select></label>
+</div>
+<p id="resultados-glosario" class="ayuda" aria-live="polite"></p>
+
+<section class="bloque" id="siglas" data-cat="siglas">
+<h2>Siglas y acrónimos <span class="cuenta-seccion" id="cuenta-siglas"></span></h2>
+<ul class="terminos" id="lista-siglas"></ul>
+</section>
+<section class="bloque" id="tropos" data-cat="tropos">
+<h2>Tropos y géneros populares <span class="cuenta-seccion" id="cuenta-tropos"></span></h2>
+<ul class="terminos" id="lista-tropos"></ul>
+</section>
+
+<p id="vacio" class="vacio-msg" hidden>No encontré ningún término con esa búsqueda. Prueba con otra palabra o limpia los filtros.</p>
+<noscript><p>Esta página necesita JavaScript para mostrar el glosario.</p></noscript>
+
+<dialog id="dialogo-copiar" aria-label="Copiar texto">
+<p>No se pudo copiar automáticamente. Selecciona el texto y cópialo:</p>
+<textarea id="copiar-texto" rows="5" readonly></textarea>
+<div class="botones">
+<button type="button" id="copiar-cerrar" class="primario">Cerrar</button>
+</div>
+</dialog>
+</main>
+<div id="copiado" class="solo-lector" role="status" aria-live="polite"></div>
+<footer>
+  <p>&copy; Diseñado e ideado por Paula Speciale, con la ayuda de Claude</p>
+</footer>
+<script src="datos-glosario.js"></script>
+<script>
+(function () {
+  "use strict";
+  var DATOS = (window.BT && window.BT.GLOSARIO) || [];
+  var CATS = ["siglas", "tropos"];
+
+  function normalizar(t) {
+    return String(t == null ? "" : t).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+  }
+  function el(tag, cls, txt) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (txt !== undefined) n.textContent = txt;
+    return n;
+  }
+
+  var elBuscar = document.getElementById("buscar");
+  var elCat = document.getElementById("f-cat");
+  var elTipo = document.getElementById("f-tipo");
+  var elRes = document.getElementById("resultados-glosario");
+  var elTotal = document.getElementById("total-glosario");
+  var elVacio = document.getElementById("vacio");
+  var elCopiado = document.getElementById("copiado");
+  var dlg = document.getElementById("dialogo-copiar");
+  var elCopiarTexto = document.getElementById("copiar-texto");
+  var filas = [];
+
+  if (!DATOS.length) {
+    elTotal.textContent = "No se pudo cargar el glosario (falta datos-glosario.js).";
+    return;
+  }
+
+  DATOS.slice().sort(function (a, b) { return a.termino.localeCompare(b.termino, "es", { sensitivity: "base" }); }).forEach(function (t) {
+    var ul = document.getElementById("lista-" + t.categoria);
+    if (!ul) return;
+    var li = el("li", "termino");
+    li.id = t.id;
+    var cab = el("div", "cab");
+    cab.appendChild(el("h3", "", t.termino));
+    var b = el("button", "btn-chico", "Copiar");
+    b.type = "button";
+    b.setAttribute("data-copiar", t.id);
+    b.setAttribute("aria-label", "Copiar " + t.termino);
+    cab.appendChild(b);
+    li.appendChild(cab);
+    if (t.en) li.appendChild(el("p", "en", t.en));
+    li.appendChild(el("p", "es", "En español: " + t.es));
+    li.appendChild(el("p", "def", t.def));
+    if (t.ejemplo) li.appendChild(el("p", "ejemplo", "Ejemplo: «" + t.ejemplo + "»"));
+    if (t.nota) li.appendChild(el("p", "nota", "Ojo: " + t.nota));
+    var meta = el("div", "meta");
+    meta.appendChild(el("span", "chip tipo-" + normalizar(t.tipo), t.tipo));
+    li.appendChild(meta);
+    ul.appendChild(li);
+    filas.push({
+      t: t, li: li,
+      texto: normalizar([t.termino, t.en, t.es, t.def, t.ejemplo, t.nota, t.tipo].join(" "))
+    });
+  });
+
+  function aplicar() {
+    var q = normalizar(elBuscar.value), cat = elCat.value, tipo = elTipo.value;
+    var visibles = 0, porCat = {};
+    CATS.forEach(function (c) { porCat[c] = { vis: 0, tot: 0 }; });
+    filas.forEach(function (f) {
+      var ok = (cat === "todas" || f.t.categoria === cat) && (tipo === "todos" || f.t.tipo === tipo) && (!q || f.texto.indexOf(q) !== -1);
+      f.li.hidden = !ok;
+      porCat[f.t.categoria].tot++;
+      if (ok) { visibles++; porCat[f.t.categoria].vis++; }
+    });
+    CATS.forEach(function (c) {
+      document.getElementById(c).hidden = porCat[c].vis === 0;
+      document.getElementById("cuenta-" + c).textContent = porCat[c].vis + " / " + porCat[c].tot;
+    });
+    elVacio.hidden = visibles !== 0;
+    elRes.textContent = "Mostrando " + visibles + " de " + filas.length + " términos.";
+  }
+  elTotal.textContent = DATOS.length + " términos";
+
+  var timer = null;
+  elBuscar.addEventListener("input", function () { clearTimeout(timer); timer = setTimeout(aplicar, 150); });
+  elCat.addEventListener("change", aplicar);
+  elTipo.addEventListener("change", aplicar);
+  aplicar();
+
+  // Copiar un término
+  function anunciar(txt) {
+    elCopiado.textContent = "";
+    setTimeout(function () { elCopiado.textContent = txt; }, 30);
+  }
+  function parpadeo(boton, txt) {
+    var original = boton.getAttribute("data-texto") || boton.textContent;
+    boton.setAttribute("data-texto", original);
+    boton.textContent = txt;
+    clearTimeout(boton._t);
+    boton._t = setTimeout(function () { boton.textContent = original; }, 1800);
+  }
+  function copiar(texto) {
+    return new Promise(function (resolve) {
+      function respaldo() {
+        try {
+          var ta = document.createElement("textarea");
+          ta.value = texto;
+          ta.setAttribute("readonly", "");
+          ta.style.cssText = "position:fixed;top:0;left:0;opacity:0";
+          document.body.appendChild(ta);
+          ta.select();
+          ta.setSelectionRange(0, texto.length);
+          var ok = !!(document.execCommand && document.execCommand("copy"));
+          ta.remove();
+          resolve(ok);
+        } catch (err) { resolve(false); }
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(texto).then(function () { resolve(true); }, respaldo);
+      } else { respaldo(); }
+    });
+  }
+  function textoDe(t) {
+    return t.termino + (t.en ? " (" + t.en + ")" : "") + " = " + t.es + ". " + t.def;
+  }
+  document.getElementById("glosario").addEventListener("click", function (e) {
+    var b = e.target.closest ? e.target.closest("button[data-copiar]") : null;
+    if (!b) return;
+    var id = b.getAttribute("data-copiar");
+    var f = filas.filter(function (x) { return x.t.id === id; })[0];
+    if (!f) return;
+    var texto = textoDe(f.t);
+    copiar(texto).then(function (ok) {
+      if (ok) { anunciar("Copiado al portapapeles."); parpadeo(b, "¡Copiado!"); }
+      else {
+        elCopiarTexto.value = texto;
+        try { dlg.showModal(); } catch (err) { dlg.setAttribute("open", ""); }
+        elCopiarTexto.focus();
+        elCopiarTexto.select();
+      }
+    });
+  });
+  document.getElementById("copiar-cerrar").addEventListener("click", function () {
+    try { dlg.close(); } catch (err) { dlg.removeAttribute("open"); }
+  });
+
+  // Enlace directo a un término: glosario.html#tbr
+  function irAlHash() {
+    var id = "";
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch (err) { return; }
+    if (!id) return;
+    var f = filas.filter(function (x) { return x.t.id === id; })[0];
+    if (!f) return;
+    if (f.li.hidden) { elBuscar.value = ""; elCat.value = "todas"; elTipo.value = "todos"; aplicar(); }
+    f.li.scrollIntoView({ block: "center" });
+    f.li.classList.add("destacada");
+    setTimeout(function () { f.li.classList.remove("destacada"); }, 2500);
+  }
+  window.addEventListener("hashchange", irAlHash);
+  irAlHash();
+})();
+</script>
+</body>
+</html>

@@ -505,11 +505,6 @@ progress.mini {
 
 .acciones-lista { margin-top: 1rem; }
 
-.chip.propia {
-  color: var(--acento);
-  border-color: var(--acento);
-}
-
 /* Orden a mano: solo se muestran las ideas y los botones para moverlas */
 .mover {
   display: flex;

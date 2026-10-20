@@ -20,6 +20,7 @@
 <a href="resenia.html">Reseñas</a>
 <a href="ideas_post_90.html">Ideas</a>
 <a href="calendario_ideas_90.html" aria-current="page">Calendario</a>
+<a href="glosario.html">Glosario</a>
 <a href="bingo.html">Bingo</a>
 <a href="sugerencias.html">Sugerencias</a>
 <a href="sobre_mi.html">Sobre mí</a>
@@ -102,7 +103,7 @@
   function fechaValida(s) {
     if (typeof s !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
     var d = deIso(s);
-    return isoDe(d) === s;
+    return isoDe(d) === s && s >= "2000-01-01" && s <= "2100-12-31";
   }
   function el(tag, cls, txt) {
     var n = document.createElement(tag);
@@ -277,7 +278,7 @@ elDetalle.appendChild(el("h3", "", titulo.charAt(0).toUpperCase() + titulo.slice
     lector.onload = function () {
       var o = null;
       try { o = JSON.parse(lector.result); } catch (err) { o = null; }
-      var ok = o && typeof o === "object" && (Array.isArray(o.hechas) || (o.datos && typeof o.datos === "object"));
+      var ok = o && typeof o === "object" && !Array.isArray(o) && o.version === 1 && (Array.isArray(o.hechas) || (o.datos && typeof o.datos === "object"));
       input.value = "";
       if (!ok) { elMsg.textContent = "El archivo no parece un respaldo de Ideas. No se cambió nada."; return; }
       fuente = o;

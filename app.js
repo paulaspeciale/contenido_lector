@@ -195,12 +195,6 @@ function fechaAceptable(v) {
     return s;
   }
 
-  function unirHashtags(actual, extra) {
-   const todosTags = partirTags(elSetTags.value);
-const tags = tagsATexto(todosTags, MAX_HASHTAGS);
-const recortados = todosTags.length - partirTags(tags).length;
-  }
-
   // ---- Estado ----
   // { hechas: {id: true},
   //   datos: {id: {fav, estado, fecha, libro, hashtags, nota, pasos}},
@@ -211,7 +205,7 @@ const recortados = todosTags.length - partirTags(tags).length;
     if (!d || typeof d !== "object") return limpio;
     if (d.fav === true) limpio.fav = true;
     if (!hecha && typeof d.estado === "string" && INTERMEDIOS.indexOf(d.estado) !== -1) limpio.estado = d.estado;
-    if (typeof d.fecha === "string" && fechaAceptable(d.fecha)) limpio.fecha = d.fecha; limpio.fecha = d.fecha;
+    if (typeof d.fecha === "string" && fechaAceptable(d.fecha)) limpio.fecha = d.fecha;
     if (typeof d.libro === "string" && d.libro.trim()) limpio.libro = d.libro.slice(0, MAX_LIBRO);
     if (typeof d.hashtags === "string" && d.hashtags.trim()) limpio.hashtags = d.hashtags.slice(0, MAX_HASHTAGS);
     if (typeof d.nota === "string" && d.nota) limpio.nota = d.nota.slice(0, MAX_NOTA);
@@ -819,7 +813,7 @@ const recortados = todosTags.length - partirTags(tags).length;
     li.appendChild(mover);
 
     refs[id] = {
-      idea: idea, li: li, ul: null, hecha: hecha, fav: fav, estado: estado, fecha: fecha,
+      idea: idea, li: li, hecha: hecha, fav: fav, estado: estado, fecha: fecha,
       libro: libro, aviso: avisoLibro, hashtags: hashtags, nota: nota, det: det, resumen: resumen,
       prod: prod, prog: prog, cuentaPaso: cuentaPaso, pasos: inputsPasos, bloqueSets: bloqueSets, chips: chips,
       num: num, textoNodo: textoNodo, meta: metaFila, mover: mover
@@ -1143,7 +1137,9 @@ function prepararDeshacer(accion) {
 
   btnSetGuardar.addEventListener("click", function () {
     const nombre = elSetNombre.value.replace(/\s+/g, " ").trim().slice(0, MAX_NOMBRE_SET);
-    const tags = tagsATexto(partirTags(elSetTags.value), MAX_HASHTAGS);
+    const todosTags = partirTags(elSetTags.value);
+    const tags = tagsATexto(todosTags, MAX_HASHTAGS);
+    const recortados = todosTags.length - partirTags(tags).length;
     if (!nombre) { avisoSet("Escribe un nombre para el conjunto."); elSetNombre.focus(); return; }
     if (!tags) { avisoSet("Escribe al menos un hashtag."); elSetTags.focus(); return; }
     const existente = indiceSet(nombre);
@@ -1160,9 +1156,9 @@ function prepararDeshacer(accion) {
     cancelarEdicionSet();
     persistirSets();
     renderSets();
-   avisoSet("Conjunto «" + nombre + "» guardado." + (recortados
-  ? " Ojo: se omitieron los últimos " + recortados + " hashtags por el límite de " + MAX_HASHTAGS + " caracteres."
-  : ""));
+    avisoSet("Conjunto «" + nombre + "» guardado." + (recortados
+      ? " Ojo: se omitieron los últimos " + recortados + " hashtags por el límite de " + MAX_HASHTAGS + " caracteres."
+      : ""));
   });
 
   btnSetCancelar.addEventListener("click", function () {
@@ -2075,7 +2071,7 @@ document.getElementById("reiniciar").addEventListener("click", function () {
       case "cuota": return "⚠ Sincronización: el almacenamiento de la página está lleno y no se pueden guardar más datos.";
       case "rechazado": return "⚠ Sincronización: una idea no se pudo guardar en la nube (¿una nota demasiado larga?). Lo demás sigue sincronizándose.";
       case "denegada": return "⚠ Sincronización detenida: esta página perdió el permiso para guardar datos.";
-      default: return "Sincronización no disponible en este momento.";
+      default: return "Sin sincronización: tus datos se guardan solo en este navegador.";
     }
   }
 

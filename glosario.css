@@ -1,0 +1,65 @@
+/* ==========================================================================
+   glosario.css · Página de Glosario: filtros, fichas de términos y botón de copiar.
+   Requiere base.css (y toc.css para el menú «En esta página»).
+   ========================================================================== */
+
+.filtros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: .6rem .75rem;
+  margin-top: 1rem;
+}
+
+.filtros .campo:first-child { grid-column: 1 / -1; }
+
+#resultados-glosario { margin-top: .5rem; text-align: center; }
+
+#glosario section.bloque { scroll-margin-top: 1rem; }
+
+.cuenta-seccion {
+  margin-left: auto;
+  font: 400 .78rem var(--maquina);
+  font-variant: normal;
+  letter-spacing: .04em;
+  color: var(--suave);
+  white-space: nowrap;
+}
+
+.terminos { margin: 0; padding: 0; list-style: none; }
+
+.termino {
+  padding: .9rem 0 .8rem .9rem;
+  border-bottom: 1px dotted var(--suave);
+  border-left: .4rem solid var(--borde);
+  scroll-margin-top: 1rem;
+}
+
+.termino.destacada { outline: 3px solid var(--acento); outline-offset: -3px; }
+
+.termino .cab { display: flex; align-items: center; gap: .6rem; }
+
+.termino h3 { flex: 1; margin: 0; font: 700 1.15rem/1.3 var(--serif); }
+
+.termino .en { margin-top: .15rem; font-style: italic; color: var(--suave); }
+
+.termino .es { margin-top: .35rem; font-weight: 600; }
+
+.termino .def { margin-top: .35rem; }
+
+.termino .ejemplo { margin-top: .5rem; padding: .35rem .6rem; border-left: 2px solid var(--acento); background: var(--superficie); font-size: .95rem; }
+
+.termino .nota { margin-top: .5rem; font-size: .88rem; color: var(--aviso); }
+
+.termino .btn-chico { flex: none; min-height: 2.5rem; padding: .3rem .8rem; }
+
+.termino .meta { margin-top: .5rem; }
+
+.tipo-sigla { color: var(--f-post); }
+.tipo-tropo { color: var(--f-carrusel); }
+.tipo-genero { color: var(--f-reel); }
+.tipo-contenido { color: var(--aviso); }
+
+@media print {
+  .filtros, .btn-chico { display: none !important; }
+  .termino { break-inside: avoid; }
+}

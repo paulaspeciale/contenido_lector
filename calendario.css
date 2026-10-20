@@ -1,5 +1,4 @@
-
-/* ---------- Calendario (comparte este archivo) ---------- */
+/* calendario.css · Estilos de la página Calendario. Requiere base.css. */
 .dia {
   border-radius: .15rem;
   display: flex;

@@ -14,6 +14,7 @@ Diseñada e ideada por Paula Speciale, con la ayuda de Claude.
 | `resenia.html` | Reseñas | Plantilla de reseña de 22 secciones, con versión completa y versión corta (TikTok / Reel). |
 | `ideas_post_90.html` | Ideas | Gestor de 90 ideas de post, con estados, fechas, checklist de producción, hashtags y notas. |
 | `calendario_ideas_90.html` | Calendario | Calendario mensual con las ideas que tienen fecha. |
+| `glosario.html` | Glosario | Glosario bookish: siglas, tropos y géneros del inglés al español, con buscador, filtros, ejemplos y botón de copiar. |
 | `bingo.html` | Bingo | Marcador «Próximamente». |
 | `sugerencias.html` | Sugerencias | Formulario para enviar ideas o comentarios. |
 | `sobre_mi.html` | Sobre mí | Presentación, redes, enlace a YouTube y formas de donar. |
@@ -21,9 +22,12 @@ Diseñada e ideada por Paula Speciale, con la ayuda de Claude.
 Archivos compartidos:
 
 - `base.css`: variables, tema, tipografía, controles, menú, pie y bloques de lectura. Se carga siempre primero.
-- `ideas.css`, `calendario.css`, `resenia.css`, `simples.css`: estilos propios de cada página.
-- `toc.css`: menú «En esta página» (Ideas y Calendario).
+- `ideas.css`, `calendario.css`, `resenia.css`, `glosario.css`, `simples.css`: estilos propios de cada página.
+- `toc.css`: menú «En esta página» (Ideas, Calendario y Glosario).
+- `datos-glosario.js`: los términos del glosario (`window.BT.GLOSARIO`).
 - `theme.js`: botón de tema claro / oscuro.
+- `fonts/`: carpeta con `courier-prime-latin-400-normal.woff2` y `courier-prime-latin-700-normal.woff2` (los carga `base.css`; sin ella se usa Courier New).
+- `reseniabooktook.txt`: nota de trabajo con los cuatro pilares de contenido; no forma parte de la web.
 - `datos-ideas.js`: las 90 ideas base y sus secciones (`window.BT.SECCIONES`).
 - `app.js`: lógica de la página de Ideas.
 
@@ -71,7 +75,17 @@ Lee los datos guardados por la página de Ideas (`localStorage`) y los textos ba
 
 ### Reseñas (`resenia.html`)
 
-Plantilla de reseña con índice de enlaces internos. Permite alternar entre versión completa y versión corta de 5 puntos, copiar la plantilla como texto plano e imprimir o guardar en PDF.
+Plantilla de reseña con índice de enlaces internos. Permite alternar entre versión completa y versión corta de 5 puntos (gancho y calificación, de qué trata, lo mejor, lo que no funcionó y veredicto), copiar la plantilla como texto plano e imprimir o guardar en PDF.
+
+### Glosario (`glosario.html` + `datos-glosario.js`)
+
+Lista de términos bookish, hoy con dos categorías: **Siglas** (ARC, ALC, CR, DNF, FMC/MMC, HEA, HFN, KU, NA/YA, RH, TBR, CW/TW, WIP) y **Tropos y géneros** (enemies to lovers, friends to lovers, fake dating, age gap, grumpy and sunshine, slow burn, romantasy, dark academia, omegaverse, spicy). Cada término lleva el significado en inglés, la traducción al español, una explicación, un ejemplo de uso y, si hace falta, una nota.
+
+- **Búsqueda** sin distinguir tildes ni mayúsculas, que mira también el significado y el ejemplo.
+- **Filtros** por categoría y por tipo (Sigla, Tropo, Género, Contenido).
+- **Copiar** deja el término con su significado listo para pegar (con ventana de respaldo si el navegador no deja copiar).
+- **Enlaces directos** a un término por su `id`: `glosario.html#tbr`. Al llegar, el término se resalta.
+- No guarda nada en el navegador: no hay nada que respaldar.
 
 ### Sugerencias (`sugerencias.html`)
 
@@ -124,10 +138,10 @@ La capacidad `downloads` también es propia de la versión publicada; en ella se
 
 - **HTML5** semántico: `<details>`, `<dialog>`, `<progress>`, formularios con validación nativa.
 - **CSS3** sin preprocesadores: variables CSS, Grid, Flexbox, `prefers-color-scheme`, `prefers-reduced-motion`, estilos de impresión (`@media print`) y áreas seguras de iOS (`env(safe-area-inset-*)`).
-- **JavaScript** puro (sintaxis ES5 en IIFE con `"use strict"`, pero con APIs de navegadores modernos), sin frameworks ni librerías ni paso de compilación.
+- **JavaScript** puro (IIFE con `"use strict"`; estilo mayormente ES5, pero `app.js` y el calendario usan también `const`/`let`, `Promise` y otras APIs modernas), sin frameworks ni librerías ni paso de compilación.
 - **APIs del navegador**: `localStorage`, `Blob` y `URL.createObjectURL` (descargas), `FileReader` (importar), Clipboard API con respaldo `execCommand`, `ResizeObserver`, `TextEncoder`.
 - **Formatos de exportación**: JSON, CSV (con protección contra inyección de fórmulas) e iCalendar (`.ics`, con plegado de líneas a 75 bytes).
-- **Tipografías del sistema**: serifa tipo «Iowan Old Style» / Palatino / Georgia para el texto y máquina de escribir («American Typewriter» / Courier) para etiquetas. No se carga ninguna fuente externa.
+- **Tipografías**: serifa del sistema («Iowan Old Style» / Palatino / Georgia) para el texto y **Courier Prime** (SIL OFL, autohospedada en la carpeta `fonts/`, subconjunto latino) para etiquetas, con «American Typewriter» / Courier New como respaldo. No se carga ninguna fuente de servidores externos.
 - **Servicios externos**: solo la imagen del botón de Cafecito y los enlaces a redes y donaciones.
 
 ## Diseño
@@ -146,7 +160,7 @@ Estética de **librería antigua (cottagecore)**: papel con grano generado con u
 
 ## Cómo usarla
 
-1. Deja todos los archivos juntos en la misma carpeta (`ideas_post_90.html` necesita `base.css`, `ideas.css`, `toc.css`, `theme.js`, `datos-ideas.js` y `app.js`; `calendario_ideas_90.html` necesita `base.css`, `calendario.css`, `toc.css`, `theme.js` y `datos-ideas.js`).
+1. Deja todos los archivos juntos en la misma carpeta, junto con la subcarpeta `fonts/` (`ideas_post_90.html` necesita `base.css`, `ideas.css`, `toc.css`, `theme.js`, `datos-ideas.js` y `app.js`; `calendario_ideas_90.html` necesita `base.css`, `calendario.css`, `toc.css`, `theme.js` y `datos-ideas.js`; `glosario.html` necesita `base.css`, `glosario.css`, `toc.css`, `theme.js` y `datos-glosario.js`).
 2. Abre `index.html` en el navegador, o sube la carpeta a cualquier hosting estático.
 3. No requiere instalación ni servidor.
 
@@ -154,6 +168,7 @@ Estética de **librería antigua (cottagecore)**: papel con grano generado con u
 
 - **Agregar o cambiar ideas base**: edita `datos-ideas.js`. Cada idea necesita `id`, `texto` y `formato`. Los `id` son lo que usa el progreso guardado: **no los renumeres ni los reutilices**; añade las nuevas al final (91, 92…) y no cambies el orden de las secciones.
 - **Una sola fuente de ideas**: tanto Ideas como Calendario leen `datos-ideas.js`, así que no hay nada más que actualizar.
+- **Agregar términos al glosario**: edita `datos-glosario.js`. Cada término necesita `id` (único, sin espacios, es el ancla), `termino`, `categoria` (`siglas` o `tropos`), `tipo`, `es` y `def`; `en`, `ejemplo` y `nota` son opcionales. Para una categoría nueva hay que añadir su sección en `glosario.html`, su opción en el filtro y su nombre en la lista `CATS` del script.
 - **Cambiar estados o pasos de producción**: modifica `ESTADOS` y `PASOS` en `app.js` y los colores correspondientes en `base.css`.
 - **Colores**: están en las variables de `:root` al inicio de `base.css`.
 - **Formulario de sugerencias**: pega en `FORM_URL` la dirección con código aleatorio de FormSubmit (no el correo).
@@ -168,6 +183,9 @@ Estética de **librería antigua (cottagecore)**: papel con grano generado con u
 - El botón de exportar espera a que se resuelva la capacidad `downloads`, pero sin tiempo límite ni aviso si tarda o falla.
 - Las ideas propias son privadas; para que otros las vean hay que enviarlas por Sugerencias.
 - Inicio y Bingo están pendientes de contenido.
+- El Calendario solo lee el `localStorage` del dispositivo: en un segundo dispositivo aparece vacío hasta abrir Ideas (que es quien sincroniza con la nube).
+- Requiere navegadores recientes: `light-dark()` y `:has()` no tienen respaldo en versiones antiguas.
+- `base.css` redefine algunos selectores (`h1`, `body`, `button`, `.guia`…) en una segunda capa; funciona, pero conviene unificarlos algún día.
 - El formulario de Sugerencias muestra un aviso en lugar del formulario hasta configurar `FORM_URL`.
 - Privacidad: ningún archivo debe contener correos personales. Si la web se publica, revisa también el historial de versiones anteriores, que pudo exponerlo.
 - «Sobre mí» no tiene foto todavía (hay un comentario en el HTML con la etiqueta lista).

@@ -80,3 +80,34 @@ table.valoracion caption {
 table.valoracion.ejemplo { border-style: dashed; }
 
 table.valoracion.ejemplo td { opacity: .75; }
+
+/* ---------- Guiones para Reels / TikTok ---------- */
+.bloque ul.ganchos { padding-left: 0; list-style: none; }
+
+.gancho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  padding: .45rem 0;
+  border-bottom: 1px dotted var(--borde);
+}
+
+.bloque li.gancho::marker { content: none; }
+
+.gancho-texto { flex: 1; min-width: 0; }
+
+.btn-gancho { flex: none; min-height: 2.5rem; padding: .3rem .8rem; }
+
+.guion-ej {
+  margin-top: .75rem;
+  padding: .35rem .6rem;
+  border-left: 2px solid var(--acento);
+  background: var(--superficie);
+  font-size: .95rem;
+}
+
+@media print {
+  .btn-gancho { display: none !important; }
+  .gancho { break-inside: avoid; }
+}
