@@ -1,0 +1,118 @@
+/* portada.css · Estilos de la portada (index.html): estantería de lomos, botones y tarjetas por sección.
+   Requiere base.css. */
+
+:root {
+  --lomo-1: light-dark(#7a2e3b, #a8485a);
+  --lomo-2: light-dark(#2c4a6e, #5a82b0);
+  --lomo-3: light-dark(#2f5d44, #4f8f6c);
+  --lomo-4: light-dark(#b08a1e, #d9b24a);
+  --lomo-5: light-dark(#7a2a63, #a8559a);
+  --lomo-6: light-dark(#8a4a22, #c0703a);
+  --lomo-7: light-dark(#5b4580, #8a74b8);
+  --lomo-8: light-dark(#2a6670, #4a9aa6);
+  --madera: light-dark(#4a3236, #8a7280);
+}
+
+/* ---------- Estantería ---------- */
+.lomos {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 3px;
+  height: 7.75rem;
+  max-width: 22rem;
+  margin: .5rem auto 1.5rem;
+  padding: .5rem .5rem 0;
+  overflow: hidden;
+  border-bottom: .45rem solid var(--madera);
+}
+
+.lomos span {
+  flex: 0 1 var(--w, 1.4rem);
+  height: var(--h, 6rem);
+  background-color: var(--lomo, var(--acento));
+  background-image:
+    linear-gradient(to bottom, transparent 10%, var(--oro) 10% 12.5%, transparent 12.5% 87.5%, var(--oro) 87.5% 90%, transparent 90%),
+    linear-gradient(to right, rgba(255, 255, 255, .2), transparent 25%, transparent 75%, rgba(0, 0, 0, .2));
+  border-radius: 2px 2px 0 0;
+  transform-origin: bottom left;
+}
+
+.lomos span:nth-child(1)  { --lomo: var(--lomo-1); --w: 1.5rem; --h: 5.8rem; --i: 0; }
+.lomos span:nth-child(2)  { --lomo: var(--lomo-2); --w: 1.2rem; --h: 6.6rem; --i: 1; }
+.lomos span:nth-child(3)  { --lomo: var(--lomo-4); --w: 1.8rem; --h: 5.2rem; --i: 2; }
+.lomos span:nth-child(4)  { --lomo: var(--lomo-3); --w: 1.3rem; --h: 6.9rem; --i: 3; }
+.lomos span:nth-child(5)  { --lomo: var(--lomo-5); --w: 1.6rem; --h: 6rem;   --i: 4; }
+.lomos span:nth-child(6)  { --lomo: var(--lomo-1); --w: 1.2rem; --h: 5.4rem; --i: 5; }
+.lomos span:nth-child(7)  { --lomo: var(--lomo-8); --w: 1.9rem; --h: 6.7rem; --i: 6; }
+.lomos span:nth-child(8)  { --lomo: var(--lomo-6); --w: 1.3rem; --h: 6.1rem; --i: 7; transform: rotate(9deg); margin-left: .35rem; margin-right: .2rem; }
+.lomos span:nth-child(9)  { --lomo: var(--lomo-7); --w: 1.2rem; --h: 5.6rem; --i: 8; }
+.lomos span:nth-child(10) { --lomo: var(--lomo-2); --w: 1.7rem; --h: 6.4rem; --i: 9; }
+.lomos span:nth-child(11) { --lomo: var(--lomo-4); --w: 1.3rem; --h: 5.3rem; --i: 10; }
+
+/* Un solo momento animado: los libros suben a la estantería al abrir la página */
+@media (prefers-reduced-motion: no-preference) {
+  .lomos span {
+    animation: sube .7s cubic-bezier(.2, .8, .3, 1) both;
+    animation-delay: calc(var(--i) * 60ms);
+  }
+}
+
+@keyframes sube { from { translate: 0 105%; } to { translate: 0 0; } }
+
+/* ---------- Botones de la portada ---------- */
+.cta-fila { display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem; margin-top: 1.25rem; }
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.9rem;
+  padding: .5rem 1.15rem;
+  border: 1px solid var(--acento);
+  border-radius: .15rem;
+  color: var(--acento);
+  font: 400 .82rem/1.3 var(--maquina);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.cta:hover { background: color-mix(in srgb, var(--acento) 10%, transparent); }
+
+.cta-principal {
+  background: var(--acento);
+  color: var(--sobre-acento);
+  font-weight: 700;
+  box-shadow: 0 3px 0 color-mix(in srgb, var(--acento) 55%, #000);
+}
+
+.cta-principal:hover { background: var(--acento); filter: brightness(1.08); }
+
+.cta-principal:active { transform: translateY(3px); box-shadow: none; }
+
+/* ---------- Tarjetas: cada una con el color de su sección ---------- */
+.tarjetas { grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }
+
+.tarjetas li { --c: var(--acento); }
+
+.tarjetas li.t-resenia { --c: var(--c-resenia); }
+.tarjetas li.t-ideas { --c: var(--c-ideas); }
+.tarjetas li.t-calendario { --c: var(--c-calendario); }
+.tarjetas li.t-glosario { --c: var(--c-glosario); }
+.tarjetas li.t-sugerencias { --c: var(--c-sugerencias); }
+.tarjetas li.t-sobre-mi { --c: var(--c-sobre-mi); }
+
+.tarjetas li a {
+  height: 100%;
+  border-top-color: var(--c);
+  border-left: .4rem solid var(--c);
+}
+
+.tarjetas li strong { color: var(--c); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .tarjetas li a { transition: transform .15s ease, box-shadow .15s ease; }
+  .tarjetas li a:hover { transform: translateY(-2px); }
+}
+
+@media print { .lomos, .cta-fila { display: none !important; } }

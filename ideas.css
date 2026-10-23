@@ -227,6 +227,30 @@ details[data-sec] > summary > h2 {
   outline-offset: -3px;
 }
 
+/* Marcapáginas sobre el corazón: solo en las ideas favoritas */
+.idea { position: relative; }
+
+.idea:has(input[data-fav]:checked)::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: .5rem;
+  width: .7rem;
+  height: 1rem;
+  background: var(--corazon);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 72%, 0 100%);
+  pointer-events: none;
+}
+
+/* A partir de 40rem la ficha tiene .5rem más de padding a la derecha */
+@media (min-width: 40rem) {
+  .idea:has(input[data-fav]:checked)::after { right: 1rem; }
+}
+
+@media print {
+  .idea::after { display: none !important; }
+}
+
 .cabecera {
   display: flex;
   align-items: flex-start;
@@ -557,3 +581,103 @@ progress.mini {
 @media (min-width: 40rem) {
   .idea { padding-right: .5rem; }
 }
+
+/* ---------- Barra de progreso con más presencia ---------- */
+#progreso { max-width: 26rem; height: 1.1rem; border-width: 2px; }
+
+#progreso::-webkit-progress-value {
+  background: repeating-linear-gradient(-45deg, var(--acento) 0 .6rem, color-mix(in srgb, var(--acento) 75%, var(--fondo)) .6rem 1.2rem);
+}
+#progreso::-moz-progress-bar {
+  background: repeating-linear-gradient(-45deg, var(--acento) 0 .6rem, color-mix(in srgb, var(--acento) 75%, var(--fondo)) .6rem 1.2rem);
+}
+/* Al llegar al 100 % la barra cambia al verde de «Publicada» */
+#progreso[data-completo]::-webkit-progress-value { background: var(--est-publicada); }
+#progreso[data-completo]::-moz-progress-bar { background: var(--est-publicada); }
+
+/* ---------- Confeti: solo existe si JS lo crea ---------- */
+.cabecera { position: relative; }
+.confeti { position: absolute; left: .95rem; top: .95rem; width: 0; height: 0; pointer-events: none; }
+.confeti i { position: absolute; left: -.25rem; top: -.25rem; width: .5rem; height: .5rem; border-radius: 50%; background: var(--c); }
+.confeti i:nth-child(even) { border-radius: 0; }
+
+/* ---------- Movimiento (solo si no pides reducirlo) ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  :root { interpolate-size: allow-keywords; }
+
+  /* Secciones, «Producción» y «Libro, hashtags y notas» se abren con suavidad.
+     Donde ::details-content no existe, se abren de golpe (sin romper nada). */
+  details[data-sec]::details-content,
+  .prod::details-content,
+  .extra::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition: block-size .3s ease, content-visibility .3s allow-discrete;
+  }
+  details[data-sec][open]::details-content,
+  .prod[open]::details-content,
+  .extra[open]::details-content { block-size: auto; }
+
+  /* Barra de progreso */
+  #progreso::-webkit-progress-value { transition: width .5s ease; }
+  #progreso.sube { animation: latido .6s ease; }
+
+  /* Marcar como publicada */
+  .idea.celebrar input[data-id] { animation: pop .45s cubic-bezier(.3, 1.6, .5, 1); }
+  .idea.celebrar .meta::after { animation: sello .45s .1s both; }
+  input[data-id]::before { transition: transform .2s cubic-bezier(.3, 1.6, .5, 1); }
+  .confeti i { animation: chispa .7s ease-out forwards; }
+}
+
+@keyframes pop { 50% { transform: scale(1.35); } }
+@keyframes latido { 40% { transform: scaleY(1.5); } }
+@keyframes sello { from { opacity: 0; transform: rotate(-3deg) scale(2); } to { opacity: 1; transform: rotate(-3deg) scale(1); } }
+@keyframes chispa {
+  from { transform: rotate(var(--a)) translateX(0) scale(1); opacity: 1; }
+  to   { transform: rotate(var(--a)) translateX(2.4rem) scale(.2); opacity: 0; }
+}
+
+/* ---------- «Libro, hashtags y notas»: se nota que son recuadros para escribir ---------- */
+.extra > summary::before {
+  content: "\270E\FE0E";
+  margin-right: .55rem;
+  font-size: 1.05rem;
+  color: var(--acento);
+}
+
+/* El fondo del panel es más oscuro que los campos, así los campos "se hunden" como casillas */
+.extra-cuerpo {
+  gap: .9rem;
+  background: var(--fondo);
+}
+
+.extra-cuerpo .campo > span {
+  color: var(--acento);
+  font-weight: 700;
+}
+
+.extra-cuerpo input[type="text"],
+.extra-cuerpo textarea {
+  padding: .6rem .75rem;
+  border: 2px solid var(--suave);
+  background: var(--superficie);
+  box-shadow: inset 0 2px 4px color-mix(in srgb, var(--texto) 14%, transparent);
+}
+
+.extra-cuerpo input[type="text"]:hover,
+.extra-cuerpo textarea:hover { border-color: var(--texto); }
+
+.extra-cuerpo input[type="text"]:focus,
+.extra-cuerpo textarea:focus {
+  border-color: var(--acento);
+  outline: 3px solid color-mix(in srgb, var(--acento) 35%, transparent);
+  outline-offset: 0;
+}
+
+.extra-cuerpo ::placeholder {
+  color: var(--suave);
+  font-style: italic;
+  opacity: .85;
+}
+
+.extra-cuerpo textarea { min-height: 6.5rem; }

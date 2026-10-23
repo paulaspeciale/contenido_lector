@@ -154,6 +154,7 @@ Estética de **librería antigua (cottagecore)**: papel con grano generado con u
 - Etiquetas `aria-*`, regiones `role="status"` y `aria-current` en el menú y en el índice.
 - Anuncios para lectores de pantalla al copiar, guardar o restaurar.
 - Contraste adecuado en modo claro y oscuro, y respeto de `prefers-reduced-motion`.
+- Animaciones de apertura de secciones, barra de progreso y celebración al publicar (confeti y sello), desactivadas con `prefers-reduced-motion` (también en el JS).
 - Menú principal desplazable con el dedo en móvil.
 
 ---

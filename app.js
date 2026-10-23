@@ -769,7 +769,7 @@ function fechaAceptable(v) {
 
     const labLibro = el("label", { "class": "campo" });
     labLibro.appendChild(el("span", { text: "Libro" }));
-    const libro = el("input", { type: "text", "data-libro": id, maxlength: String(MAX_LIBRO) });
+    const libro = el("input", { type: "text", "data-libro": id, maxlength: String(MAX_LIBRO), placeholder: "Título y autor del libro" });
     labLibro.appendChild(libro);
     cuerpo.appendChild(labLibro);
     const avisoLibro = el("p", { "class": "aviso-libro" });
@@ -777,7 +777,7 @@ function fechaAceptable(v) {
 
     const labHash = el("label", { "class": "campo" });
     labHash.appendChild(el("span", { text: "Hashtags" }));
-    const hashtags = el("input", { type: "text", "data-hashtags": id, maxlength: String(MAX_HASHTAGS) });
+    const hashtags = el("input", { type: "text", "data-hashtags": id, maxlength: String(MAX_HASHTAGS), placeholder: "#booktok #romantasy #bookstagram" });
     labHash.appendChild(hashtags);
     cuerpo.appendChild(labHash);
 
@@ -790,7 +790,7 @@ function fechaAceptable(v) {
 
     const labNota = el("label", { "class": "campo" });
     labNota.appendChild(el("span", { text: "Notas" }));
-    const nota = el("textarea", { "data-nota": id, rows: "3" });
+    const nota = el("textarea", { "data-nota": id, rows: "3", placeholder: "Escribe aquí tu caption, guion o notas…" });
     labNota.appendChild(nota);
     cuerpo.appendChild(labNota);
 
@@ -907,6 +907,8 @@ function fechaAceptable(v) {
   const elTotal = document.getElementById("total");
   const elTotalIdeas = document.getElementById("total-ideas");
 
+  let hPrevio = null;   // para animar la barra solo cuando sube el número de publicadas
+
   function contar() {
     let h = 0, f = 0, descartadas = 0;
     const porEstado = {};
@@ -929,6 +931,13 @@ function fechaAceptable(v) {
     elTotalIdeas.textContent = "Total: " + todas.length + " ideas" + (descartadas ? " (" + descartadas + " descartadas)" : "");
     elProgreso.max = Math.max(validas, 1);
     elProgreso.value = h;
+    elProgreso.toggleAttribute("data-completo", validas > 0 && h >= validas);
+    if (hPrevio !== null && h > hPrevio && movimientoOk()) {
+      elProgreso.classList.remove("sube");
+      void elProgreso.offsetWidth;
+      elProgreso.classList.add("sube");
+    }
+    hPrevio = h;
     elFavoritas.textContent = f;
     elPorEstado.textContent = "Por estado: " + ESTADOS.map(function (o) {
       return o[1] + " " + porEstado[o[0]];
@@ -1344,6 +1353,28 @@ function aplicarSet(id, k, boton) {
   document.getElementById("abrir-detalles").addEventListener("click", function () { abrirDetalles(true); });
   document.getElementById("cerrar-detalles").addEventListener("click", function () { abrirDetalles(false); });
 
+  // ---- Celebración al publicar (se omite si pides reducir el movimiento) ----
+  const sinMovimiento = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
+  function movimientoOk() { return !(sinMovimiento && sinMovimiento.matches); }
+
+  function celebrar(id) {
+    const r = refs[id];
+    if (!r || !movimientoOk()) return;
+    const cab = r.li.querySelector(".cabecera");
+    r.li.classList.remove("celebrar");
+    void r.li.offsetWidth;   // reinicia la animación si se repite
+    r.li.classList.add("celebrar");
+    const g = el("span", { "class": "confeti", "aria-hidden": "true" });
+    for (let k = 0; k < 8; k++) {
+      const p = el("i");
+      p.style.setProperty("--a", (k * 45) + "deg");
+      p.style.setProperty("--c", k % 2 ? "var(--est-publicada)" : "var(--acento)");
+      g.appendChild(p);
+    }
+    cab.appendChild(g);
+    setTimeout(function () { g.remove(); r.li.classList.remove("celebrar"); }, 1000);
+  }
+
   // ---- Cambios en las ideas ----
   function setDatoMem(id, campo, valor) {
     const d = state.datos[id] || {};
@@ -1358,6 +1389,7 @@ function aplicarSet(id, k, boton) {
   }
 
   function setEstado(id, nuevo) {
+    const antes = estadoDe(id);
     if (nuevo === "publicada") {
       state.hechas[id] = true;
       setDatoMem(id, "estado", "");
@@ -1370,6 +1402,7 @@ function aplicarSet(id, k, boton) {
     marcarFila(id);
     persistirIdea(id);
     contar();
+    if (nuevo === "publicada" && antes !== "publicada") celebrar(id);
   }
 
   function setPaso(id, clave, marcado) {
@@ -2032,6 +2065,8 @@ document.getElementById("reiniciar").addEventListener("click", function () {
   // ---- Sincronización entre pestañas del mismo navegador ----
   window.addEventListener("storage", function (e) {
     if (e.key !== null && e.key !== KEY && e.key !== KEY_META && e.key !== KEY_DESHACER) return;
+    // Si hay una edición local en espera, se guarda y no se relee: así no se pierde al pisar el estado.
+    if (persistPendiente) { vaciarPersistencia(); return; }
         const insp2 = inspeccionarAlmacen();
     if (insp2.tipo === "ok") { state = insp2.estado; }
     else if (insp2.tipo === "vacio") state = estadoVacio();

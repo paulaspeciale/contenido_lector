@@ -2,6 +2,10 @@
   "use strict";
   var KEY = "tema_preferido";   // "claro" | "oscuro"; sin valor = sigue al dispositivo
   var root = document.documentElement;
+  // Color propio por sección: se deduce del nombre del archivo y lo aplica base.css
+  var PAGINAS = { resenia: "resenia", ideas_post_90: "ideas", calendario_ideas_90: "calendario", glosario: "glosario", bingo: "bingo", sugerencias: "sugerencias", sobre_mi: "sobre-mi" };
+  var archivo = (location.pathname.split("/").pop() || "index").replace(/\.html?$/, "");
+  root.setAttribute("data-seccion", PAGINAS[archivo] || "inicio");
   var mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
   var boton = null, timer = null;
 
