@@ -13,8 +13,9 @@
   font-family: var(--serif);
   border: 1px solid var(--borde);
   background: var(--superficie);
-  overflow: hidden;
 }
+
+.dia > * { min-width: 0; }
 
 .cal-dow {
   padding: .3rem 0;
@@ -120,3 +121,94 @@
 .ev[data-est="descartada"], .det-item[data-est="descartada"] { --cinta: var(--est-descartada); }
 
 #calendario, #leyenda, #detalle, #ayuda-datos { scroll-margin-top: 1rem; }
+
+/* Cambiar o quitar la fecha desde el detalle del día */
+.det-fecha { display: flex; flex-wrap: wrap; align-items: flex-end; gap: .5rem .75rem; margin-top: .6rem; }
+
+.det-fecha .campo { flex: 1 1 11rem; }
+
+.btn-quitar { min-height: 2.5rem; padding: .3rem .8rem; border-color: var(--corazon); color: var(--corazon); }
+
+#msg-fecha-wrap { margin-top: .5rem; text-align: center; }
+#msg-deshacer { min-height: 2.5rem; padding: .3rem .8rem; }
+#detalle:focus { outline: none; }
+
+/* Ideas vencidas: fecha pasada y sin publicar (las publicadas y descartadas nunca se marcan) */
+.dia.tiene-venc { border-color: var(--aviso); }
+
+.ev.vencida { outline: 1.5px solid var(--aviso); outline-offset: -1.5px; font-weight: 700; }
+
+.punto.vencida { outline: 2px solid var(--aviso); outline-offset: 1px; }
+
+.chip.venc { color: var(--aviso); border-color: var(--aviso); font-weight: 700; }
+
+.det-item.vencida { background: color-mix(in srgb, var(--aviso) 10%, transparent); }
+
+.btn-venc { min-height: 2.5rem; padding: .3rem .8rem; border-color: var(--aviso); color: var(--aviso); }
+
+/* Meta semanal y días libres */
+.meta-semanal { margin-top: 1rem; padding: .8rem 1rem; border: 1px solid var(--borde); border-top: 2px solid var(--acento); border-radius: .15rem; background: var(--superficie); box-shadow: var(--marco); }
+
+.meta-fila { display: flex; flex-wrap: wrap; align-items: flex-end; gap: .5rem 1rem; }
+
+.meta-fila .campo { flex: 0 1 15rem; }
+
+.meta-estado { flex: 1 1 12rem; font: 400 1rem/1.4 var(--serif); }
+
+.meta-estado.cumplida { color: var(--est-publicada); font-weight: 700; }
+
+.meta-semanal progress { max-width: none; margin: .6rem 0 .3rem; }
+
+.meta-semanal .ayuda { margin-top: .35rem; }
+
+#meta, #racha { scroll-margin-top: 1rem; }
+
+.dia.libre { border-style: dashed; border-color: var(--acento); }
+
+.libre-tag { align-self: flex-start; padding: 0 .3rem; font: 400 .68rem/1.4 var(--maquina); letter-spacing: .06em; text-transform: uppercase; color: var(--acento); }
+
+.chip.libre-leg { border-style: dashed; color: var(--acento); }
+
+@media (max-width: 40rem) { .libre-tag { display: none; } }
+
+/* Eventos propios (lanzamientos, plazos de ARC, colaboraciones) */
+.ev.evento { --cinta: var(--oro); background: color-mix(in srgb, var(--oro) 22%, var(--fondo)); color: var(--texto); font-style: italic; }
+
+.punto.evento { color: var(--oro); border-radius: 0; transform: rotate(45deg); }
+
+.chip.evento-chip { color: var(--texto); border-color: var(--oro); background: color-mix(in srgb, var(--oro) 22%, transparent); }
+
+#detalle h4 { margin: 1.25rem 0 .4rem; font: 400 .85rem/1.3 var(--maquina); letter-spacing: .1em; text-transform: uppercase; color: var(--suave); }
+
+.det-evento { padding: .6rem 0 .6rem .8rem; border-left: .4rem solid var(--oro); border-bottom: 1px dotted var(--suave); }
+
+.det-evento p { font: 1.02rem/1.45 var(--serif); }
+
+.det-evento .meta { margin: .35rem 0; }
+
+.det-evento-nuevo { display: flex; flex-wrap: wrap; align-items: flex-end; gap: .5rem .75rem; margin-top: 1rem; padding: .8rem; border: 1px dashed var(--borde); border-radius: .15rem; }
+
+.det-evento-nuevo .campo { flex: 1 1 12rem; }
+
+/* Fechas bookish sugeridas */
+.sug-tag { align-self: flex-start; padding: 0 .3rem; font: 400 .68rem/1.4 var(--maquina); letter-spacing: .04em; color: var(--c-ideas); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+
+.chip.sug-leg { color: var(--c-ideas); border-style: dotted; }
+
+.det-bookish { margin-bottom: .75rem; padding: .5rem .8rem; border: 1px dotted var(--c-ideas); background: color-mix(in srgb, var(--c-ideas) 8%, transparent); font-size: .95rem; }
+
+@media (max-width: 40rem) { .sug-tag { font-size: 0; } .sug-tag::before { content: "✦"; font-size: .8rem; } }
+
+/* Racha y cumplimiento (solo lectura) */
+#racha progress { max-width: none; margin: .6rem 0 .3rem; }
+#racha > .ayuda:last-child { margin-top: .6rem; }
+
+/* Añadir una idea sin fecha al día seleccionado */
+.det-anadir { display: flex; flex-wrap: wrap; align-items: flex-end; gap: .5rem .75rem; margin-top: .4rem; padding: .8rem; border: 1px dashed var(--borde); border-radius: .15rem; }
+
+.det-anadir .campo { flex: 1 1 14rem; min-width: 0; }
+
+/* Aviso de eventos y meta sin respaldar */
+.aviso-resp { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .5rem .75rem; margin-top: .6rem; padding: .6rem .8rem; border: 1px dashed var(--aviso); color: var(--texto); }
+
+.aviso-resp button { min-height: 2.5rem; padding: .3rem .8rem; }

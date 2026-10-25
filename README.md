@@ -10,7 +10,7 @@ Diseñada e ideada por Paula Speciale, con la ayuda de Claude.
 
 | Archivo | Sección | Qué hace |
 |---|---|---|
-| `index.html` | Inicio | Portada (marcador «Próximamente»). |
+| `index.html` | Inicio | Portada con presentación y tarjetas a cada sección. |
 | `resenia.html` | Reseñas | Plantilla de reseña de 22 secciones, con versión completa y versión corta (TikTok / Reel). |
 | `ideas_post_90.html` | Ideas | Gestor de 90 ideas de post, con estados, fechas, checklist de producción, hashtags y notas. |
 | `calendario_ideas_90.html` | Calendario | Calendario mensual con las ideas que tienen fecha. |
@@ -30,6 +30,7 @@ Archivos compartidos:
 - `reseniabooktook.txt`: nota de trabajo con los cuatro pilares de contenido; no forma parte de la web.
 - `datos-ideas.js`: las 90 ideas base y sus secciones (`window.BT.SECCIONES`).
 - `app.js`: lógica de la página de Ideas.
+- `almacen.js`: escritura segura de datos de Ideas desde otras páginas (`guardarFecha`); lo usa el Calendario.
 
 ---
 
@@ -63,15 +64,20 @@ Herramientas generales:
 
 ### Calendario (`calendario_ideas_90.html`)
 
-Lee los datos guardados por la página de Ideas (`localStorage`) y los textos base de `datos-ideas.js`, y dibuja un calendario mensual (semana de lunes a domingo). No tiene lista propia de ideas: no hay nada que mantener sincronizado.
+Lee los datos de Ideas (`localStorage`) y `datos-ideas.js`, y dibuja un calendario mensual (lunes a domingo). Escribe en Ideas solo la fecha, mediante `almacen.js`.
 
-- Cada día muestra las publicaciones con fecha, con el color del formato y de la cinta de estado. Las publicadas aparecen tachadas.
-- Al tocar un día se ve su detalle.
-- En pantallas pequeñas las publicaciones se resumen en puntos de color.
-- Se actualiza solo al volver a la pestaña o cuando cambian los datos en otra pestaña.
-- Muestra un resumen del mes (publicaciones y cuántas están publicadas).
-- Se puede importar un respaldo JSON **solo para verlo**: no modifica tu progreso.
-- Incluye un menú «En esta página» con enlaces a cada bloque.
+- **Detalle del día**: va justo bajo la rejilla; en móvil, al tocar un día la página baja hasta él. Cada publicación tiene campo de fecha, «Quitar fecha» y, si está vencida, «Mover a hoy» y «+7 días». Cambiar o quitar una fecha, o borrar un evento, ofrece un botón **Deshacer**.
+- **Teclado**: las flechas mueven el día seleccionado (un solo día entra en el orden de tabulación). Los cambios de día y de mes se anuncian con un aviso breve para lectores de pantalla.
+- **Vencidas**: fecha pasada y sin publicar ni descartar; se marcan en la rejilla y en el resumen.
+- **Meta semanal**: cuenta las **publicadas** y muestra también las planificadas. Escribe 0 para quitarla. Se guarda en `calendario_config`.
+- **Racha y cumplimiento** (solo lectura): semanas seguidas con al menos tantas publicadas como la meta (1 si no hay meta), mejor racha y porcentaje de ideas con fecha hasta hoy ya publicadas.
+- **Días libres**: de hoy al domingo, sin publicaciones.
+- **Eventos propios** (lanzamientos, plazos de ARC, colaboraciones): se añaden con el formulario del día (Enter funciona). Se guardan en `calendario_eventos`.
+- **Fechas bookish**: sugerencias fijas (incluye internacionales y el primer jueves de marzo, fecha móvil), se pueden ocultar.
+- **Respaldo aparte**: «Exportar / Importar eventos y meta» (JSON propio, `tipo: "calendario"`); al importar se suman los eventos que falten. No entran en el JSON de Ideas.
+- «Hoy» se actualiza al pasar la medianoche y al volver a la pestaña.
+- Se puede cargar un respaldo JSON de Ideas **solo para verlo**.
+- El menú «En esta página» marca la sección visible.
 
 ### Reseñas (`resenia.html`)
 
@@ -111,6 +117,8 @@ Todo el progreso se guarda **en el navegador** con `localStorage`, sin servidor 
 | `ideas_post_90_meta` | Fechas del último respaldo y del último cambio. |
 | `ideas_post_90_deshacer` | Copia para el botón «Deshacer». |
 | `ideas_post_90_corrupto` | Copia del dato original si no se pudo leer (solo aparece en ese caso). |
+| `calendario_config` | Meta semanal del Calendario. |
+| `calendario_eventos` | Eventos propios del Calendario. |
 | `tema_preferido` | Tema claro u oscuro. |
 
 Importante:
@@ -161,7 +169,7 @@ Estética de **librería antigua (cottagecore)**: papel con grano generado con u
 
 ## Cómo usarla
 
-1. Deja todos los archivos juntos en la misma carpeta, junto con la subcarpeta `fonts/` (`ideas_post_90.html` necesita `base.css`, `ideas.css`, `toc.css`, `theme.js`, `datos-ideas.js` y `app.js`; `calendario_ideas_90.html` necesita `base.css`, `calendario.css`, `toc.css`, `theme.js` y `datos-ideas.js`; `glosario.html` necesita `base.css`, `glosario.css`, `toc.css`, `theme.js` y `datos-glosario.js`).
+1. Deja todos los archivos juntos en la misma carpeta, junto con la subcarpeta `fonts/` (`ideas_post_90.html` necesita `base.css`, `ideas.css`, `toc.css`, `theme.js`, `datos-ideas.js` y `app.js`; `calendario_ideas_90.html` necesita `base.css`, `calendario.css`, `toc.css`, `theme.js`, `datos-ideas.js` y `almacen.js`; `glosario.html` necesita `base.css`, `glosario.css`, `toc.css`, `theme.js` y `datos-glosario.js`).
 2. Abre `index.html` en el navegador, o sube la carpeta a cualquier hosting estático.
 3. No requiere instalación ni servidor.
 
@@ -184,6 +192,7 @@ Estética de **librería antigua (cottagecore)**: papel con grano generado con u
 - El botón de exportar espera a que se resuelva la capacidad `downloads`, pero sin tiempo límite ni aviso si tarda o falla.
 - Las ideas propias son privadas; para que otros las vean hay que enviarlas por Sugerencias.
 - Inicio y Bingo están pendientes de contenido.
+- La racha y el cumplimiento usan la fecha puesta a cada idea (no el día real de publicación) y la meta semanal actual, así que cambiar la meta recalcula todo el historial.
 - El Calendario solo lee el `localStorage` del dispositivo: en un segundo dispositivo aparece vacío hasta abrir Ideas (que es quien sincroniza con la nube).
 - Requiere navegadores recientes: `light-dark()` y `:has()` no tienen respaldo en versiones antiguas.
 - `base.css` redefine algunos selectores (`h1`, `body`, `button`, `.guia`…) en una segunda capa; funciona, pero conviene unificarlos algún día.

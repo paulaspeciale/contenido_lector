@@ -43,26 +43,53 @@
 <h1>Calendario de publicaciones</h1>
 <p class="intro">Aquí aparecen las ideas a las que les pusiste fecha en <a href="ideas_post_90.html">Ideas</a>.</p>
 <p id="resumen-mes" class="ayuda" aria-live="polite"></p>
+<p id="aviso-resp" class="ayuda aviso-resp" role="status" hidden><span id="aviso-resp-txt"></span> <button type="button" id="aviso-resp-btn">Exportar ahora</button></p>
 </header>
 <nav class="toc" id="toc" aria-label="En esta página">
 <p class="toc-titulo">En esta página</p>
 <ol>
+<li><a href="#meta">Meta semanal</a></li>
+<li><a href="#racha">Racha</a></li>
 <li><a href="#calendario">Calendario</a></li>
-<li><a href="#leyenda">Leyenda</a></li>
 <li><a href="#detalle">Detalle del día</a></li>
+<li><a href="#leyenda">Leyenda</a></li>
 <li><a href="#ayuda-datos">Ver un respaldo</a></li>
 </ol>
 </nav>
 <main>
+<section id="meta" class="meta-semanal" aria-label="Meta semanal">
+<div class="meta-fila">
+<label class="campo"><span>Meta: publicaciones por semana</span>
+<input type="number" id="meta-n" min="0" max="21" step="1" inputmode="numeric" autocomplete="off"></label>
+<p id="meta-estado" class="meta-estado" aria-live="polite"></p>
+</div>
+<progress id="meta-prog" max="1" value="0" hidden aria-hidden="true"></progress>
+<p id="meta-libres" class="ayuda"></p>
+<p class="ayuda">Escribe 0 para quitar la meta. La semana va de lunes a domingo y no cuenta las ideas descartadas.</p>
+<p id="meta-msg" class="ayuda" role="status"></p>
+</section>
+
+<section id="racha" class="meta-semanal" aria-label="Racha y cumplimiento">
+<p id="racha-estado" class="meta-estado" aria-live="polite"></p>
+<p id="racha-mejor" class="ayuda"></p>
+<progress id="cumpl-prog" max="100" value="0" hidden aria-label="Porcentaje de cumplimiento"></progress>
+<p id="cumpl-estado" class="meta-estado" aria-live="polite"></p>
+<p class="ayuda">Solo lectura. Una semana (lunes a domingo) cuenta si tiene tantas publicadas como tu meta semanal, o al menos 1 si no tienes meta. Se usa la fecha que le pusiste a cada idea; las descartadas no cuentan.</p>
+</section>
+
 <section id="calendario" aria-label="Calendario mensual">
 <div class="cal-nav">
 <button type="button" id="mes-ant" aria-label="Mes anterior">‹</button>
-<h2 id="mes-titulo" aria-live="polite"></h2>
+<h2 id="mes-titulo"></h2>
 <button type="button" id="mes-sig" aria-label="Mes siguiente">›</button>
 </div>
 <div class="botones centrado"><button type="button" id="mes-hoy">Ir a hoy</button></div>
 <div class="cal-grid" id="cal-grid"></div>
 </section>
+
+<p id="anuncio" class="solo-lector" role="status" aria-live="polite"></p>
+<section id="detalle" aria-label="Detalle del día" tabindex="-1"></section>
+<p class="ayuda" id="msg-fecha-wrap" role="status"><span id="msg-fecha"></span> <button type="button" id="msg-deshacer" hidden>Deshacer</button></p>
 
 <section id="leyenda" aria-label="Leyenda">
 <div class="leyenda">
@@ -75,10 +102,14 @@
 <span class="ev" data-est="programada">Programada</span>
 <span class="ev" data-est="publicada">Publicada</span>
 <span class="ev" data-est="descartada">Descartada</span>
+<span class="ev vencida" data-est="idea">Vencida</span>
+<span class="chip libre-leg">Día libre</span>
+<span class="chip evento-chip">Evento</span>
+<span class="chip sug-leg">✦ Fecha bookish</span>
+<label class="check"><input type="checkbox" id="ver-bookish" checked> Mostrar fechas bookish</label>
 </div>
 </section>
 
-<section id="detalle" aria-live="polite"></section>
 
 <details class="guia" id="ayuda-datos">
 <summary>Ver un respaldo</summary>
@@ -88,6 +119,11 @@
 <input type="file" id="importar" accept="application/json,.json"></label>
 <div class="botones" style="margin-top:.6rem"><button type="button" id="volver-mios" hidden>Volver a mis datos</button></div>
 <p id="msg" class="ayuda" role="status" style="margin-top:.6rem"></p>
+<p class="ayuda" style="margin-top:1rem">Tus eventos y tu meta semanal solo viven en este navegador y no van en el respaldo de Ideas. Descárgalos aparte para no perderlos.</p>
+<div class="botones" style="margin-top:.6rem"><button type="button" id="exp-cal">Exportar eventos y meta</button></div>
+<label class="campo" style="margin-top:.6rem"><span>Importar eventos y meta (se suman a los actuales)</span>
+<input type="file" id="imp-cal" accept="application/json,.json"></label>
+<p id="msg-cal" class="ayuda" role="status" style="margin-top:.6rem"></p>
 </div>
 </details>
 </main>
@@ -95,10 +131,14 @@
   <p>&copy; Diseñado e ideado por Paula Speciale, con la ayuda de Claude</p>
 </footer>
 <script src="datos-ideas.js"></script>
+<script src="almacen.js"></script>
 <script>
 (function () {
   "use strict";
   var KEY = "ideas_post_90_v1";
+  var KEY_CFG = "calendario_config";   // clave propia: solo guarda la meta semanal
+  var KEY_RESP = "calendario_respaldo"; // fechas (ms) del último cambio y del último respaldo de eventos y meta
+  var META_MAX = 21;
   var FORMATOS = ["Post", "Carrusel", "Reel"];
   var ESTADOS = { idea: 1, grabando: 1, editando: 1, programada: 1, publicada: 1, descartada: 1 };
   var DOW = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
@@ -129,6 +169,34 @@
     return String(t).replace(/^[★◆]\s*/, "").replace(/\s*\[(?:Post|Carrusel|Reel)\]\s*$/, "");
   }
 
+  // Fechas bookish: lista fija por mes-día. Solo sugerencias; no se guarda nada.
+  var BOOKISH = {
+    "02-14": ["San Valentín", "Tropes románticos o tu pareja literaria favorita."],
+    "03-21": ["Día Mundial de la Poesía", "Un libro de poesía o una frase subrayada."],
+    "04-02": ["Día del Libro Infantil", "El libro que te hizo lectora."],
+    "04-23": ["Día del Libro", "Tu libro favorito o tu mejor regalo literario."],
+    "06-13": ["Día del Escritor (Argentina)", "Una autora o autor con quien serías amiga."],
+    "06-15": ["Día Nacional del Libro (Argentina)", "Joyas escondidas o autoras hispanohablantes."],
+    "06-30": ["Mitad de año", "Mid-Year Freak Out Tag: mejores y peores lecturas."],
+    "08-24": ["Día del Lector (Argentina)", "Tu ritual de lectura o tu rincón favorito."],
+    "09-08": ["Día de la Alfabetización", "Cómo te hiciste lectora."],
+    "08-09": ["Día del Amante de los Libros", "Tu historia de amor con los libros en una foto o reel."],
+    "09-06": ["Día de Leer un Libro (EE. UU.)", "Lo que estás leyendo hoy."],
+    "10-24": ["Día de las Bibliotecas", "Tu biblioteca favorita o tu último préstamo."],
+    "10-31": ["Halloween", "Libros oscuros: dark academia, gótico, terror."],
+    "12-25": ["Navidad", "Árbol de libros o libros de confort."],
+    "12-31": ["Cierre de año", "Wrap-up anual y balance de compras vs. lecturas."]
+  };
+  var verBookish = true;
+  // Primer jueves de marzo: Día Mundial del Libro en Reino Unido (fecha móvil)
+  function juevesMarzo(y) { var d = new Date(y, 2, 1); return "03-" + pad(1 + ((4 - d.getDay() + 7) % 7)); }
+  function bookishDe(key) {
+    if (!verBookish) return null;
+    var md = key.slice(5);
+    if (BOOKISH[md]) return BOOKISH[md];
+    return md === juevesMarzo(Number(key.slice(0, 4))) ? ["Día Mundial del Libro (Reino Unido)", "Tu libro de infancia o un disfraz literario."] : null;
+  }
+
   var hoyIso = isoDe(new Date());
   var vistaA = new Date().getFullYear(), vistaM = new Date().getMonth();
   var sel = hoyIso;
@@ -140,6 +208,276 @@
   var elResumen = document.getElementById("resumen-mes");
   var elMsg = document.getElementById("msg");
   var btnVolver = document.getElementById("volver-mios");
+  var elMsgFecha = document.getElementById("msg-fecha");
+  var elMetaN = document.getElementById("meta-n");
+  var elMetaEstado = document.getElementById("meta-estado");
+  var elMetaProg = document.getElementById("meta-prog");
+  var elMetaLibres = document.getElementById("meta-libres");
+  var elMetaMsg = document.getElementById("meta-msg");
+  var elRachaEstado = document.getElementById("racha-estado");
+  var elRachaMejor = document.getElementById("racha-mejor");
+  var elCumplProg = document.getElementById("cumpl-prog");
+  var elCumplEstado = document.getElementById("cumpl-estado");
+  var elAnuncio = document.getElementById("anuncio");
+  var btnDes = document.getElementById("msg-deshacer"), deshacerFn = null;
+  var movil = window.matchMedia ? window.matchMedia("(max-width: 40rem)") : null;
+  function anunciar(t) { elAnuncio.textContent = ""; setTimeout(function () { elAnuncio.textContent = t; }, 30); }
+  function ofrecerDeshacer(fn) { deshacerFn = fn; btnDes.hidden = !fn; }
+  btnDes.addEventListener("click", function () { var f = deshacerFn; ofrecerDeshacer(null); if (f) f(); });
+  function anunciarDia() {
+    var t = elDetalle.querySelector("h3"), n = elDetalle.querySelectorAll(".det-item").length;
+    anunciar((t ? t.textContent : "") + ": " + (n ? n + " publicación" + (n === 1 ? "" : "es") : "sin publicaciones") + ".");
+  }
+
+  // ---- Meta semanal (calendario_config: { metaSemanal: 0..21 }, 0 = sin meta) ----
+  function metaValida(n) { return typeof n === "number" && isFinite(n) && Math.floor(n) === n && n >= 0 && n <= META_MAX; }
+  function leerConfig() {
+    try {
+      var c = JSON.parse(localStorage.getItem(KEY_CFG));
+      return { metaSemanal: c && typeof c === "object" && metaValida(c.metaSemanal) ? c.metaSemanal : 0 };
+    } catch (e) { return { metaSemanal: 0 }; }
+  }
+  function guardarConfig(c) {
+    try { localStorage.setItem(KEY_CFG, JSON.stringify(c)); marcarResp("cambio"); return true; } catch (e) { return false; }
+  }
+  var config = leerConfig();
+
+  // Aviso de respaldo: eventos y meta no van en el JSON de Ideas, así que se avisa si hay cambios sin exportar
+  function leerResp() {
+    try {
+      var o = JSON.parse(localStorage.getItem(KEY_RESP));
+      return { cambio: o && typeof o.cambio === "number" ? o.cambio : 0, respaldo: o && typeof o.respaldo === "number" ? o.respaldo : 0 };
+    } catch (e) { return { cambio: 0, respaldo: 0 }; }
+  }
+  function marcarResp(campo) {
+    var r = leerResp();
+    r[campo] = Date.now();
+    try { localStorage.setItem(KEY_RESP, JSON.stringify(r)); } catch (e) { /* no es crítico */ }
+  }
+  function renderAvisoResp() {
+    var aviso = document.getElementById("aviso-resp"), txt = document.getElementById("aviso-resp-txt");
+    var r = leerResp(), hayAlgo = eventos.length > 0 || config.metaSemanal > 0;
+    var pendiente = hayAlgo && (r.respaldo === 0 || r.cambio > r.respaldo);
+    aviso.hidden = !pendiente;
+    if (pendiente) {
+      txt.textContent = r.respaldo === 0
+        ? "⚠ Tus eventos y tu meta solo viven en este navegador y nunca los has exportado."
+        : "⚠ Cambiaste eventos o meta después de tu último respaldo (" + new Date(r.respaldo).toLocaleDateString("es") + ").";
+    }
+  }
+
+  // ---- Eventos propios (calendario_eventos: { version: 1, eventos: [{id, fecha, titulo, tipo}] }) ----
+  var KEY_EV = "calendario_eventos";   // clave propia: no forma parte del respaldo de Ideas
+  var TIPOS_EV = { lanzamiento: "Lanzamiento", arc: "Plazo de ARC", colaboracion: "Colaboración", otro: "Otro" };
+  var MAX_EV = 200, MAX_TIT_EV = 80;
+  function leerEventos(crudo) {
+    try {
+      var o = crudo || JSON.parse(localStorage.getItem(KEY_EV));
+      var arr = o && Array.isArray(o.eventos) ? o.eventos : [];
+      var vistos = Object.create(null), out = [];
+      arr.forEach(function (e) {
+        if (out.length >= MAX_EV || !e || typeof e !== "object") return;
+        var id = typeof e.id === "string" ? e.id : "";
+        var t = typeof e.titulo === "string" ? e.titulo.replace(/\s+/g, " ").trim().slice(0, MAX_TIT_EV) : "";
+        if (!/^e[a-z0-9]{6,24}$/.test(id) || vistos[id] || !t || !fechaValida(e.fecha)) return;
+        vistos[id] = true;
+        out.push({ id: id, fecha: e.fecha, titulo: t, tipo: tiene(TIPOS_EV, e.tipo) ? e.tipo : "otro" });
+      });
+      return out;
+    } catch (err) { return []; }
+  }
+  function guardarEventos(arr) {
+    try { localStorage.setItem(KEY_EV, JSON.stringify({ version: 1, eventos: arr })); marcarResp("cambio"); return true; }
+    catch (err) { return false; }
+  }
+  var eventos = leerEventos();
+  function eventosDe(key) { return eventos.filter(function (e) { return e.fecha === key; }); }
+
+  // Ideas que se pueden programar desde el calendario: estado «Idea», sin fecha y sin borrar
+  function candidatas() {
+    var o = leerDatos() || {};
+    var datos = o.datos && typeof o.datos === "object" && !Array.isArray(o.datos) ? o.datos : {};
+    var hechas = Object.create(null);
+    (Array.isArray(o.hechas) ? o.hechas : []).forEach(function (id) { hechas[String(id)] = true; });
+    var ids = Object.keys(base);
+    Object.keys(datos).forEach(function (id) { if (!base[id]) ids.push(id); });
+    var out = [];
+    ids.forEach(function (id) {
+      var d = datos[id], b = base[id];
+      d = d && typeof d === "object" ? d : {};
+      if (!b && d.propia !== true) return;
+      if (d.borrada === true || hechas[id] || fechaValida(d.fecha)) return;
+      if (typeof d.estado === "string" && tiene(ESTADOS, d.estado) && d.estado !== "idea") return;
+      var texto = typeof d.texto === "string" && d.texto.trim() ? d.texto : (b ? b.texto : "");
+      if (!texto) return;
+      var formato = FORMATOS.indexOf(d.formato) !== -1 ? d.formato : (b && FORMATOS.indexOf(b.formato) !== -1 ? b.formato : "Post");
+      var t = partir(texto);
+      out.push({ id: id, etiqueta: (b ? id + ". " : "Mía: ") + (t.length > 70 ? t.slice(0, 70) + "…" : t) + " [" + formato + "]" });
+    });
+    return out;
+  }
+
+  function renderAnadir() {
+    elDetalle.appendChild(el("h4", "", "Añadir una idea a este día"));
+    var lista = candidatas();
+    if (!lista.length) {
+      elDetalle.appendChild(el("p", "vacio-msg", "No quedan ideas en estado «Idea» sin fecha."));
+      return;
+    }
+    var f = el("div", "det-anadir");
+    var l = el("label", "campo");
+    l.appendChild(el("span", "", "Idea sin fecha (" + lista.length + ")"));
+    var s = el("select");
+    s.id = "anadir-idea";
+    var o0 = el("option", "", "Elige una idea…");
+    o0.value = "";
+    s.appendChild(o0);
+    lista.forEach(function (c) {
+      var o = el("option", "", c.etiqueta);
+      o.value = c.id;
+      s.appendChild(o);
+    });
+    l.appendChild(s);
+    f.appendChild(l);
+    var b = el("button", "primario", "Añadir al día");
+    b.type = "button";
+    b.setAttribute("data-anadir", "1");
+    f.appendChild(b);
+    elDetalle.appendChild(f);
+  }
+
+  function renderEventosDia() {
+    var lista = eventosDe(sel);
+    if (lista.length) {
+      elDetalle.appendChild(el("h4", "", "Eventos"));
+      lista.forEach(function (ev) {
+        var d = el("div", "det-evento");
+        d.appendChild(el("p", "", ev.titulo));
+        var m = el("div", "meta");
+        m.appendChild(el("span", "chip evento-chip", TIPOS_EV[ev.tipo]));
+        d.appendChild(m);
+        var q = el("button", "btn-quitar", "Borrar evento");
+        q.type = "button";
+        q.setAttribute("data-borrar-ev", ev.id);
+        d.appendChild(q);
+        elDetalle.appendChild(d);
+      });
+    }
+    var f = el("form", "det-evento-nuevo");
+    var l1 = el("label", "campo");
+    l1.appendChild(el("span", "", "Nuevo evento en este día"));
+    var inp = el("input");
+    inp.type = "text";
+    inp.id = "ev-titulo";
+    inp.maxLength = MAX_TIT_EV;
+    inp.placeholder = "Ej.: Lanzamiento de ACOTAR 5";
+    inp.autocomplete = "off";
+    l1.appendChild(inp);
+    f.appendChild(l1);
+    var l2 = el("label", "campo");
+    l2.appendChild(el("span", "", "Tipo"));
+    var s = el("select");
+    s.id = "ev-tipo";
+    Object.keys(TIPOS_EV).forEach(function (k) {
+      var o = el("option", "", TIPOS_EV[k]);
+      o.value = k;
+      s.appendChild(o);
+    });
+    l2.appendChild(s);
+    f.appendChild(l2);
+    var add = el("button", "primario", "Añadir evento");
+    add.type = "button";
+    add.type = "submit";
+    f.appendChild(add);
+    elDetalle.appendChild(f);
+  }
+
+  // Los 7 días (lunes a domingo) de la semana que contiene a la fecha iso
+  function semanaDe(iso) {
+    var d = deIso(iso);
+    var lun = d.getDate() - ((d.getDay() + 6) % 7);
+    var out = [];
+    for (var i = 0; i < 7; i++) out.push(isoDe(new Date(d.getFullYear(), d.getMonth(), lun + i)));
+    return out;
+  }
+  // Publicaciones de un día sin contar las descartadas
+  function activas(mapa, key) {
+    return (mapa[key] || []).filter(function (it) { return it.est !== "descartada"; });
+  }
+
+  function renderMeta(mapa, semana) {
+    var meta = config.metaSemanal, plan = 0, pub = 0, libres = [];
+    semana.forEach(function (k, i) {
+      var a = activas(mapa, k);
+      plan += a.length;
+      a.forEach(function (it) { if (it.est === "publicada") pub++; });
+      if (k >= hoyIso && !a.length) libres.push(DOW[i] + " " + deIso(k).getDate());
+    });
+    if (document.activeElement !== elMetaN) elMetaN.value = String(meta);
+    var cumplida = meta > 0 && pub >= meta;
+    if (meta > 0) {
+      elMetaEstado.textContent = pub + " de " + meta + " publicadas esta semana (" + plan + " planificadas). " +
+        (cumplida ? "✓ ¡Meta cumplida!" : plan >= meta ? "Ya planificaste suficientes: falta publicarlas." :
+          "Te " + (meta - plan === 1 ? "falta 1 por planificar." : "faltan " + (meta - plan) + " por planificar."));
+    } else {
+      elMetaEstado.textContent = "Sin meta definida. Esta semana: " + plan + " planificada" + (plan === 1 ? "" : "s") + ", " + pub + " publicada" + (pub === 1 ? "" : "s") + ".";
+    }
+    elMetaEstado.classList.toggle("cumplida", cumplida);
+    elMetaProg.hidden = meta === 0;
+    elMetaProg.max = Math.max(meta, 1);
+    elMetaProg.value = Math.min(pub, Math.max(meta, 1));
+    elMetaLibres.textContent = libres.length
+      ? "Días libres que quedan esta semana: " + libres.join(", ") + "."
+      : "No quedan días libres esta semana.";
+  }
+
+  function sumarDias(iso, n) { var d = deIso(iso); d.setDate(d.getDate() + n); return isoDe(d); }
+
+  // Racha y cumplimiento. Solo lee.
+  function renderRacha(mapa) {
+    var objetivo = config.metaSemanal > 0 ? config.metaSemanal : 1;
+    var pubSem = Object.create(null), primera = null, pasadas = 0, hechas = 0;
+    Object.keys(mapa).forEach(function (k) {
+      if (k.indexOf("__") === 0) return;
+      var lun = semanaDe(k)[0];
+      mapa[k].forEach(function (it) {
+        if (it.est === "descartada") return;
+        if (it.est === "publicada") {
+          pubSem[lun] = (pubSem[lun] || 0) + 1;
+          if (primera === null || lun < primera) primera = lun;
+        }
+        if (k <= hoyIso) { pasadas++; if (it.est === "publicada") hechas++; }
+      });
+    });
+    function ok(lun) { return (pubSem[lun] || 0) >= objetivo; }
+    var actual = semanaDe(hoyIso)[0], racha = 0, mejor = 0, corrida = 0;
+    var enCurso = ok(actual);
+    var cursor = enCurso ? actual : sumarDias(actual, -7);
+    while (primera !== null && cursor >= primera && ok(cursor)) { racha++; cursor = sumarDias(cursor, -7); }
+    if (primera !== null) {
+      for (var c = primera; c <= actual; c = sumarDias(c, 7)) {
+        if (ok(c)) { corrida++; if (corrida > mejor) mejor = corrida; } else { corrida = 0; }
+      }
+    }
+    var req = objetivo === 1 ? "al menos 1 publicada" : objetivo + " publicadas";
+    if (racha > 0) {
+      elRachaEstado.textContent = "Racha: " + racha + " semana" + (racha === 1 ? "" : "s") + " seguida" + (racha === 1 ? "" : "s") +
+        (enCurso ? " (con esta semana)." : ". Esta semana aún no llegas a " + req + ": publica para mantenerla.");
+    } else {
+      elRachaEstado.textContent = "Sin racha por ahora. Una semana cuenta con " + req + ".";
+    }
+    elRachaEstado.classList.toggle("cumplida", racha > 0 && enCurso);
+    elRachaMejor.textContent = mejor > 0 ? "Mejor racha: " + mejor + " semana" + (mejor === 1 ? "" : "s") + "." : "";
+    if (!pasadas) {
+      elCumplProg.hidden = true;
+      elCumplEstado.textContent = "Cumplimiento: aún no hay ideas con fecha hasta hoy para medirlo.";
+    } else {
+      var pct = Math.round(hechas * 100 / pasadas);
+      elCumplProg.hidden = false;
+      elCumplProg.value = pct;
+      elCumplEstado.textContent = "Cumplimiento: " + pct + " % (" + hechas + " de " + pasadas + " ideas con fecha hasta hoy están publicadas).";
+    }
+  }
 
   function leerDatos() {
     if (fuente) return fuente;
@@ -157,7 +495,7 @@
     (Array.isArray(o.hechas) ? o.hechas : []).forEach(function (id) { hechas[String(id)] = true; });
     var ids = Object.keys(base);
     Object.keys(datos).forEach(function (id) { if (!base[id]) ids.push(id); });
-    var mapa = {}, total = 0;
+    var mapa = {}, total = 0, vencidas = 0;
     ids.forEach(function (id) {
       var d = datos[id];
       if (!d || typeof d !== "object") return;
@@ -168,12 +506,16 @@
       if (!texto) return;
       var formato = FORMATOS.indexOf(d.formato) !== -1 ? d.formato : (b && FORMATOS.indexOf(b.formato) !== -1 ? b.formato : "Post");
       var est = hechas[id] ? "publicada" : (typeof d.estado === "string" && tiene(ESTADOS, d.estado) && d.estado !== "publicada" ? d.estado : "idea");
+      // Vencida: fecha pasada y sin publicar ni descartar
+      var venc = d.fecha < hoyIso && est !== "publicada" && est !== "descartada";
+      if (venc) vencidas++;
       (mapa[d.fecha] = mapa[d.fecha] || []).push({
-        num: b ? id : "", texto: partir(texto), formato: formato, est: est, fav: d.fav === true, propia: !b
+        id: id, num: b ? id : "", texto: partir(texto), formato: formato, est: est, venc: venc, fav: d.fav === true, propia: !b
       });
       total++;
     });
     mapa.__total = total;
+    mapa.__venc = vencidas;
     return mapa;
   }
 
@@ -183,6 +525,7 @@
 
   function render() {
     var mapa = recopilar();
+    var semana = semanaDe(hoyIso);
     elTitulo.textContent = MESES[vistaM] + " " + vistaA;
     elGrid.textContent = "";
     DOW.forEach(function (h) { elGrid.appendChild(el("div", "cal-dow", h)); });
@@ -190,27 +533,45 @@
     var off = (new Date(vistaA, vistaM, 1).getDay() + 6) % 7;
     var dias = new Date(vistaA, vistaM + 1, 0).getDate();
     var celdas = Math.ceil((off + dias) / 7) * 7;
+    var ym = vistaA + "-" + pad(vistaM + 1), tabKey = sel && sel.slice(0, 7) === ym ? sel : ym + "-01";
     for (var i = 0; i < celdas; i++) {
       var f = new Date(vistaA, vistaM, 1 - off + i);
       var key = isoDe(f);
       var lista = mapa[key] || [];
-      var b = el("button", "dia" + (f.getMonth() !== vistaM ? " fuera" : "") + (key === hoyIso ? " hoy" : "") + (key === sel ? " sel" : ""));
+      var evs = eventosDe(key);
+      var bk = bookishDe(key);
+      var nv = lista.filter(function (it) { return it.venc; }).length;
+      // Día libre: de hoy al domingo de esta semana, sin publicaciones (las descartadas no cuentan)
+      var libre = semana.indexOf(key) !== -1 && key >= hoyIso && !activas(mapa, key).length;
+      var b = el("button", "dia" + (libre ? " libre" : "") + (f.getMonth() !== vistaM ? " fuera" : "") + (key === hoyIso ? " hoy" : "") + (key === sel ? " sel" : "") + (nv ? " tiene-venc" : ""));
       b.type = "button";
       b.setAttribute("data-fecha", key);
+      b.tabIndex = key === tabKey ? 0 : -1;
       b.setAttribute("aria-pressed", String(key === sel));
-      b.setAttribute("aria-label", etiquetaDia(f, lista.length));
+      b.setAttribute("aria-label", etiquetaDia(f, lista.length) + (evs.length ? ", " + evs.length + " evento" + (evs.length === 1 ? "" : "s") : "") + (nv ? " (" + nv + " vencida" + (nv === 1 ? "" : "s") + ")" : "") + (libre ? ", día libre" : "") + (bk ? ", " + bk[0] : ""));
       b.appendChild(el("span", "n", String(f.getDate())));
+      if (libre) { var lt = el("span", "libre-tag", "libre"); lt.setAttribute("aria-hidden", "true"); b.appendChild(lt); }
+      if (bk) { var st = el("span", "sug-tag", "✦ " + bk[0]); st.setAttribute("aria-hidden", "true"); b.appendChild(st); }
+      var cupo = Math.max(0, 2 - Math.min(lista.length, 2));
       lista.slice(0, 2).forEach(function (it) {
-        var e = el("span", "ev f-" + it.formato + (it.est === "publicada" ? " hecha" : ""), it.texto);
+        var e = el("span", "ev f-" + it.formato + (it.est === "publicada" ? " hecha" : "") + (it.venc ? " vencida" : ""), it.texto);
         e.setAttribute("data-est", it.est);
         e.setAttribute("aria-hidden", "true");
         b.appendChild(e);
       });
-      if (lista.length > 2) b.appendChild(el("span", "mas", "+" + (lista.length - 2) + " más"));
-      if (lista.length) {
+      evs.slice(0, cupo).forEach(function (ev) {
+        var e2 = el("span", "ev evento", ev.titulo);
+        e2.setAttribute("aria-hidden", "true");
+        b.appendChild(e2);
+      });
+      var resto = lista.length + evs.length - Math.min(lista.length, 2) - Math.min(evs.length, cupo);
+      if (resto > 0) b.appendChild(el("span", "mas", "+" + resto + " más"));
+      if (lista.length || evs.length) {
         var pt = el("span", "puntos");
         pt.setAttribute("aria-hidden", "true");
-        lista.slice(0, 6).forEach(function (it) { pt.appendChild(el("span", "punto f-" + it.formato)); });
+        var pts = lista.slice(0, 6);
+        pts.forEach(function (it) { pt.appendChild(el("span", "punto f-" + it.formato + (it.venc ? " vencida" : ""))); });
+        evs.slice(0, 6 - pts.length).forEach(function () { pt.appendChild(el("span", "punto evento")); });
         b.appendChild(pt);
       }
       elGrid.appendChild(b);
@@ -218,14 +579,30 @@
 
     // Resumen del mes
     var pref = vistaA + "-" + pad(vistaM + 1) + "-", n = 0, pub = 0;
+    var porF = { Post: 0, Carrusel: 0, Reel: 0 };
     Object.keys(mapa).forEach(function (k) {
       if (k.indexOf(pref) !== 0) return;
-      mapa[k].forEach(function (it) { n++; if (it.est === "publicada") pub++; });
+      mapa[k].forEach(function (it) {
+        n++;
+        if (it.est === "publicada") pub++;
+        if (it.est !== "descartada") porF[it.formato]++;   // el balance no cuenta las descartadas
+      });
     });
     elResumen.textContent = mapa.__total
       ? "Este mes: " + n + " publicación" + (n === 1 ? "" : "es") + ", " + pub + " publicada" + (pub === 1 ? "" : "s") + "." + (fuente ? " (Mostrando un respaldo, solo lectura.)" : "")
       : "Todavía no hay ideas con fecha. Asigna una desde Ideas y aparecerá aquí.";
 
+    if (mapa.__venc) elResumen.textContent += " Vencidas sin publicar: " + mapa.__venc + ".";
+
+    if (n) {
+      var pl = function (c, uno, varios) { return c + " " + (c === 1 ? uno : varios); };
+      elResumen.textContent += " Balance: " + pl(porF.Carrusel, "carrusel", "carruseles") + ", " +
+        pl(porF.Reel, "reel", "reels") + ", " + pl(porF.Post, "post", "posts") + ".";
+    }
+
+    renderMeta(mapa, semana);
+    renderRacha(mapa);
+    renderAvisoResp();
     renderDetalle(mapa);
   }
 
@@ -238,23 +615,65 @@
     let f = deIso(sel);
     let titulo = f.toLocaleDateString("es", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 elDetalle.appendChild(el("h3", "", titulo.charAt(0).toUpperCase() + titulo.slice(1)));
+    var bkd = bookishDe(sel);
+    if (bkd) {
+      var pb = el("p", "det-bookish");
+      pb.appendChild(el("strong", "", "✦ " + bkd[0] + ". "));
+      pb.appendChild(document.createTextNode("Idea: " + bkd[1]));
+      elDetalle.appendChild(pb);
+    }
     let lista = mapa[sel] || [];
     if (!lista.length) {
       elDetalle.appendChild(el("p", "vacio-msg", "No hay publicaciones este día."));
-      return;
     }
     lista.forEach(function (it) {
       let d = el("div", "det-item");
       d.setAttribute("data-est", it.est);
+      if (it.venc) d.className += " vencida";
       d.appendChild(el("p", "", (it.num ? it.num + ". " : "") + it.texto));
       let m = el("div", "meta");
       m.appendChild(el("span", "chip formato-" + it.formato.toLowerCase(), it.formato));
       m.appendChild(el("span", "chip origen", NOMBRES_EST[it.est]));
+      if (it.venc) m.appendChild(el("span", "chip venc", "Vencida"));
       if (it.fav) m.appendChild(el("span", "chip origen", "♥ Favorita"));
       if (it.propia) m.appendChild(el("span", "chip propia", "Mía"));
       d.appendChild(m);
+      // Controles de fecha: solo con tus datos (no al ver un respaldo)
+      if (!fuente && window.BT && window.BT.almacen) {
+        var fila = el("div", "det-fecha");
+        var lab = el("label", "campo");
+        lab.appendChild(el("span", "", "Fecha de publicación"));
+        var inp = el("input");
+        inp.type = "date";
+        inp.value = sel;
+        inp.min = "2000-01-01";
+        inp.max = "2100-12-31";
+        inp.setAttribute("data-cambiar", it.id);
+        lab.appendChild(inp);
+        fila.appendChild(lab);
+        if (it.venc) {
+          var bh = el("button", "btn-venc", "Mover a hoy");
+          bh.type = "button";
+          bh.setAttribute("data-mover", "hoy");
+          bh.setAttribute("data-idea", it.id);
+          fila.appendChild(bh);
+          var b7 = el("button", "btn-venc", "+7 días");
+          b7.type = "button";
+          b7.title = "Una semana a partir de hoy";
+          b7.setAttribute("data-mover", "7");
+          b7.setAttribute("data-idea", it.id);
+          fila.appendChild(b7);
+        }
+        var q = el("button", "btn-quitar", "Quitar fecha");
+        q.type = "button";
+        q.setAttribute("data-quitar", it.id);
+        fila.appendChild(q);
+        d.appendChild(fila);
+      }
       elDetalle.appendChild(d);
     });
+    if (!fuente && window.BT && window.BT.almacen) renderAnadir();
+    renderEventosDia();
   }
 
   function irA(f) { vistaA = f.getFullYear(); vistaM = f.getMonth(); }
@@ -284,6 +703,122 @@ elDetalle.appendChild(el("h3", "", titulo.charAt(0).toUpperCase() + titulo.slice
     if (nuevo) nuevo.focus({ preventScroll: true });
   });
 
+  // Cambiar o quitar la fecha de una idea desde el detalle del día
+  function aplicarFecha(id, fecha) {
+    var previa = sel;
+    ofrecerDeshacer(null);
+    var r = window.BT.almacen.guardarFecha(id, fecha);
+    if (!r.ok) {
+      elMsgFecha.textContent = r.mensaje;
+      render();
+      return;
+    }
+    if (!r.cambio) { elMsgFecha.textContent = "No hubo cambios."; return; }
+    if (fecha) {
+      sel = fecha;                 // sigue a la publicación hasta su nuevo día
+      irA(deIso(fecha));
+      ofrecerDeshacer(function () { aplicarFecha(id, previa); });
+      elMsgFecha.textContent = "Fecha cambiada al " + deIso(fecha).toLocaleDateString("es", { day: "numeric", month: "long", year: "numeric" }) + ".";
+    } else {
+      elMsgFecha.textContent = "Fecha quitada: la idea ya no aparece en el calendario.";
+      ofrecerDeshacer(function () { aplicarFecha(id, previa); });
+    }
+    render();
+    var nuevo = elDetalle.querySelector('[data-cambiar="' + id + '"]');
+    if (nuevo) nuevo.focus({ preventScroll: true });
+  }
+
+  // Añadir al día seleccionado una idea que todavía no tiene fecha
+  function anadirIdea(id) {
+    var dia = sel;
+    ofrecerDeshacer(null);
+    var r = window.BT.almacen.guardarFecha(id, dia);
+    if (!r.ok) { elMsgFecha.textContent = r.mensaje; render(); return; }
+    elMsgFecha.textContent = "Idea añadida al " + deIso(dia).toLocaleDateString("es", { day: "numeric", month: "long", year: "numeric" }) + ".";
+    ofrecerDeshacer(function () {
+      var q = window.BT.almacen.guardarFecha(id, "");
+      elMsgFecha.textContent = q.ok ? "Fecha quitada: la idea vuelve a estar sin fecha." : q.mensaje;
+      render();
+    });
+    render();
+    var nuevo = elDetalle.querySelector('[data-cambiar="' + id + '"]');
+    if (nuevo) nuevo.focus({ preventScroll: true });
+  }
+  elDetalle.addEventListener("click", function (e) {
+    var b = e.target.closest ? e.target.closest("button[data-anadir]") : null;
+    if (!b) return;
+    var s = elDetalle.querySelector("#anadir-idea");
+    if (!s || !s.value) { elMsgFecha.textContent = "Elige primero una idea de la lista."; if (s) s.focus(); return; }
+    anadirIdea(s.value);
+  });
+
+  elDetalle.addEventListener("change", function (e) {
+    var t = e.target;
+    var id = t.getAttribute && t.getAttribute("data-cambiar");
+    if (!id) return;
+    if (!t.value) { render(); return; }   // campo vaciado a mano: para quitar la fecha está el botón
+    aplicarFecha(id, t.value);
+  });
+
+  elDetalle.addEventListener("click", function (e) {
+    var m = e.target.closest ? e.target.closest("button[data-mover]") : null;
+    if (m) {
+      var h = new Date();   // fecha de hoy al momento del toque
+      if (m.getAttribute("data-mover") === "7") h.setDate(h.getDate() + 7);
+      aplicarFecha(m.getAttribute("data-idea"), isoDe(h));
+      return;
+    }
+    var b = e.target.closest ? e.target.closest("button[data-quitar]") : null;
+    if (b) aplicarFecha(b.getAttribute("data-quitar"), "");
+  });
+
+  // Eventos propios: añadir (también con Enter) y borrar (con deshacer)
+  elDetalle.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var inp = e.target.querySelector("#ev-titulo"), tipo = e.target.querySelector("#ev-tipo");
+    ofrecerDeshacer(null);
+    var t = inp.value.replace(/\s+/g, " ").trim().slice(0, MAX_TIT_EV);
+    if (!t) { elMsgFecha.textContent = "Escribe el título del evento."; inp.focus(); return; }
+    if (eventos.length >= MAX_EV) { elMsgFecha.textContent = "Llegaste al límite de " + MAX_EV + " eventos. Borra alguno para añadir otro."; return; }
+    eventos.push({ id: "e" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), fecha: sel, titulo: t, tipo: tiene(TIPOS_EV, tipo.value) ? tipo.value : "otro" });
+    if (!guardarEventos(eventos)) { eventos.pop(); elMsgFecha.textContent = "No se pudo guardar el evento en el navegador."; return; }
+    elMsgFecha.textContent = "Evento añadido.";
+    render();
+    var nuevo = elDetalle.querySelector("#ev-titulo");
+    if (nuevo) nuevo.focus({ preventScroll: true });
+  });
+  elDetalle.addEventListener("click", function (e) {
+    var b = e.target.closest ? e.target.closest("button[data-borrar-ev]") : null;
+    if (!b) return;
+    var id = b.getAttribute("data-borrar-ev"), antes = eventos.slice();
+    var quitado = eventos.filter(function (x) { return x.id === id; })[0];
+    eventos = eventos.filter(function (x) { return x.id !== id; });
+    if (!guardarEventos(eventos)) { eventos = antes; elMsgFecha.textContent = "No se pudo borrar el evento."; return; }
+    elMsgFecha.textContent = "Evento borrado.";
+    ofrecerDeshacer(function () {
+      if (quitado && !eventos.some(function (x) { return x.id === id; })) { eventos.push(quitado); guardarEventos(eventos); }
+      elMsgFecha.textContent = "Evento restaurado.";
+      render();
+    });
+    render();
+  });
+
+  // Meta semanal: se guarda al cambiar el número
+  elMetaN.addEventListener("change", function () {
+    var v = elMetaN.value.trim();
+    var n = v === "" ? 0 : Number(v);
+    if (!metaValida(n)) {
+      elMetaMsg.textContent = "Escribe un número entero entre 0 y " + META_MAX + ".";
+      elMetaN.value = String(config.metaSemanal);
+      return;
+    }
+    config.metaSemanal = n;
+    elMetaMsg.textContent = guardarConfig(config)
+      ? (n ? "Meta guardada: " + n + " por semana." : "Meta quitada.")
+      : "No se pudo guardar la meta en el navegador.";
+    render();
+  });
+
   // Respaldo solo para ver
   document.getElementById("importar").addEventListener("change", function (ev) {
     var input = ev.target, archivo = input.files && input.files[0];
@@ -311,7 +846,7 @@ elDetalle.appendChild(el("h3", "", titulo.charAt(0).toUpperCase() + titulo.slice
   });
 
   // Se actualiza si cambian los datos en otra pestaña o al volver a esta
-  window.addEventListener("storage", function (e) { if (e.key === null || e.key === KEY) render(); });
+  window.addEventListener("storage", function (e) { if (e.key === null || e.key === KEY || e.key === KEY_CFG || e.key === KEY_EV || e.key === KEY_RESP) { config = leerConfig(); eventos = leerEventos(); render(); } });
   document.addEventListener("visibilitychange", function () {
     if (!document.hidden) { hoyIso = isoDe(new Date()); render(); }
   });
@@ -324,7 +859,87 @@ elDetalle.appendChild(el("h3", "", titulo.charAt(0).toUpperCase() + titulo.slice
       if (t && t.tagName === "DETAILS") t.open = true;
     });
   }
+  document.getElementById("ver-bookish").addEventListener("change", function (e) {
+    verBookish = e.target.checked;
+    render();
+  });
+  elGrid.addEventListener("click", function (e) {
+    if (e.target.closest && e.target.closest(".dia")) {
+      anunciarDia();
+      if (movil && movil.matches) elDetalle.scrollIntoView({ block: "start" });
+    }
+  });
+  elGrid.addEventListener("keydown", function (e) {
+    var b = e.target.closest ? e.target.closest(".dia") : null;
+    var paso = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[e.key];
+    if (!b || !paso) return;
+    e.preventDefault();
+    sel = sumarDias(b.getAttribute("data-fecha"), paso);
+    irA(deIso(sel));
+    render();
+    var n = elGrid.querySelector('[data-fecha="' + sel + '"]');
+    if (n) n.focus();
+    anunciarDia();
+  });
+  ["mes-ant", "mes-sig", "mes-hoy"].forEach(function (id) {
+    document.getElementById(id).addEventListener("click", function () { anunciar(elTitulo.textContent); });
+  });
+  // «Hoy» se refresca solo al pasar la medianoche
+  function programarMedianoche() {
+    var n = new Date();
+    setTimeout(function () {
+      var h = isoDe(new Date());
+      if (h !== hoyIso) { if (sel === hoyIso) sel = h; hoyIso = h; render(); }
+      programarMedianoche();
+    }, new Date(n.getFullYear(), n.getMonth(), n.getDate() + 1, 0, 0, 5) - n);
+  }
+  programarMedianoche();
+  // Respaldo aparte de eventos y meta
+  var elMsgCal = document.getElementById("msg-cal");
+  document.getElementById("aviso-resp-btn").addEventListener("click", function () { document.getElementById("exp-cal").click(); });
+  document.getElementById("exp-cal").addEventListener("click", function () {
+    var blob = new Blob([JSON.stringify({ tipo: "calendario", version: 1, metaSemanal: config.metaSemanal, eventos: eventos }, null, 2)], { type: "application/json" });
+    var u = URL.createObjectURL(blob), a = document.createElement("a");
+    a.href = u; a.download = "calendario_eventos_y_meta.json";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(u); }, 1000);
+    marcarResp("respaldo");
+    renderAvisoResp();
+    elMsgCal.textContent = "Descargado: " + eventos.length + " evento" + (eventos.length === 1 ? "" : "s") + " y meta de " + config.metaSemanal + ".";
+  });
+  document.getElementById("imp-cal").addEventListener("change", function (ev) {
+    var input = ev.target, f = input.files && input.files[0];
+    if (!f) return;
+    var lector = new FileReader();
+    lector.onload = function () {
+      var o = null;
+      try { o = JSON.parse(lector.result); } catch (err) { o = null; }
+      input.value = "";
+      if (!o || o.tipo !== "calendario" || o.version !== 1) { elMsgCal.textContent = "El archivo no es un respaldo de eventos y meta. No se cambió nada."; return; }
+      var nuevos = leerEventos({ eventos: o.eventos }).filter(function (x) { return !eventos.some(function (y) { return y.id === x.id; }); });
+      nuevos = nuevos.slice(0, Math.max(0, MAX_EV - eventos.length));
+      var antes = eventos.slice();
+      eventos = eventos.concat(nuevos);
+      if (!guardarEventos(eventos)) { eventos = antes; elMsgCal.textContent = "No se pudo guardar en el navegador."; return; }
+      if (metaValida(o.metaSemanal)) { config.metaSemanal = o.metaSemanal; guardarConfig(config); }
+      elMsgCal.textContent = "Importados " + nuevos.length + " evento" + (nuevos.length === 1 ? "" : "s") + " nuevos" + (metaValida(o.metaSemanal) ? " y la meta semanal." : ".");
+      render();
+    };
+    lector.readAsText(f);
+  });
+  // Menú «En esta página»: marca la sección visible
+  var enlacesToc = [].slice.call(document.querySelectorAll("#toc a"));
+  function espiarToc() {
+    var linea = window.innerHeight * 0.3, act = null;
+    enlacesToc.forEach(function (a) {
+      var t = document.getElementById(a.getAttribute("href").slice(1));
+      if (t && t.getClientRects().length && t.getBoundingClientRect().top <= linea) act = a;
+    });
+    enlacesToc.forEach(function (a) { if (a === act) a.setAttribute("aria-current", "location"); else a.removeAttribute("aria-current"); });
+  }
+  window.addEventListener("scroll", espiarToc, { passive: true });
   render();
+  espiarToc();
 })();
 </script>
 </body>
