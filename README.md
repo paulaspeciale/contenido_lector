@@ -14,7 +14,7 @@ Diseñada e ideada por Paula Speciale, con la ayuda de Claude.
 | `resenia.html` | Reseñas | Plantilla de reseña de 22 secciones, con versión completa y versión corta (TikTok / Reel). |
 | `ideas_post_90.html` | Ideas | Gestor de 90 ideas de post, con estados, fechas, checklist de producción, hashtags y notas. |
 | `calendario_ideas_90.html` | Calendario | Calendario mensual con las ideas que tienen fecha. |
-| `glosario.html` | Glosario | Glosario bookish: siglas, tropos y géneros del inglés al español, con buscador, filtros, ejemplos y botón de copiar. |
+| `glosario.html` | Glosario | Glosario bookish inglés-español (más de 300 términos en 13 categorías): buscador, filtros, imprescindibles, ejemplos y botón de copiar. |
 | `bingo.html` | Bingo | Marcador «Próximamente». |
 | `sugerencias.html` | Sugerencias | Formulario para enviar ideas o comentarios. |
 | `sobre_mi.html` | Sobre mí | Presentación, redes, enlace a YouTube y formas de donar. |
@@ -74,6 +74,7 @@ Lee los datos de Ideas (`localStorage`) y `datos-ideas.js`, y dibuja un calendar
 - **Días libres**: de hoy al domingo, sin publicaciones.
 - **Eventos propios** (lanzamientos, plazos de ARC, colaboraciones): se añaden con el formulario del día (Enter funciona). Se guardan en `calendario_eventos`.
 - **Fechas bookish**: sugerencias fijas (incluye internacionales y el primer jueves de marzo, fecha móvil), se pueden ocultar.
+- **Aviso de respaldo**: si hay eventos o meta que nunca exportaste, o los cambiaste después del último respaldo, aparece un aviso con botón «Exportar ahora» (usa `calendario_respaldo`).
 - **Respaldo aparte**: «Exportar / Importar eventos y meta» (JSON propio, `tipo: "calendario"`); al importar se suman los eventos que falten. No entran en el JSON de Ideas.
 - «Hoy» se actualiza al pasar la medianoche y al volver a la pestaña.
 - Se puede cargar un respaldo JSON de Ideas **solo para verlo**.
@@ -85,12 +86,25 @@ Plantilla de reseña con índice de enlaces internos. Permite alternar entre ver
 
 ### Glosario (`glosario.html` + `datos-glosario.js`)
 
-Lista de términos bookish, hoy con dos categorías: **Siglas** (ARC, ALC, CR, DNF, FMC/MMC, HEA, HFN, KU, NA/YA, RH, TBR, CW/TW, WIP) y **Tropos y géneros** (enemies to lovers, friends to lovers, fake dating, age gap, grumpy and sunshine, slow burn, romantasy, dark academia, omegaverse, spicy). Cada término lleva el significado en inglés, la traducción al español, una explicación, un ejemplo de uso y, si hace falta, una nota.
+Glosario bookish inglés → español con **304 términos** en **13 categorías**, agrupadas en 5 bloques (de lo básico a lo específico):
 
-- **Búsqueda** sin distinguir tildes ni mayúsculas, que mira también el significado y el ejemplo.
-- **Filtros** por categoría y por tipo (Sigla, Tropo, Género, Contenido).
+| Bloque | Categorías |
+|---|---|
+| Lo básico | Siglas y abreviaturas |
+| Romance | Tropes románticos · Devoción, protección y dinámica de pareja · Spice y nivel de explicitud |
+| Historias | Géneros y subgéneros · Personajes y arquetipos · Trama, ritmo y finales · Fantasía, paranormal y romantasy |
+| Opinar y reseñar | Reacciones, jerga y valoración · Content warnings habituales |
+| Comunidad y estética | Comunidad y hábitos lectores · Ediciones y publicación · Estética para Bookstagram |
+
+Las categorías y los términos van de los más usados a los menos. Cada término tiene el inglés, la traducción al español y, según el caso, una explicación, un ejemplo de uso y enlaces «Ver también».
+
+- **Imprescindibles**: 50 términos marcados como tal (borde de color y sello «Imprescindible») y una sección de accesos rápidos con los más usados.
+- **Búsqueda** sin distinguir tildes ni mayúsculas, que mira también la explicación y el ejemplo.
+- **Filtros** por categoría, orden (popularidad o A–Z) y «Solo imprescindibles». Con un filtro o una búsqueda activos se abren las categorías con resultados.
+- **Ver los restantes**: cada categoría muestra primero 8 términos y el resto se despliega con un botón. Spice y Content warnings empiezan plegadas.
 - **Copiar** deja el término con su significado listo para pegar (con ventana de respaldo si el navegador no deja copiar).
-- **Enlaces directos** a un término por su `id`: `glosario.html#tbr`. Al llegar, el término se resalta.
+- **Enlaces directos** a un término por su `id` (se genera a partir del inglés): `glosario.html#tbr`. Al llegar, se abre su categoría y el término se resalta. También funciona con una categoría: `glosario.html#tropes`.
+- Menú «En esta página» con los bloques que tengan resultados.
 - No guarda nada en el navegador: no hay nada que respaldar.
 
 ### Sugerencias (`sugerencias.html`)
@@ -119,6 +133,7 @@ Todo el progreso se guarda **en el navegador** con `localStorage`, sin servidor 
 | `ideas_post_90_corrupto` | Copia del dato original si no se pudo leer (solo aparece en ese caso). |
 | `calendario_config` | Meta semanal del Calendario. |
 | `calendario_eventos` | Eventos propios del Calendario. |
+| `calendario_respaldo` | Fechas (en ms) del último cambio y del último respaldo de eventos y meta; solo sirve para el aviso del Calendario. |
 | `tema_preferido` | Tema claro u oscuro. |
 
 Importante:
@@ -177,7 +192,7 @@ Estética de **librería antigua (cottagecore)**: papel con grano generado con u
 
 - **Agregar o cambiar ideas base**: edita `datos-ideas.js`. Cada idea necesita `id`, `texto` y `formato`. Los `id` son lo que usa el progreso guardado: **no los renumeres ni los reutilices**; añade las nuevas al final (91, 92…) y no cambies el orden de las secciones.
 - **Una sola fuente de ideas**: tanto Ideas como Calendario leen `datos-ideas.js`, así que no hay nada más que actualizar.
-- **Agregar términos al glosario**: edita `datos-glosario.js`. Cada término necesita `id` (único, sin espacios, es el ancla), `termino`, `categoria` (`siglas` o `tropos`), `tipo`, `es` y `def`; `en`, `ejemplo` y `nota` son opcionales. Para una categoría nueva hay que añadir su sección en `glosario.html`, su opción en el filtro y su nombre en la lista `CATS` del script.
+- **Agregar términos al glosario**: edita `datos-glosario.js`. Dentro de la categoría que corresponda, añade una fila `[inglés, español, explicación, imprescindible, ejemplo]`: la explicación y el ejemplo pueden ir vacíos (`""`) y el cuarto valor es `1` para marcar un imprescindible. El `id` (el ancla) se genera solo a partir del inglés. Para que una fila con varios términos separados por « · » se divida en fichas, añade su texto inglés a la lista `SPLIT`. Una categoría nueva se añade a la lista `C` y a un bloque de `GLOSARIO_GRUPOS`; los imprescindibles de acceso rápido están en `GLOSARIO_DESTACADOS` y los enlaces «Ver también» en `GLOSARIO_VER_TAMBIEN`. `glosario.html` no hay que tocarlo: lo construye todo desde los datos.
 - **Cambiar estados o pasos de producción**: modifica `ESTADOS` y `PASOS` en `app.js` y los colores correspondientes en `base.css`.
 - **Colores**: están en las variables de `:root` al inicio de `base.css`.
 - **Formulario de sugerencias**: pega en `FORM_URL` la dirección con código aleatorio de FormSubmit (no el correo).
@@ -194,6 +209,7 @@ Estética de **librería antigua (cottagecore)**: papel con grano generado con u
 - Inicio y Bingo están pendientes de contenido.
 - La racha y el cumplimiento usan la fecha puesta a cada idea (no el día real de publicación) y la meta semanal actual, así que cambiar la meta recalcula todo el historial.
 - El Calendario solo lee el `localStorage` del dispositivo: en un segundo dispositivo aparece vacío hasta abrir Ideas (que es quien sincroniza con la nube).
+- Una fecha cambiada desde el Calendario se sube a la nube cuando se carga Ideas. Si Ideas ya estaba abierta en otra pestaña, no se sube hasta recargarla o pulsar «Sincronizar ahora».
 - Requiere navegadores recientes: `light-dark()` y `:has()` no tienen respaldo en versiones antiguas.
 - `base.css` redefine algunos selectores (`h1`, `body`, `button`, `.guia`…) en una segunda capa; funciona, pero conviene unificarlos algún día.
 - El formulario de Sugerencias muestra un aviso en lugar del formulario hasta configurar `FORM_URL`.

@@ -386,7 +386,6 @@
     l2.appendChild(s);
     f.appendChild(l2);
     var add = el("button", "primario", "Añadir evento");
-    add.type = "button";
     add.type = "submit";
     f.appendChild(add);
     elDetalle.appendChild(f);
@@ -606,14 +605,41 @@
     renderDetalle(mapa);
   }
 
+  // Lo que la persona está escribiendo en el detalle (título de evento, tipo, idea elegida) sobrevive a los render()
+  var detalleSel = null;
+  function tomarBorrador() {
+    var t = elDetalle.querySelector("#ev-titulo"), tp = elDetalle.querySelector("#ev-tipo"), a = elDetalle.querySelector("#anadir-idea");
+    if (!t && !a) return null;
+    var ae = document.activeElement;
+    return {
+      dia: detalleSel,
+      titulo: t ? t.value : "", tipo: tp ? tp.value : "", idea: a ? a.value : "",
+      foco: ae && elDetalle.contains(ae) ? ae.id : ""
+    };
+  }
+  function devolverBorrador(b) {
+    if (!b || b.dia !== sel) return;   // si cambió el día, el borrador ya no corresponde
+    var t = elDetalle.querySelector("#ev-titulo"), tp = elDetalle.querySelector("#ev-tipo"), a = elDetalle.querySelector("#anadir-idea");
+    if (t && b.titulo) t.value = b.titulo;
+    if (tp && b.tipo) tp.value = b.tipo;
+    if (a && b.idea) a.value = b.idea;   // si la idea ya no está en la lista, queda en «Elige una idea…»
+    var f = b.foco ? elDetalle.querySelector("#" + b.foco) : null;
+    if (f) {
+      f.focus({ preventScroll: true });
+      if (f === t) { try { f.setSelectionRange(f.value.length, f.value.length); } catch (e) { /* sin acción */ } }
+    }
+  }
+
   function renderDetalle(mapa) {
+    var borrador = tomarBorrador();
     elDetalle.textContent = "";
     if (!sel) {
+      detalleSel = null;
       elDetalle.appendChild(el("p", "vacio-msg", "Toca un día para ver sus publicaciones."));
       return;
     }
-    let f = deIso(sel);
-    let titulo = f.toLocaleDateString("es", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+    var f = deIso(sel);
+    var titulo = f.toLocaleDateString("es", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 elDetalle.appendChild(el("h3", "", titulo.charAt(0).toUpperCase() + titulo.slice(1)));
     var bkd = bookishDe(sel);
     if (bkd) {
@@ -622,16 +648,16 @@ elDetalle.appendChild(el("h3", "", titulo.charAt(0).toUpperCase() + titulo.slice
       pb.appendChild(document.createTextNode("Idea: " + bkd[1]));
       elDetalle.appendChild(pb);
     }
-    let lista = mapa[sel] || [];
+    var lista = mapa[sel] || [];
     if (!lista.length) {
       elDetalle.appendChild(el("p", "vacio-msg", "No hay publicaciones este día."));
     }
     lista.forEach(function (it) {
-      let d = el("div", "det-item");
+      var d = el("div", "det-item");
       d.setAttribute("data-est", it.est);
       if (it.venc) d.className += " vencida";
       d.appendChild(el("p", "", (it.num ? it.num + ". " : "") + it.texto));
-      let m = el("div", "meta");
+      var m = el("div", "meta");
       m.appendChild(el("span", "chip formato-" + it.formato.toLowerCase(), it.formato));
       m.appendChild(el("span", "chip origen", NOMBRES_EST[it.est]));
       if (it.venc) m.appendChild(el("span", "chip venc", "Vencida"));
@@ -674,6 +700,8 @@ elDetalle.appendChild(el("h3", "", titulo.charAt(0).toUpperCase() + titulo.slice
     });
     if (!fuente && window.BT && window.BT.almacen) renderAnadir();
     renderEventosDia();
+    detalleSel = sel;
+    devolverBorrador(borrador);
   }
 
   function irA(f) { vistaA = f.getFullYear(); vistaM = f.getMonth(); }
@@ -701,6 +729,8 @@ elDetalle.appendChild(el("h3", "", titulo.charAt(0).toUpperCase() + titulo.slice
     render();
     var nuevo = elGrid.querySelector('[data-fecha="' + sel + '"]');
     if (nuevo) nuevo.focus({ preventScroll: true });
+    anunciarDia();
+    if (movil && movil.matches) elDetalle.scrollIntoView({ block: "start" });
   });
 
   // Cambiar o quitar la fecha de una idea desde el detalle del día
@@ -744,32 +774,12 @@ elDetalle.appendChild(el("h3", "", titulo.charAt(0).toUpperCase() + titulo.slice
     var nuevo = elDetalle.querySelector('[data-cambiar="' + id + '"]');
     if (nuevo) nuevo.focus({ preventScroll: true });
   }
-  elDetalle.addEventListener("click", function (e) {
-    var b = e.target.closest ? e.target.closest("button[data-anadir]") : null;
-    if (!b) return;
-    var s = elDetalle.querySelector("#anadir-idea");
-    if (!s || !s.value) { elMsgFecha.textContent = "Elige primero una idea de la lista."; if (s) s.focus(); return; }
-    anadirIdea(s.value);
-  });
-
   elDetalle.addEventListener("change", function (e) {
     var t = e.target;
     var id = t.getAttribute && t.getAttribute("data-cambiar");
     if (!id) return;
     if (!t.value) { render(); return; }   // campo vaciado a mano: para quitar la fecha está el botón
     aplicarFecha(id, t.value);
-  });
-
-  elDetalle.addEventListener("click", function (e) {
-    var m = e.target.closest ? e.target.closest("button[data-mover]") : null;
-    if (m) {
-      var h = new Date();   // fecha de hoy al momento del toque
-      if (m.getAttribute("data-mover") === "7") h.setDate(h.getDate() + 7);
-      aplicarFecha(m.getAttribute("data-idea"), isoDe(h));
-      return;
-    }
-    var b = e.target.closest ? e.target.closest("button[data-quitar]") : null;
-    if (b) aplicarFecha(b.getAttribute("data-quitar"), "");
   });
 
   // Eventos propios: añadir (también con Enter) y borrar (con deshacer)
@@ -783,14 +793,13 @@ elDetalle.appendChild(el("h3", "", titulo.charAt(0).toUpperCase() + titulo.slice
     eventos.push({ id: "e" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), fecha: sel, titulo: t, tipo: tiene(TIPOS_EV, tipo.value) ? tipo.value : "otro" });
     if (!guardarEventos(eventos)) { eventos.pop(); elMsgFecha.textContent = "No se pudo guardar el evento en el navegador."; return; }
     elMsgFecha.textContent = "Evento añadido.";
+    inp.value = "";
     render();
     var nuevo = elDetalle.querySelector("#ev-titulo");
     if (nuevo) nuevo.focus({ preventScroll: true });
   });
-  elDetalle.addEventListener("click", function (e) {
-    var b = e.target.closest ? e.target.closest("button[data-borrar-ev]") : null;
-    if (!b) return;
-    var id = b.getAttribute("data-borrar-ev"), antes = eventos.slice();
+  function borrarEvento(id) {
+    var antes = eventos.slice();
     var quitado = eventos.filter(function (x) { return x.id === id; })[0];
     eventos = eventos.filter(function (x) { return x.id !== id; });
     if (!guardarEventos(eventos)) { eventos = antes; elMsgFecha.textContent = "No se pudo borrar el evento."; return; }
@@ -801,6 +810,25 @@ elDetalle.appendChild(el("h3", "", titulo.charAt(0).toUpperCase() + titulo.slice
       render();
     });
     render();
+  }
+
+  // Un solo manejador de clics para todos los botones del detalle del día
+  elDetalle.addEventListener("click", function (e) {
+    var b = e.target.closest ? e.target.closest("button") : null;
+    if (!b || !elDetalle.contains(b)) return;
+    if (b.hasAttribute("data-anadir")) {
+      var s = elDetalle.querySelector("#anadir-idea");
+      if (!s || !s.value) { elMsgFecha.textContent = "Elige primero una idea de la lista."; if (s) s.focus(); return; }
+      anadirIdea(s.value);
+    } else if (b.hasAttribute("data-mover")) {
+      var h = new Date();   // fecha de hoy al momento del toque
+      if (b.getAttribute("data-mover") === "7") h.setDate(h.getDate() + 7);
+      aplicarFecha(b.getAttribute("data-idea"), isoDe(h));
+    } else if (b.hasAttribute("data-quitar")) {
+      aplicarFecha(b.getAttribute("data-quitar"), "");
+    } else if (b.hasAttribute("data-borrar-ev")) {
+      borrarEvento(b.getAttribute("data-borrar-ev"));
+    }
   });
 
   // Meta semanal: se guarda al cambiar el número
@@ -862,12 +890,6 @@ elDetalle.appendChild(el("h3", "", titulo.charAt(0).toUpperCase() + titulo.slice
   document.getElementById("ver-bookish").addEventListener("change", function (e) {
     verBookish = e.target.checked;
     render();
-  });
-  elGrid.addEventListener("click", function (e) {
-    if (e.target.closest && e.target.closest(".dia")) {
-      anunciarDia();
-      if (movil && movil.matches) elDetalle.scrollIntoView({ block: "start" });
-    }
   });
   elGrid.addEventListener("keydown", function (e) {
     var b = e.target.closest ? e.target.closest(".dia") : null;
