@@ -45,6 +45,7 @@ Por cada idea puedes:
 - Marcarla como **hecha** (equivale al estado «Publicada») y como **favorita**.
 - Cambiar su **estado**: Idea, Grabando, Editando, Programada, Publicada o Descartada.
 - Asignarle una **fecha de publicación**.
+- Marcar en qué **red o redes** se publicará (Instagram, TikTok, YouTube; puede ser más de una). Se puede filtrar por red, va en el CSV y en el `.ics`, y el Calendario la muestra en el detalle del día. Se guarda en `datos[id].redes`, así que entra en el respaldo JSON y en la sincronización.
 - Seguir su **checklist de producción**: Guion, Grabar o foto, Editar, Caption, Programar.
 - Guardar el **libro**, los **hashtags** y **notas**. Si repites un libro en varias ideas, la app te avisa.
 - **Copiar** al portapapeles el texto listo para pegar (notas, libro y hashtags).

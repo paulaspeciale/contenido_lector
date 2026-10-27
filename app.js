@@ -25,7 +25,7 @@
   const REQUERIDOS = [
     "lista", "mensaje", "recordatorio", "sync-estado", "sync-ahora", "contador", "favoritas", "total", "progreso",
     "barra", "btn-filtros", "panel-filtros", "por-estado", "buscar", "f-estado", "f-formato", "f-fecha", "f-prod",
-    "f-fav", "f-orden", "resultados", "sorpresa", "sorpresa-btn", "limpiar", "deshacer", "dialogo", "dialogo-texto",
+    "f-fav", "f-orden", "f-red", "resultados", "sorpresa", "sorpresa-btn", "limpiar", "deshacer", "dialogo", "dialogo-texto",
     "dialogo-si", "dialogo-no", "lista-sets", "set-nombre", "set-tags", "set-guardar", "set-cancelar", "set-mensaje",
     "abrir-secciones", "cerrar-secciones", "abrir-detalles", "cerrar-detalles", "exportar", "exportar-csv",
     "exportar-ics", "importar", "reiniciar", "total-ideas", "nueva-idea", "dialogo-idea", "dialogo-idea-titulo",
@@ -89,6 +89,9 @@ function fechaAceptable(v) {
     ["programar", "Programar"]
   ];
   const CLAVES_PASOS = PASOS.map(function (p) { return p[0]; });
+  // Redes donde se piensa publicar cada idea (puede ser más de una)
+  const REDES = [["instagram", "Instagram"], ["tiktok", "TikTok"], ["youtube", "YouTube"]];
+  const CLAVES_REDES = REDES.map(function (r) { return r[0]; });
 
   // Ideas base (las 90 originales): su texto, formato, sección y posición de origen.
   const baseInfo = Object.create(null);
@@ -212,6 +215,10 @@ function fechaAceptable(v) {
     if (Array.isArray(d.pasos)) {
       const p = CLAVES_PASOS.filter(function (k) { return d.pasos.indexOf(k) !== -1; });
       if (p.length) limpio.pasos = p;
+    }
+    if (Array.isArray(d.redes)) {
+      const rs = CLAVES_REDES.filter(function (k) { return d.redes.indexOf(k) !== -1; });
+      if (rs.length) limpio.redes = rs;
     }
     // Edición de ideas: texto/formato/sección propios, orden de prioridad y borrado
     if (typeof d.texto === "string" && d.texto.trim()) limpio.texto = d.texto.replace(/\s+/g, " ").trim().slice(0, MAX_TEXTO + 40);
@@ -361,7 +368,7 @@ function fechaAceptable(v) {
     return (state.datos[id] && state.datos[id].pasos) || [];
   }
 
-  const CAMPOS = ["fav", "estado", "fecha", "libro", "hashtags", "nota", "pasos", "texto", "formato", "sec", "secNombre", "orden", "propia", "borrada"];
+  const CAMPOS = ["fav", "estado", "fecha", "libro", "hashtags", "nota", "pasos", "redes", "texto", "formato", "sec", "secNombre", "orden", "propia", "borrada"];
 
   // Contenido de una idea tal como se guarda en la nube (y para comparar cambios).
   function registroDe(id, st) {
@@ -499,6 +506,7 @@ function fechaAceptable(v) {
   const elFormato = document.getElementById("f-formato");
   const elFecha = document.getElementById("f-fecha");
   const elProd = document.getElementById("f-prod");
+  const elRed = document.getElementById("f-red");
   const elSoloFav = document.getElementById("f-fav");
   const elOrden = document.getElementById("f-orden");
   const elResultados = document.getElementById("resultados");
@@ -740,6 +748,20 @@ function fechaAceptable(v) {
     campos.appendChild(labFecha);
     li.appendChild(campos);
 
+    // Redes donde se publicará
+    const redesDiv = el("div", { "class": "redes", role: "group", "aria-label": "Redes donde se publicará" });
+    redesDiv.appendChild(el("span", { "class": "redes-rotulo", text: "Redes" }));
+    const inputsRedes = {};
+    REDES.forEach(function (rd) {
+      const lab = el("label", { "class": "paso" });
+      const cb = el("input", { type: "checkbox", "data-red": rd[0], "data-rid": id });
+      inputsRedes[rd[0]] = cb;
+      lab.appendChild(cb);
+      lab.appendChild(el("span", { text: rd[1] }));
+      redesDiv.appendChild(lab);
+    });
+    li.appendChild(redesDiv);
+
     // Checklist de producción
     const prod = el("details", { "class": "prod" });
     const sumProd = el("summary");
@@ -814,7 +836,7 @@ function fechaAceptable(v) {
 
     refs[id] = {
       idea: idea, li: li, hecha: hecha, fav: fav, estado: estado, fecha: fecha,
-      libro: libro, aviso: avisoLibro, hashtags: hashtags, nota: nota, det: det, resumen: resumen,
+      redes: inputsRedes, libro: libro, aviso: avisoLibro, hashtags: hashtags, nota: nota, det: det, resumen: resumen,
       prod: prod, prog: prog, cuentaPaso: cuentaPaso, pasos: inputsPasos, bloqueSets: bloqueSets, chips: chips,
       num: num, textoNodo: textoNodo, meta: metaFila, mover: mover
     };
@@ -895,6 +917,8 @@ function fechaAceptable(v) {
     if (activo !== r.libro) r.libro.value = d.libro || "";
     if (activo !== r.hashtags) r.hashtags.value = d.hashtags || "";
     if (activo !== r.nota) r.nota.value = d.nota || "";
+    const rsel = d.redes || [];
+    CLAVES_REDES.forEach(function (k) { r.redes[k].checked = rsel.indexOf(k) !== -1; });
     actualizarPasos(id);
   }
 
@@ -1240,9 +1264,10 @@ function aplicarSet(id, k, boton) {
     const formato = elFormato.value;
     const fechaF = elFecha.value;
     const prodF = elProd.value;
+    const redF = elRed.value;
     const soloFav = elSoloFav.checked;
     // Con búsqueda o filtros activos se abren las secciones que tengan resultados.
-    const hayFiltro = !!q || estadoF !== "todas" || formato !== "todos" || fechaF !== "todas" || prodF !== "todas" || soloFav;
+    const hayFiltro = !!q || estadoF !== "todas" || formato !== "todos" || fechaF !== "todas" || prodF !== "todas" || redF !== "todas" || soloFav;
 
     let base = new Date();
     base = new Date(base.getFullYear(), base.getMonth(), base.getDate());
@@ -1276,6 +1301,9 @@ function aplicarSet(id, k, boton) {
         if (prodF === "sin" && np !== 0) ok = false;
         if (prodF === "curso" && !(np > 0 && np < PASOS.length)) ok = false;
         if (prodF === "completa" && np !== PASOS.length) ok = false;
+        const rd = d.redes || [];
+        if (redF === "sin" && rd.length) ok = false;
+        else if (redF !== "todas" && redF !== "sin" && rd.indexOf(redF) === -1) ok = false;
         if (soloFav && !d.fav) ok = false;
         if (q) {
           const enTexto = normalizar(r.idea.texto).indexOf(q) !== -1;
@@ -1293,7 +1321,7 @@ function aplicarSet(id, k, boton) {
     vistaFecha.hidden = !modoFecha || visibles === 0;
     elResultados.textContent = "Mostrando " + visibles + " de " + todas.length + " ideas.";
     const activos = (estadoF !== "todas" ? 1 : 0) + (formato !== "todos" ? 1 : 0) + (fechaF !== "todas" ? 1 : 0) +
-      (prodF !== "todas" ? 1 : 0) + (soloFav ? 1 : 0) + (elOrden.value !== "original" ? 1 : 0);
+      (prodF !== "todas" ? 1 : 0) + (redF !== "todas" ? 1 : 0) + (soloFav ? 1 : 0) + (elOrden.value !== "original" ? 1 : 0);
     btnFiltros.textContent = "Filtros" + (activos ? " (" + activos + ")" : "");
   }
 
@@ -1302,7 +1330,7 @@ function aplicarSet(id, k, boton) {
     clearTimeout(buscarTimer);
     buscarTimer = setTimeout(aplicarFiltros, 200);
   });
-  [elEstado, elFormato, elFecha, elProd, elSoloFav, elOrden].forEach(function (c) {
+  [elEstado, elFormato, elFecha, elProd, elRed, elSoloFav, elOrden].forEach(function (c) {
     c.addEventListener("change", aplicarFiltros);
   });
   btnReordenar.addEventListener("click", reordenar);
@@ -1312,6 +1340,7 @@ function aplicarSet(id, k, boton) {
     elFormato.value = "todos";
     elFecha.value = "todas";
     elProd.value = "todas";
+    elRed.value = "todas";
     elSoloFav.checked = false;
     elOrden.value = "original";
     aplicarFiltros();
@@ -1413,6 +1442,13 @@ function aplicarSet(id, k, boton) {
     actualizarPasos(id);
   }
 
+  function setRed(id, clave, marcado) {
+    const actuales = ((state.datos[id] || {}).redes || []).filter(function (k) { return k !== clave; });
+    if (marcado) actuales.push(clave);
+    const ordenadas = CLAVES_REDES.filter(function (k) { return actuales.indexOf(k) !== -1; });
+    setDato(id, "redes", ordenadas.length ? ordenadas : "");
+  }
+
   lista.addEventListener("change", function (e) {
     const t = e.target;
     const idHecha = t.getAttribute("data-id");
@@ -1420,6 +1456,7 @@ function aplicarSet(id, k, boton) {
     const idFav = t.getAttribute("data-fav");
     const idFecha = t.getAttribute("data-fecha");
     const paso = t.getAttribute("data-paso");
+    const red = t.getAttribute("data-red");
     if (idHecha) {
       setEstado(idHecha, t.checked ? "publicada" : "idea");
     } else if (idEstado) {
@@ -1435,6 +1472,8 @@ function aplicarSet(id, k, boton) {
   setDato(idFecha, "fecha", t.value);
     } else if (paso) {
       setPaso(t.getAttribute("data-pid"), paso, t.checked);
+    } else if (red) {
+      setRed(t.getAttribute("data-rid"), red, t.checked);
     }
   });
 
@@ -1532,6 +1571,11 @@ function aplicarSet(id, k, boton) {
     return out.join("\r\n");
   }
 
+  function textoRedes(id) {
+    const rs = (state.datos[id] || {}).redes || [];
+    return REDES.filter(function (r) { return rs.indexOf(r[0]) !== -1; }).map(function (r) { return r[1]; }).join(", ");
+  }
+
   function textoProduccion(id) {
     const hechos = pasosDe(id);
     if (!hechos.length) return "0/" + PASOS.length;
@@ -1556,7 +1600,7 @@ function aplicarSet(id, k, boton) {
   });
 
   document.getElementById("exportar-csv").addEventListener("click", function () {
-    const filas = [["id", "sección", "formato", "idea", "estado", "producción", "favorita", "fecha", "libro", "hashtags", "notas", "prioridad"].map(csv).join(",")];
+    const filas = [["id", "sección", "formato", "idea", "estado", "producción", "favorita", "fecha", "redes", "libro", "hashtags", "notas", "prioridad"].map(csv).join(",")];
     const puesto = {};
     todas.slice().sort(cmpOrden).forEach(function (i, k) { puesto[i.id] = k + 1; });
     secRefs.forEach(function (sec, k) {
@@ -1564,7 +1608,7 @@ function aplicarSet(id, k, boton) {
         const d = state.datos[i.id] || {};
         filas.push([
           i.propia ? "propia" : i.id, sec.titulo, i.formato, i.texto, etiquetaEstado(estadoDe(i.id)), textoProduccion(i.id),
-          d.fav ? "sí" : "", d.fecha || "", d.libro || "", d.hashtags || "", d.nota || "", puesto[i.id]
+          d.fav ? "sí" : "", d.fecha || "", textoRedes(i.id), d.libro || "", d.hashtags || "", d.nota || "", puesto[i.id]
         ].map(csv).join(","));
       });
     });
@@ -1583,6 +1627,7 @@ function aplicarSet(id, k, boton) {
       const p = d.fecha.split("-").map(Number);
       const fin = new Date(Date.UTC(p[0], p[1] - 1, p[2] + 1)).toISOString().slice(0, 10).replace(/-/g, "");
       const desc = ["Formato: " + i.formato, "Estado: " + etiquetaEstado(estadoDe(i.id)), "Producción: " + textoProduccion(i.id)];
+      if (textoRedes(i.id)) desc.push("Redes: " + textoRedes(i.id));
       if (d.libro) desc.push("Libro: " + d.libro);
       if (d.hashtags) desc.push("Hashtags: " + d.hashtags);
       if (d.nota) desc.push("Notas: " + d.nota);

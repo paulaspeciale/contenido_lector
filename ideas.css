@@ -350,6 +350,11 @@ input[data-fav]:checked::before {
   color: var(--corazon);
 }
 
+/* ---------- Redes donde se publicará ---------- */
+.redes { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin-top: .6rem; }
+
+.redes-rotulo { margin-right: .2rem; font: 400 .78rem/1.3 var(--maquina); letter-spacing: .08em; text-transform: uppercase; color: var(--suave); }
+
 /* ---------- «Producción» y «Libro, hashtags y notas»: barra desplegable ---------- */
 .prod, .extra { margin-top: .6rem; }
 
@@ -537,7 +542,7 @@ progress.mini {
   margin-top: .6rem;
 }
 
-#lista.modo-prioridad .campos, #lista.modo-prioridad .prod, #lista.modo-prioridad .extra, #lista.modo-prioridad .acciones {
+#lista.modo-prioridad .campos, #lista.modo-prioridad .redes, #lista.modo-prioridad .prod, #lista.modo-prioridad .extra, #lista.modo-prioridad .acciones {
   display: none;
 }
 

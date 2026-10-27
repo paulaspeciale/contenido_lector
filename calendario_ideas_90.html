@@ -48,15 +48,29 @@
 <nav class="toc" id="toc" aria-label="En esta página">
 <p class="toc-titulo">En esta página</p>
 <ol>
-<li><a href="#meta">Meta semanal</a></li>
-<li><a href="#racha">Racha</a></li>
 <li><a href="#calendario">Calendario</a></li>
 <li><a href="#detalle">Detalle del día</a></li>
+<li><a href="#meta">Meta semanal</a></li>
+<li><a href="#racha">Racha</a></li>
 <li><a href="#leyenda">Leyenda</a></li>
 <li><a href="#ayuda-datos">Ver un respaldo</a></li>
 </ol>
 </nav>
 <main>
+<section id="calendario" aria-label="Calendario mensual">
+<div class="cal-nav">
+<button type="button" id="mes-ant" aria-label="Mes anterior">‹</button>
+<h2 id="mes-titulo"></h2>
+<button type="button" id="mes-sig" aria-label="Mes siguiente">›</button>
+</div>
+<div class="botones centrado"><button type="button" id="mes-hoy">Ir a hoy</button></div>
+<div class="cal-grid" id="cal-grid"></div>
+</section>
+
+<p id="anuncio" class="solo-lector" role="status" aria-live="polite"></p>
+<section id="detalle" aria-label="Detalle del día" tabindex="-1"></section>
+<p class="ayuda" id="msg-fecha-wrap" role="status"><span id="msg-fecha"></span> <button type="button" id="msg-deshacer" hidden>Deshacer</button></p>
+
 <section id="meta" class="meta-semanal" aria-label="Meta semanal">
 <div class="meta-fila">
 <label class="campo"><span>Meta: publicaciones por semana</span>
@@ -76,20 +90,6 @@
 <p id="cumpl-estado" class="meta-estado" aria-live="polite"></p>
 <p class="ayuda">Solo lectura. Una semana (lunes a domingo) cuenta si tiene tantas publicadas como tu meta semanal, o al menos 1 si no tienes meta. Se usa la fecha que le pusiste a cada idea; las descartadas no cuentan.</p>
 </section>
-
-<section id="calendario" aria-label="Calendario mensual">
-<div class="cal-nav">
-<button type="button" id="mes-ant" aria-label="Mes anterior">‹</button>
-<h2 id="mes-titulo"></h2>
-<button type="button" id="mes-sig" aria-label="Mes siguiente">›</button>
-</div>
-<div class="botones centrado"><button type="button" id="mes-hoy">Ir a hoy</button></div>
-<div class="cal-grid" id="cal-grid"></div>
-</section>
-
-<p id="anuncio" class="solo-lector" role="status" aria-live="polite"></p>
-<section id="detalle" aria-label="Detalle del día" tabindex="-1"></section>
-<p class="ayuda" id="msg-fecha-wrap" role="status"><span id="msg-fecha"></span> <button type="button" id="msg-deshacer" hidden>Deshacer</button></p>
 
 <section id="leyenda" aria-label="Leyenda">
 <div class="leyenda">
@@ -136,6 +136,7 @@
 (function () {
   "use strict";
   var KEY = "ideas_post_90_v1";
+  var NOTA_SYNC = " Se sincroniza con tus otros dispositivos al abrir Ideas.";
   var KEY_CFG = "calendario_config";   // clave propia: solo guarda la meta semanal
   var KEY_RESP = "calendario_respaldo"; // fechas (ms) del último cambio y del último respaldo de eventos y meta
   var META_MAX = 21;
@@ -144,6 +145,8 @@
   var DOW = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
   var MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
   var NOMBRES_EST = { idea: "Idea", grabando: "Grabando", editando: "Editando", programada: "Programada", publicada: "Publicada", descartada: "Descartada" };
+
+  var REDES = { instagram: "Instagram", tiktok: "TikTok", youtube: "YouTube" };
 
   var base = Object.create(null);
   ((window.BT && window.BT.SECCIONES) || []).forEach(function (s) {
@@ -478,12 +481,15 @@
     }
   }
 
+  var cacheDatos;   // undefined = sin leer en este render
   function leerDatos() {
     if (fuente) return fuente;
+    if (cacheDatos !== undefined) return cacheDatos;
     try {
       var o = JSON.parse(localStorage.getItem(KEY));
-      return o && typeof o === "object" ? o : null;
-    } catch (e) { return null; }
+      cacheDatos = o && typeof o === "object" ? o : null;
+    } catch (e) { cacheDatos = null; }
+    return cacheDatos;
   }
 
   // Devuelve { "AAAA-MM-DD": [ {num, texto, formato, est, fav, propia} ] }
@@ -509,7 +515,8 @@
       var venc = d.fecha < hoyIso && est !== "publicada" && est !== "descartada";
       if (venc) vencidas++;
       (mapa[d.fecha] = mapa[d.fecha] || []).push({
-        id: id, num: b ? id : "", texto: partir(texto), formato: formato, est: est, venc: venc, fav: d.fav === true, propia: !b
+        id: id, num: b ? id : "", texto: partir(texto), formato: formato, est: est, venc: venc, fav: d.fav === true, propia: !b,
+        redes: Object.keys(REDES).filter(function (k) { return Array.isArray(d.redes) && d.redes.indexOf(k) !== -1; })
       });
       total++;
     });
@@ -523,6 +530,7 @@
   }
 
   function render() {
+    cacheDatos = undefined;   // una lectura nueva por render
     var mapa = recopilar();
     var semana = semanaDe(hoyIso);
     elTitulo.textContent = MESES[vistaM] + " " + vistaA;
@@ -659,6 +667,7 @@ elDetalle.appendChild(el("h3", "", titulo.charAt(0).toUpperCase() + titulo.slice
       d.appendChild(el("p", "", (it.num ? it.num + ". " : "") + it.texto));
       var m = el("div", "meta");
       m.appendChild(el("span", "chip formato-" + it.formato.toLowerCase(), it.formato));
+      it.redes.forEach(function (k) { m.appendChild(el("span", "chip origen", REDES[k])); });
       m.appendChild(el("span", "chip origen", NOMBRES_EST[it.est]));
       if (it.venc) m.appendChild(el("span", "chip venc", "Vencida"));
       if (it.fav) m.appendChild(el("span", "chip origen", "♥ Favorita"));
@@ -748,9 +757,9 @@ elDetalle.appendChild(el("h3", "", titulo.charAt(0).toUpperCase() + titulo.slice
       sel = fecha;                 // sigue a la publicación hasta su nuevo día
       irA(deIso(fecha));
       ofrecerDeshacer(function () { aplicarFecha(id, previa); });
-      elMsgFecha.textContent = "Fecha cambiada al " + deIso(fecha).toLocaleDateString("es", { day: "numeric", month: "long", year: "numeric" }) + ".";
+      elMsgFecha.textContent = "Fecha cambiada al " + deIso(fecha).toLocaleDateString("es", { day: "numeric", month: "long", year: "numeric" }) + "." + NOTA_SYNC;
     } else {
-      elMsgFecha.textContent = "Fecha quitada: la idea ya no aparece en el calendario.";
+      elMsgFecha.textContent = "Fecha quitada: la idea ya no aparece en el calendario." + NOTA_SYNC;
       ofrecerDeshacer(function () { aplicarFecha(id, previa); });
     }
     render();
@@ -764,7 +773,7 @@ elDetalle.appendChild(el("h3", "", titulo.charAt(0).toUpperCase() + titulo.slice
     ofrecerDeshacer(null);
     var r = window.BT.almacen.guardarFecha(id, dia);
     if (!r.ok) { elMsgFecha.textContent = r.mensaje; render(); return; }
-    elMsgFecha.textContent = "Idea añadida al " + deIso(dia).toLocaleDateString("es", { day: "numeric", month: "long", year: "numeric" }) + ".";
+    elMsgFecha.textContent = "Idea añadida al " + deIso(dia).toLocaleDateString("es", { day: "numeric", month: "long", year: "numeric" }) + "." + NOTA_SYNC;
     ofrecerDeshacer(function () {
       var q = window.BT.almacen.guardarFecha(id, "");
       elMsgFecha.textContent = q.ok ? "Fecha quitada: la idea vuelve a estar sin fecha." : q.mensaje;

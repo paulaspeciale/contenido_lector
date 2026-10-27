@@ -178,7 +178,7 @@ button.primario {
   font-weight: 600;
 }
 
-input[type="search"], input[type="text"], input[type="date"], select, textarea {
+input[type="search"], input[type="text"], input[type="date"], input[type="number"], select, textarea {
   display: block;
   width: 100%;
   min-height: 2.75rem;
@@ -390,7 +390,7 @@ button {
 
 button.primario { background: var(--acento); }
 
-input[type="search"], input[type="text"], input[type="date"], select, textarea {
+input[type="search"], input[type="text"], input[type="date"], input[type="number"], select, textarea {
   border-radius: .15rem;
   border-color: var(--borde);
   background: var(--superficie);

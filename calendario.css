@@ -212,3 +212,14 @@
 .aviso-resp { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .5rem .75rem; margin-top: .6rem; padding: .6rem .8rem; border: 1px dashed var(--aviso); color: var(--texto); }
 
 .aviso-resp button { min-height: 2.5rem; padding: .3rem .8rem; }
+
+/* ---------- Impresión ---------- */
+@media print {
+  .cal-nav button, .botones.centrado, #leyenda .check, #msg-fecha-wrap,
+  #ayuda-datos, .aviso-resp, .det-fecha, .det-anadir, .det-evento-nuevo,
+  .btn-quitar, .btn-venc, .meta-semanal input { display: none !important; }
+  .dia { min-height: 4.5rem; break-inside: avoid; }
+  .cal-grid .ev, .cal-grid .mas { display: block; }
+  .puntos { display: none; }
+  #detalle { break-before: page; }
+}
