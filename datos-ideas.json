@@ -1,0 +1,499 @@
+{
+ "version": 1,
+ "secciones": [
+  {
+   "titulo": "1. PLANTILLAS \"UN LIBRO QUE...\" Y FAVORITOS (10)",
+   "ideas": [
+    {
+     "id": "1",
+     "texto": "★ Un libro que... me hizo reír / me hizo llorar / me enfadó / me hizo mejor persona / me desveló toda la noche / me cambió la vida [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "2",
+     "texto": "★ Un libro que... no puedo vivir sin él / desearía volver a leer por primera vez / me hizo enamorarme del protagonista / recomendaría sin dudar [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "3",
+     "texto": "★ Un libro que... me gustaría vivir en él / me recomendaron y yo recomendaría / me hizo enamorarme del interés amoroso / me hace identificarme demasiado con la protagonista / no puedo creer cómo terminó [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "4",
+     "texto": "★ Mis favoritos, edición libros: libro favorito, serie favorita, mejor adaptación al cine, libro que leí de una sentada, mayor crush literario y de quién me encanta recibir recomendaciones [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "5",
+     "texto": "★ Mi top 5 de libros: el favorito, el que me marcó, el que releí, el que no me gustó y el que recomiendo [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "6",
+     "texto": "★ Mi top 5, versión emocional: lo amé / me marcó / lo odié / lo releí / lo recomiendo [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "7",
+     "texto": "★ Sobre mí para amantes de los libros: autor favorito, libro favorito, serie favorita, el que quiero ver en película, lugar favorito para leer y mejor regalo literario [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "8",
+     "texto": "★ Favoritos de confort: libro, película, serie, canción y personaje de confort [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "9",
+     "texto": "★ Una canción que me recuerda a mi libro favorito (y por qué) [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "10",
+     "texto": "★ Mi libro de confort para un mal día y por qué [Reel]",
+     "formato": "Reel"
+    }
+   ]
+  },
+  {
+   "titulo": "2. PRESÉNTATE: ASÍ SOY COMO LECTORA (11)",
+   "ideas": [
+    {
+     "id": "11",
+     "texto": "◆ Conoce a la bookstagrammer: nombre, qué leo, géneros favoritos y qué me enamoró de los libros [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "12",
+     "texto": "Cómo me hice lectora: el primer libro que me enganchó [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "13",
+     "texto": "Mi rincón de lectura: dónde, cuándo y con qué leo [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "14",
+     "texto": "Mi ritual de lectura: bebida, música, silencio o ruido, papel, ebook o audiolibro [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "15",
+     "texto": "Mi lore lector: los libros que explican quién soy hoy [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "16",
+     "texto": "◆ Último–ahora–siguiente: el último libro que leí, el que leo y el que viene después [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "17",
+     "texto": "◆ Mi taza y mi lectura actual (#coffeeandcurrentlyreading) [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "18",
+     "texto": "◆ Mi resumen del mes: lecturas, estadísticas y libro favorito del mes [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "19",
+     "texto": "Cuántos libros tengo sin leer y cuál leeré primero [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "20",
+     "texto": "Mi biblioteca: cómo la organizo (por color, género, autor o sin orden) [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "21",
+     "texto": "◆ Tour de mi estantería: 5 libros que dicen quién soy [Reel]",
+     "formato": "Reel"
+    }
+   ]
+  },
+  {
+   "titulo": "3. GUSTOS Y PERSONALIDAD (12)",
+   "ideas": [
+    {
+     "id": "22",
+     "texto": "◆ Mis tropes favoritos y los que no soporto [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "23",
+     "texto": "Green flags y red flags en un libro [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "24",
+     "texto": "Mi crush literario (novio o novia de libro) y por qué [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "25",
+     "texto": "Mi personaje secundario favorito [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "26",
+     "texto": "3 libros que me describen mejor que yo misma [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "27",
+     "texto": "Mi opinión impopular sobre un libro muy querido [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "28",
+     "texto": "Mi género de confort vs. el que está fuera de mi zona de confort [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "29",
+     "texto": "Libros según mi estado de ánimo: para reír, para llorar, para desconectar [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "30",
+     "texto": "Mis autores de compra automática [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "31",
+     "texto": "Mi libro favorito descrito solo con emojis (¡adivinen cuál es!) [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "32",
+     "texto": "Si mi vida fuera una novela: género y título [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "33",
+     "texto": "Libros que mi yo de hace 5 años no creería que leo [Carrusel]",
+     "formato": "Carrusel"
+    }
+   ]
+  },
+  {
+   "titulo": "4. REACCIONES Y EMOCIONES (10)",
+   "ideas": [
+    {
+     "id": "34",
+     "texto": "◆ Reacción en vivo al terminar un libro [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "35",
+     "texto": "El final que todavía no supero (sin spoilers) [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "36",
+     "texto": "◆ POV: te quedas leyendo hasta las 2 a.m. [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "37",
+     "texto": "Ranking de libros que me hicieron llorar, con escala de pañuelos [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "38",
+     "texto": "◆ Reto: leer un libro en un día (y cómo me fue) [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "39",
+     "texto": "◆ Dilema de un personaje: ¿debería perdonar? Que decidan los comentarios [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "40",
+     "texto": "Libros que pensé que odiaría y terminé amando [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "41",
+     "texto": "Libros que me decepcionaron (sin spoilers) [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "42",
+     "texto": "Lecturas de BookTok: ¿merecen la fama? [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "43",
+     "texto": "La frase de un libro que me destrozó [Post]",
+     "formato": "Post"
+    }
+   ]
+  },
+  {
+   "titulo": "5. ESTÉTICA PARA BOOKSTAGRAM (10)",
+   "ideas": [
+    {
+     "id": "44",
+     "texto": "◆ Un libro + un outfit que combine con su portada [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "45",
+     "texto": "◆ Un libro + la comida o bebida que aparece en la historia [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "46",
+     "texto": "◆ Un libro + una foto de un lugar que me recuerda a la historia [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "47",
+     "texto": "Mi estantería ordenada por colores [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "48",
+     "texto": "◆ Rincón de lectura acogedor: manta, café y luz cálida [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "49",
+     "texto": "◆ La pila de TBR del mes [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "50",
+     "texto": "◆ Reto de portadas: cinco libros del mismo color [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "51",
+     "texto": "Mi compañero de lectura (mascota o planta) [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "52",
+     "texto": "Mis marcapáginas y merchandising literario favoritos [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "53",
+     "texto": "El regalo literario ideal [Post]",
+     "formato": "Post"
+    }
+   ]
+  },
+  {
+   "titulo": "6. PARA INTERACTUAR CON LA COMUNIDAD (10)",
+   "ideas": [
+    {
+     "id": "54",
+     "texto": "◆ Contesto la plantilla y dejo una en blanco en la última slide para que otros la usen [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "55",
+     "texto": "◆ Book tag: contesto las preguntas y etiqueto a otros bookstagrammers [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "56",
+     "texto": "◆ \"Life in Books\" tag: contar mi vida con títulos de libros [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "57",
+     "texto": "◆ Mid-Year Freak Out Tag: mejores y peores lecturas de mitad de año [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "58",
+     "texto": "Pregúntame lo que quieras sobre libros (caja de preguntas) [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "59",
+     "texto": "Recomiéndame un libro a partir de estos 3 que amé [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "60",
+     "texto": "Encuesta: ¿cuál de estos dos libros leo primero? [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "61",
+     "texto": "Adivina el libro por los emojis o por una frase [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "62",
+     "texto": "Esto o aquello lector: papel o ebook, noche o mañana, saga o libro único [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "63",
+     "texto": "◆ Mini reseña con puntuación y una frase gancho [Post]",
+     "formato": "Post"
+    }
+   ]
+  },
+  {
+   "titulo": "7. RECOMENDACIONES CON TU SELLO PERSONAL (6)",
+   "ideas": [
+    {
+     "id": "64",
+     "texto": "Si te gustó este libro, lee este otro [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "65",
+     "texto": "Joyas escondidas que nadie menciona [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "66",
+     "texto": "Libros para cada estación del año [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "67",
+     "texto": "Libros que regalaría a cada tipo de persona [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "68",
+     "texto": "◆ Tropes y vibes: título, 3 tropes y una frase gancho en texto sobre el video (por ejemplo, \"enemies to lovers, slow burn\") [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "69",
+     "texto": "Libros que no puedo recomendar (y por qué) [Reel]",
+     "formato": "Reel"
+    }
+   ]
+  },
+  {
+   "titulo": "8. RETOS, RANKINGS Y TENDENCIAS (21)",
+   "ideas": [
+    {
+     "id": "70",
+     "texto": "★ Mi guía de picante: cómo califico el spice de los libros del 🌶️ al 🌶️🌶️🌶️🌶️🌶️ con un ejemplo por nivel [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "71",
+     "texto": "★ Mi cementerio de DNF: los libros que abandoné y la razón de cada uno [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "72",
+     "texto": "★ Tier list de mi TBR: de \"lo leo ya\" a \"quizá nunca\" [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "73",
+     "texto": "★ Cómo califico los libros: mi sistema de estrellas explicado con ejemplos [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "74",
+     "texto": "★ Diccionario bookish: siglas y tropes explicados (TBR, DNF, ARC, enemies to lovers, slow burn) [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "75",
+     "texto": "★ Isla desierta: los 3 libros que me llevaría y por qué [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "76",
+     "texto": "★ Juzgo un libro por su portada: elijo mi próxima lectura sin leer la sinopsis [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "77",
+     "texto": "★ Abecedario bookish: una letra, un libro (A–Z de mis lecturas) [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "78",
+     "texto": "★ Cita a ciegas con un libro: elijo mi lectura con los ojos cerrados o envuelta en papel [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "79",
+     "texto": "★ Recreo una portada de libro con objetos de mi casa [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "80",
+     "texto": "★ Árbol de libros navideño: apilo mis libros para hacer un árbol (ideal para diciembre) [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "81",
+     "texto": "★ Un autor o autora con quien me gustaría ser amiga y qué le preguntaría [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "82",
+     "texto": "★ Placer culpable: el libro que me da vergüenza admitir que disfruté [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "83",
+     "texto": "◆ Del libro a la pantalla: próximas adaptaciones, ¿leo primero o veo primero? [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "84",
+     "texto": "◆ Anotando mi libro: mis subrayados, pestañas de colores y notas al margen [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "85",
+     "texto": "◆ Rescato del backlist: un libro de hace años que BookTok debería redescubrir [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "86",
+     "texto": "◆ Bingo de tendencias del año: marco cuáles leí (romantasy, romance deportivo, ciencia ficción, horror) [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "87",
+     "texto": "◆ Joyas en español: autoras y autores hispanohablantes que debes leer (#BookTokEspañol) [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "88",
+     "texto": "◆ ¿Qué llevo en mi bolso lector? Ebook, marcapáginas, luz de lectura y snacks [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "89",
+     "texto": "◆ ¿Leer o coleccionar? Libros que compré por la edición, el canto pintado o la portada [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "90",
+     "texto": "◆ Mi balance de compras vs. lecturas: cuántos libros compré este año y cuántos leí (con reto \"no compro más\") [Reel]",
+     "formato": "Reel"
+    }
+   ]
+  },
+  {
+   "titulo": "9. MIS IDEAS",
+   "ideas": []
+  }
+ ]
+}

@@ -1,0 +1,13 @@
+{
+ "version": 1,
+ "titulo": "Book Bingo 2027",
+ "tamano": 5,
+ "libre": "Free Space",
+ "retos": [
+  "Re-Read", "Dual POV", "New Author", "Sports Romance", "Buddy Read",
+  "Over 500 Pages", "Judge a Book by Cover", "Enemies to Lovers", "Slow Burn", "Standalone",
+  "Romantasy", "Debut Novel", "Book Hangover", "Comfort Read", "Hidden Gem",
+  "Found Family", "Plot Twist", "Series Starter", "Book Club Pick", "Cliffhanger",
+  "Hardcover", "Audiobook", "Translated Book", "Adapted to Screen"
+ ]
+}

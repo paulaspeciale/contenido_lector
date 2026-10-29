@@ -130,10 +130,22 @@
 <footer>
   <p>&copy; Diseñado e ideado por Paula Speciale, con la ayuda de Claude</p>
 </footer>
-<script src="datos-ideas.js"></script>
+<script src="datos.js" data-usa="ideas"></script>
 <script src="almacen.js"></script>
 <script>
-(function () {
+(function (listo) {
+  if (!listo) {
+    var aviso = document.createElement("p");
+    aviso.setAttribute("role", "alert");
+    aviso.className = "vacio-msg";
+    aviso.textContent = "No se pudieron cargar los datos: falta datos.js (o datos-ideas.json). Sube todos los archivos a la misma carpeta y abre la página desde un servidor, no con file://.";
+    var m = document.querySelector("main");
+    if (m) m.insertBefore(aviso, m.firstChild);
+  }
+  (listo || Promise.resolve()).then(arrancar, arrancar);
+})(window.BT && window.BT.listo);
+
+function arrancar() {
   "use strict";
   var KEY = "ideas_post_90_v1";
   var NOTA_SYNC = " Se sincroniza con tus otros dispositivos al abrir Ideas.";
@@ -971,7 +983,7 @@ elDetalle.appendChild(el("h3", "", titulo.charAt(0).toUpperCase() + titulo.slice
   window.addEventListener("scroll", espiarToc, { passive: true });
   render();
   espiarToc();
-})();
+}
 </script>
 </body>
 </html>

@@ -28,7 +28,8 @@ Archivos compartidos:
 - `theme.js`: botón de tema claro / oscuro.
 - `fonts/`: carpeta con `courier-prime-latin-400-normal.woff2` y `courier-prime-latin-700-normal.woff2` (los carga `base.css`; sin ella se usa Courier New).
 - `reseniabooktook.txt`: nota de trabajo con los cuatro pilares de contenido; no forma parte de la web.
-- `datos-ideas.js`: las 90 ideas base y sus secciones (`window.BT.SECCIONES`).
+- `datos-ideas.json`: las 90 ideas base y sus secciones. `datos-bingo.json`: los retos del Book Bingo. Ninguno se edita desde el navegador.
+- `datos.js`: carga esos JSON con `fetch` y los deja en `window.BT.SECCIONES` y `window.BT.BINGO` (`BT.cargarIdeas()` y `BT.cargarBingo()` devuelven una promesa). Hace falta un hosting o servidor local: con doble clic (`file://`) los JSON no cargan.
 - `app.js`: lógica de la página de Ideas.
 - `almacen.js`: escritura segura de datos de Ideas desde otras páginas (`guardarFecha`); lo usa el Calendario.
 
@@ -38,7 +39,7 @@ Archivos compartidos:
 
 ### Ideas de post (`ideas_post_90.html` + `app.js`)
 
-La lista base de 90 ideas vive en `datos-ideas.js` (`window.BT.SECCIONES`), organizada en 8 secciones más una novena, «Mis ideas», para las tuyas. Cada idea tiene un formato sugerido (Post, Carrusel o Reel) y una marca de origen: ★ plantillas clásicas, ◆ tendencias.
+La lista base de 90 ideas vive en `datos-ideas.json` (se carga con `datos.js` en `window.BT.SECCIONES`), organizada en 8 secciones más una novena, «Mis ideas», para las tuyas. Cada idea tiene un formato sugerido (Post, Carrusel o Reel) y una marca de origen: ★ plantillas clásicas, ◆ tendencias.
 
 Por cada idea puedes:
 
@@ -65,7 +66,7 @@ Herramientas generales:
 
 ### Calendario (`calendario_ideas_90.html`)
 
-Lee los datos de Ideas (`localStorage`) y `datos-ideas.js`, y dibuja un calendario mensual (lunes a domingo). Escribe en Ideas solo la fecha, mediante `almacen.js`.
+Lee los datos de Ideas (`localStorage`) y `datos-ideas.json`, y dibuja un calendario mensual (lunes a domingo). Escribe en Ideas solo la fecha, mediante `almacen.js`.
 
 - **Detalle del día**: va justo bajo la rejilla; en móvil, al tocar un día la página baja hasta él. Cada publicación tiene campo de fecha, «Quitar fecha» y, si está vencida, «Mover a hoy» y «+7 días». Cambiar o quitar una fecha, o borrar un evento, ofrece un botón **Deshacer**.
 - **Teclado**: las flechas mueven el día seleccionado (un solo día entra en el orden de tabulación). Los cambios de día y de mes se anuncian con un aviso breve para lectores de pantalla.
@@ -185,14 +186,14 @@ Estética de **librería antigua (cottagecore)**: papel con grano generado con u
 
 ## Cómo usarla
 
-1. Deja todos los archivos juntos en la misma carpeta, junto con la subcarpeta `fonts/` (`ideas_post_90.html` necesita `base.css`, `ideas.css`, `toc.css`, `theme.js`, `datos-ideas.js` y `app.js`; `calendario_ideas_90.html` necesita `base.css`, `calendario.css`, `toc.css`, `theme.js`, `datos-ideas.js` y `almacen.js`; `glosario.html` necesita `base.css`, `glosario.css`, `toc.css`, `theme.js` y `datos-glosario.js`).
+1. Deja todos los archivos juntos en la misma carpeta, junto con la subcarpeta `fonts/` (`ideas_post_90.html` necesita `base.css`, `ideas.css`, `toc.css`, `theme.js`, `datos.js`, `datos-ideas.json` y `app.js`; `calendario_ideas_90.html` necesita `base.css`, `calendario.css`, `toc.css`, `theme.js`, `datos.js`, `datos-ideas.json` y `almacen.js`; `glosario.html` necesita `base.css`, `glosario.css`, `toc.css`, `theme.js` y `datos-glosario.js`).
 2. Abre `index.html` en el navegador, o sube la carpeta a cualquier hosting estático.
 3. No requiere instalación ni servidor.
 
 ## Cómo modificarla
 
-- **Agregar o cambiar ideas base**: edita `datos-ideas.js`. Cada idea necesita `id`, `texto` y `formato`. Los `id` son lo que usa el progreso guardado: **no los renumeres ni los reutilices**; añade las nuevas al final (91, 92…) y no cambies el orden de las secciones.
-- **Una sola fuente de ideas**: tanto Ideas como Calendario leen `datos-ideas.js`, así que no hay nada más que actualizar.
+- **Agregar o cambiar ideas base**: edita `datos-ideas.json`. Cada idea necesita `id`, `texto` y `formato`. Los `id` son lo que usa el progreso guardado: **no los renumeres ni los reutilices**; añade las nuevas al final (91, 92…) y no cambies el orden de las secciones.
+- **Una sola fuente de ideas**: tanto Ideas como Calendario leen `datos-ideas.json`, así que no hay nada más que actualizar.
 - **Agregar términos al glosario**: edita `datos-glosario.js`. Dentro de la categoría que corresponda, añade una fila `[inglés, español, explicación, imprescindible, ejemplo]`: la explicación y el ejemplo pueden ir vacíos (`""`) y el cuarto valor es `1` para marcar un imprescindible. El `id` (el ancla) se genera solo a partir del inglés. Para que una fila con varios términos separados por « · » se divida en fichas, añade su texto inglés a la lista `SPLIT`. Una categoría nueva se añade a la lista `C` y a un bloque de `GLOSARIO_GRUPOS`; los imprescindibles de acceso rápido están en `GLOSARIO_DESTACADOS` y los enlaces «Ver también» en `GLOSARIO_VER_TAMBIEN`. `glosario.html` no hay que tocarlo: lo construye todo desde los datos.
 - **Cambiar estados o pasos de producción**: modifica `ESTADOS` y `PASOS` en `app.js` y los colores correspondientes en `base.css`.
 - **Colores**: están en las variables de `:root` al inicio de `base.css`.

@@ -1,22 +1,17 @@
 (function () {
   "use strict";
 
-  // Si app.js se carga sin datos-ideas.js, lo pide él mismo (desde la misma carpeta que app.js)
-  // y arranca cuando llega. Solo si ese archivo tampoco se puede cargar sale el cartel rojo.
+  // Los datos los carga datos.js (que va ANTES de este archivo): se espera a que terminen.
+  // Si fallan, iniciar() muestra el cartel rojo.
   function datosListos() {
     return !!(window.BT && window.BT.SECCIONES && window.BT.SECCIONES.length);
   }
   if (datosListos()) {
     iniciar();
+  } else if (window.BT && window.BT.listo) {
+    window.BT.listo.then(iniciar, iniciar);
   } else {
-    const actual = document.currentScript;
-    let srcDatos = "datos-ideas.js";
-    if (actual && actual.src) srcDatos = actual.src.replace(/[^\/?#]*(?:[?#].*)?$/, "datos-ideas.js");
-    const tag = document.createElement("script");
-    tag.src = srcDatos;
-    tag.onload = iniciar;
-    tag.onerror = iniciar;   // si falla, iniciar() muestra el cartel rojo como antes
-    document.head.appendChild(tag);
+    iniciar();
   }
 
   function iniciar() {
@@ -34,14 +29,14 @@
     "idea-seccion-nueva", "idea-seccion-nueva-campo"
   ];
   const faltan = REQUERIDOS.filter(function (id) { return !document.getElementById(id); });
-  if (!(window.BT && window.BT.SECCIONES && window.BT.SECCIONES.length)) faltan.unshift("datos-ideas.js");
+  if (!(window.BT && window.BT.SECCIONES && window.BT.SECCIONES.length)) faltan.unshift("datos-ideas.json" + (window.BT && window.BT.errorDatos ? " (" + window.BT.errorDatos + ")" : ""));
   if (faltan.length) {
     const aviso0 = document.createElement("p");
     aviso0.setAttribute("role", "alert");
     aviso0.style.cssText = "padding:1rem;margin:1rem 0;border:2px solid #c0392b;font:1rem/1.5 system-ui,sans-serif";
     aviso0.textContent = "No se pudo cargar la lista: faltan archivos o están desactualizados (falta " +
       faltan.slice(0, 3).join(", ") + (faltan.length > 3 ? " y " + (faltan.length - 3) + " más" : "") +
-      "). Descarga de nuevo los archivos (ideas_post_90.html, datos-ideas.js, base.css, ideas.css, toc.css y app.js) y déjalos juntos en la misma carpeta, " +
+      "). Abre la página desde un servidor (no con file://) y descarga de nuevo los archivos (ideas_post_90.html, datos.js, datos-ideas.json, base.css, ideas.css, toc.css y app.js) y déjalos juntos en la misma carpeta, " +
       "sustituyendo los anteriores. Tu progreso guardado no se ha tocado.";
     const destino = document.getElementById("lista") || document.body;
     destino.insertBefore(aviso0, destino.firstChild);
