@@ -1,0 +1,75 @@
+/* bingo.css · Estilos de la página Bingo. Requiere base.css. */
+.bingo-resumen { margin-top: 1rem; text-align: center; }
+
+.bingo-estado { font: 400 1rem/1.4 var(--serif); }
+
+.bingo-estado.hay-bingo { color: var(--acento); font-weight: 700; }
+
+#bingo-prog { max-width: 20rem; margin: .6rem auto; }
+
+.bingo-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 3px;
+  margin-top: 1rem;
+  padding: 3px;
+  border: 2px solid var(--texto);
+  background: var(--texto);
+}
+
+.bingo-casilla {
+  position: relative;
+  display: grid;
+  place-content: center;
+  aspect-ratio: 1;
+  min-height: 0;
+  padding: .25rem;
+  border: 0;
+  border-radius: 0;
+  background: var(--superficie);
+  color: var(--texto);
+  font: 400 clamp(.64rem, 2.7vw, .95rem)/1.25 var(--serif);
+  letter-spacing: normal;
+  text-align: center;
+  text-transform: none;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
+.bingo-casilla:hover { background: color-mix(in srgb, var(--acento) 10%, var(--superficie)); }
+
+.bingo-casilla[aria-pressed="true"] {
+  background: var(--acento);
+  color: var(--sobre-acento);
+  font-weight: 600;
+}
+
+/* Sello ✓ en la esquina de las casillas marcadas */
+.bingo-casilla[aria-pressed="true"]::after {
+  content: "\2713\FE0E";
+  position: absolute;
+  top: .1rem;
+  right: .25rem;
+  font: 700 .85rem/1 var(--maquina);
+}
+
+.bingo-casilla.libre {
+  background: color-mix(in srgb, var(--oro) 28%, var(--superficie));
+  color: var(--texto);
+  font: 700 clamp(.64rem, 2.7vw, .95rem)/1.25 var(--maquina);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  cursor: default;
+}
+
+/* Casillas que forman una línea completa */
+.bingo-casilla.linea { box-shadow: inset 0 0 0 3px var(--oro); }
+
+.bingo-grid + .ayuda { margin-top: .75rem; text-align: center; }
+
+.bingo-acciones { margin-top: 1rem; }
+
+@media print {
+  .bingo-acciones, #bingo-prog { display: none !important; }
+  .bingo-casilla[aria-pressed="true"] { background: #ddd; color: #000; }
+}
