@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="description" content="Plantilla de reseña de 22 secciones, versión corta para TikTok y Reels, y guiones con ganchos para BookTok. Cópiala como texto o guárdala en PDF.">
+<meta name="description" content="Plantilla de reseña de 22 secciones, versión corta para TikTok y Reels, guiones con ganchos para BookTok y prompts para IA. Cópiala como texto o guárdala en PDF.">
 <meta name="theme-color" content="#e8e3df" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#353436" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%9A%3C/text%3E%3C/svg%3E">
@@ -16,13 +16,13 @@
 <meta property="og:locale" content="es_ES">
 <meta property="og:site_name" content="Contenido BookTok">
 <meta property="og:title" content="Plantilla de reseña de libros y guiones para Reels y TikTok">
-<meta property="og:description" content="Plantilla de reseña de 22 secciones, versión corta para TikTok y Reels, y guiones con ganchos para BookTok. Cópiala como texto o guárdala en PDF.">
+<meta property="og:description" content="Plantilla de reseña de 22 secciones, versión corta para TikTok y Reels, guiones con ganchos para BookTok y prompts para IA. Cópiala como texto o guárdala en PDF.">
 <meta property="og:url" content="https://TU-DOMINIO.com/resenia.html">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Plantilla de reseña de libros y guiones para Reels y TikTok">
-<meta name="twitter:description" content="Plantilla de reseña de 22 secciones, versión corta para TikTok y Reels, y guiones con ganchos para BookTok. Cópiala como texto o guárdala en PDF.">
+<meta name="twitter:description" content="Plantilla de reseña de 22 secciones, versión corta para TikTok y Reels, guiones con ganchos para BookTok y prompts para IA. Cópiala como texto o guárdala en PDF.">
 <link rel="preload" href="fonts/courier-prime-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebPage", "url": "https://TU-DOMINIO.com/resenia.html", "name": "Plantilla de reseña de libros y guiones para Reels y TikTok", "description": "Plantilla de reseña de 22 secciones, versión corta para TikTok y Reels, y guiones con ganchos para BookTok. Cópiala como texto o guárdala en PDF.", "inLanguage": "es"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://TU-DOMINIO.com/"}, {"@type": "ListItem", "position": 2, "name": "Reseñas", "item": "https://TU-DOMINIO.com/resenia.html"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebPage", "url": "https://TU-DOMINIO.com/resenia.html", "name": "Plantilla de reseña de libros y guiones para Reels y TikTok", "description": "Plantilla de reseña de 22 secciones, versión corta para TikTok y Reels, guiones con ganchos para BookTok y prompts para IA. Cópiala como texto o guárdala en PDF.", "inLanguage": "es"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://TU-DOMINIO.com/"}, {"@type": "ListItem", "position": 2, "name": "Reseñas", "item": "https://TU-DOMINIO.com/resenia.html"}]}]}</script>
 <link rel="stylesheet" href="base.css">
 <link rel="stylesheet" href="resenia.css">
 <script src="theme.js"></script>
@@ -46,6 +46,7 @@
 <button type="button" id="ver-completa" aria-pressed="true">Versión completa</button>
 <button type="button" id="ver-corta" aria-pressed="false">Versión corta (TikTok / Reel)</button>
 <button type="button" id="ver-guiones" aria-pressed="false">Guiones Reel / TikTok</button>
+<button type="button" id="ver-prompts" aria-pressed="false">Prompts para IA</button>
 </div>
 <div class="botones centrado">
 <button type="button" id="copiar-plantilla">Copiar plantilla</button>
@@ -420,6 +421,242 @@
 </ul>
 </section>
 </div>
+<div id="vista-prompts" hidden>
+<p class="intro">Prompts listos para pegar en Claude u otra IA. Rellena los corchetes [ ] con los datos de tu libro y envíalo. Cada prompt está plegado: ábrelo para leerlo o cópialo directamente con el botón.</p>
+<div class="botones centrado no-print">
+<button type="button" id="copiar-todos-prompts" class="primario">Copiar todos los prompts</button>
+</div>
+
+<section class="bloque">
+<h2><span class="n">1.</span> Cómo sacarles partido</h2>
+<ul>
+<li>Cuantos más apuntes propios incluyas (aunque estén desordenados), menos genérico será el resultado.</li>
+<li>Revisa siempre lo que devuelva la IA: puede inventar datos, escenas o citas. Los prompts le piden que no lo haga, pero conviene comprobarlo.</li>
+<li>Puedes encadenarlos: primero la ficha de personajes y la descripción del mundo, y luego pegar esos resultados como «mis notas» en la reseña larga.</li>
+<li>Cuida los spoilers: indica siempre si se permiten o no.</li>
+</ul>
+</section>
+
+<section class="bloque">
+<h2><span class="n">2.</span> Reseña corta (TikTok / Reel)</h2>
+<p>Cinco puntos para un video de 30 a 60 segundos, con gancho, veredicto, una sola llamada a la acción, caption y hashtags.</p>
+<div class="botones prompt-acciones no-print"><button type="button" class="btn-prompt primario">Copiar este prompt</button></div>
+<details class="guia prompt" data-titulo="Prompt 1: reseña corta (TikTok / Reel)">
+<summary>Ver el texto del prompt</summary>
+<div class="prompt-cuerpo">
+<pre class="prompt-texto">Actúa como una booktoker que escribe reseñas de libros en español, con tono cercano, emocional y natural, sin sonar a texto de IA.
+
+Escribe una reseña CORTA para un TikTok o Reel de 30 a 60 segundos sobre este libro:
+
+- Título: [título]
+- Autor/a: [autor]
+- Género y tropes: [por ejemplo: romantasy, enemies to lovers, slow burn]
+- Saga o autoconclusivo: [saga / autoconclusivo]
+- Mi calificación: [por ejemplo: 4 de 5]
+- Lo que más me gustó: [personajes / mundo / escritura / romance / ritmo, y un detalle concreto]
+- Lo que no me funcionó: [un punto concreto]
+- Content warnings: [temas sensibles, o "ninguno"]
+- Libro con el que lo comparo: [libro A]
+- ¿Leeré la continuación?: [sí / no / no aplica]
+- ¿Es ARC o regalo?: [sí / no]
+
+Estructura (cinco puntos, unos 10 segundos cada uno, una idea por punto):
+1. Gancho y calificación (0 a 3 s): una frase gancho que haga que se queden, con el título, el autor y mi nota. Debe servir también como texto en pantalla.
+2. De qué trata (sin spoilers): una o dos frases con el protagonista y el conflicto principal, más género, tropes y si es saga o autoconclusivo.
+3. Lo mejor: uno o dos aspectos, con una escena o detalle concreto que conquistó.
+4. Lo que no me funcionó: un solo punto concreto, y el aviso de content warnings si los hay.
+5. Veredicto y cierre: si lo recomiendo y a quién, la comparación "si te gustó [libro A], te gustará este", si leeré la continuación y UNA sola llamada a la acción (comentar, guardar, compartir o seguir).
+
+Reglas:
+- Cero spoilers.
+- Frases cortas, para decir en voz alta; marca con (texto en pantalla) lo que debe aparecer escrito.
+- Si es ARC o regalo, añade al final una línea para indicarlo en el caption.
+- Termina con un caption breve y 5 hashtags (incluye #BookTok y #BookTokEspañol).
+- No uses clichés vacíos como "una historia que no te dejará indiferente".</pre>
+</div>
+</details>
+</section>
+
+<section class="bloque">
+<h2><span class="n">3.</span> Reseña larga (completa, 22 secciones)</h2>
+<p>Sigue la estructura completa de la plantilla, de la información básica al veredicto y los extras. Funciona mejor si pegas tus apuntes en bruto.</p>
+<div class="botones prompt-acciones no-print"><button type="button" class="btn-prompt primario">Copiar este prompt</button></div>
+<details class="guia prompt" data-titulo="Prompt 2: reseña larga (completa, 22 secciones)">
+<summary>Ver el texto del prompt</summary>
+<div class="prompt-cuerpo">
+<pre class="prompt-texto">Actúa como una reseñista literaria con criterio, que escribe en español con voz propia, cercana y honesta. Una buena reseña va más allá de "me gustó / no me gustó": ayuda a la audiencia a decidir si el libro es para ella y aporta una mirada crítica. Será para [Instagram / blog / YouTube / podcast].
+
+Escribe una reseña COMPLETA siguiendo estas 22 secciones, con un encabezado numerado por sección. Si una sección no aplica (por ejemplo, sistema de magia o romance), omítela y dilo en una línea.
+
+Datos del libro:
+- Título: [título]
+- Autor/a: [autor]
+- Año: [año]
+- Género y subgénero: [género / subgénero]
+- Páginas: [número]
+- Saga o autoconclusivo: [saga / autoconclusivo]
+- Editorial (opcional): [editorial]
+- Calificación personal: [x de 5]
+- Mis notas y opiniones (en bruto, con lo que recuerdo del libro): [pega aquí tus apuntes]
+- Content warnings que detecté: [lista]
+- Notas por categoría (opcional): Personajes [x], Mundo [x], Romance [x], Escritura [x], Ritmo [x], Final [x], Originalidad [x]
+
+Estructura:
+1. Información básica: título, autor, año, género, subgénero, páginas, saga o autoconclusivo, público objetivo, editorial y calificación personal.
+2. Sinopsis (sin spoilers): de qué trata, quién es el protagonista, el conflicto principal y qué hace interesante la historia. Debe despertar interés sin revelar giros.
+3. Primera impresión: qué expectativas tenía, por qué lo elegí y si las cumplió.
+4. Personajes: protagonista (desarrollo, personalidad, evolución, motivaciones), secundarios (relevancia, profundidad, relaciones) y antagonista (objetivos, construcción, credibilidad). ¿Se sienten reales, cambian, son memorables?
+5. Mundo (worldbuilding): sistema político, historia, geografía, culturas, religiones, magia, tecnología y reglas. ¿Es coherente, está bien explicado, se siente vivo?
+6. Sistema de magia (si existe): reglas, límites, originalidad, consistencia e impacto en la historia.
+7. Trama: estructura, conflicto, tensión, giros y resolución. ¿Hay partes lentas, mantiene el interés, funciona el final?
+8. Ritmo: inicio, desarrollo, clímax y final; clasifícalo como lento, equilibrado o rápido.
+9. Escritura: estilo, vocabulario, descripciones, diálogos, narración y fluidez. ¿Es fácil de leer, se vuelve repetitiva, tiene buena prosa?
+10. Narrador: primera o tercera persona, múltiples POV, narrador poco fiable, y si el tipo de narrador beneficia a la historia.
+11. Temas: qué explora el libro (amor, pérdida, duelo, amistad, guerra, salud mental, familia, poder, libertad, identidad…).
+12. Romance (si aplica): química, desarrollo, naturalidad, clichés, evolución, toxicidad y tensión romántica.
+13. Emociones: qué me hizo sentir (ansiedad, alegría, tristeza, sorpresa, enojo, esperanza).
+14. Aspectos positivos: concretos, con ejemplos.
+15. Aspectos negativos: sé concreta y explica exactamente qué no funcionó (romance apresurado, exceso de exposición, final débil, personajes planos, ritmo lento, deus ex machina…).
+16. Citas memorables (sin spoilers): una o dos frases que transmitan el estilo de la autora o el autor. Solo usa citas que yo te dé; si no te doy ninguna, deja un espacio para completar y no inventes citas.
+17. Comparaciones: con otros libros o autores, para contextualizar la experiencia (por ejemplo: "si disfrutaste X, probablemente te guste este").
+18. Público recomendado: para quién es y para quién no.
+19. Advertencias (content warnings): temas sensibles sin spoilers.
+20. Valoración final: tabla con nota de 1 a 5 estrellas por aspecto (Personajes, Mundo, Romance, Escritura, Ritmo, Final, Originalidad) y la nota global.
+21. Veredicto: ¿lo recomiendo?, ¿a quién?, ¿lo volvería a leer?, ¿leeré la continuación?
+22. Extras (opcional): curiosidades del autor o de la creación del libro, adaptaciones, premios, contexto histórico o cultural y diferencias entre edición original y traducciones. Incluye solo lo que yo te haya dado o lo que sepas con seguridad; si no estás segura de un dato, márcalo como "por verificar".
+
+Reglas:
+- Cero spoilers en todo el texto.
+- Tono personal y honesto, no de ficha técnica; evita clichés vacíos.
+- Basa tus juicios en mis notas; no inventes escenas, personajes ni datos que yo no haya mencionado.
+- Si me falta información para alguna sección, déjala con una pregunta breve para que la complete en lugar de rellenar con generalidades.
+- Si el libro es un ARC o regalo, indícalo al inicio.</pre>
+</div>
+</details>
+</section>
+
+<section class="bloque">
+<h2><span class="n">4.</span> Guion de Reel / TikTok</h2>
+<p>Guion con tiempos para reseña de 60 o 30 s, POV, reacción en vivo o tier list, con tres ganchos, dos cierres, caption y lista de «Antes de publicar».</p>
+<div class="botones prompt-acciones no-print"><button type="button" class="btn-prompt primario">Copiar este prompt</button></div>
+<details class="guia prompt" data-titulo="Prompt 3: guion de Reel / TikTok">
+<summary>Ver el texto del prompt</summary>
+<div class="prompt-cuerpo">
+<pre class="prompt-texto">Actúa como una booktoker que escribe guiones de video corto en español, con tono cercano y natural, sin sonar a texto de IA.
+
+Escribe un guion con tiempos para un Reel o TikTok sobre este libro:
+
+- Título: [título]
+- Autor/a: [autor]
+- Género y tropes: [por ejemplo: romantasy, enemies to lovers]
+- Mi calificación: [x de 5]
+- Lo mejor: [aspecto y detalle concreto]
+- Lo que no me funcionó: [un punto concreto]
+- Content warnings: [temas, o "ninguno"]
+- Libro con el que lo comparo: [libro A]
+- ¿Leeré la continuación?: [sí / no / no aplica]
+- ¿Es ARC o regalo?: [sí / no]
+- Formato del video: [reseña de 60 s / reseña de 30 s / POV / reacción en vivo / tier list]
+- Tipo de gancho preferido: [intriga / comparación / opinión impopular / emoción / pregunta directa]
+
+Estructura según el formato:
+- Reseña de 60 s: gancho (0-3 s), de qué trata (3-12 s), lo mejor (12-27 s), lo que no me funcionó (27-40 s), veredicto (40-52 s) y cierre con llamada a la acción (52-60 s). Si es de 30 s, divide los tiempos a la mitad después del gancho.
+- POV (10-20 s): situación "POV: [situación de lector]" (0-3 s), imagen o escena (3-10 s), giro "Y entonces..." (10-15 s) y cierre con título, autor y calificación (15-20 s). Casi sin hablar, con texto en pantalla.
+- Reacción en vivo (30-60 s): gancho (0-3 s), contexto sin revelar nada (3-10 s), tres momentos de reacción con cortes (10-35 s), escala emocional con emojis o pañuelos (35-50 s) y cierre con veredicto parcial y pregunta (50-60 s).
+- Tier list (45-60 s): gancho (0-3 s), un libro cada 5 a 8 s con título, nivel (S, A, B, C, D) y una frase de motivo (3-45 s), y cierre pidiendo que discrepen en comentarios (45-60 s).
+
+Entrégame:
+1. Tres opciones de gancho (0 a 3 s), cada una también como texto en pantalla.
+2. El guion completo con tiempos, frases cortas para decir en voz alta y marcas (texto en pantalla) donde corresponda.
+3. Dos opciones de cierre con UNA sola llamada a la acción (comentar, guardar, compartir o seguir).
+4. Un caption breve y 5 hashtags (incluye #BookTok y #BookTokEspañol).
+5. Una lista final "Antes de publicar" con estos puntos, marcando cuáles cumple el guion: gancho en los primeros 3 s y escrito en pantalla, subtítulos, sin spoilers, content warnings en el video o en el primer comentario, calificación y título visibles, aviso si es ARC o regalo, una sola llamada a la acción.
+
+Reglas: cero spoilers, nada de clichés vacíos, y no inventes datos del libro que yo no te haya dado.</pre>
+</div>
+</details>
+</section>
+
+<section class="bloque">
+<h2><span class="n">5.</span> Ficha de personaje</h2>
+<p>Personalidad, motivaciones, evolución, relaciones, etiquetas y veredicto de un personaje, a partir de tus notas y sin inventar nada.</p>
+<div class="botones prompt-acciones no-print"><button type="button" class="btn-prompt primario">Copiar este prompt</button></div>
+<details class="guia prompt" data-titulo="Prompt 4: ficha de personaje">
+<summary>Ver el texto del prompt</summary>
+<div class="prompt-cuerpo">
+<pre class="prompt-texto">Actúa como una lectora crítica que analiza personajes con criterio y los explica en español de forma cercana y clara.
+
+Crea una ficha de personaje a partir de mis notas:
+
+- Libro: [título] de [autor]
+- Personaje: [nombre]
+- Rol: [protagonista / secundario / antagonista / interés romántico]
+- Mis notas en bruto (lo que recuerdo, escenas que me marcaron, lo que sentí): [pega aquí tus apuntes]
+- ¿Hay spoilers permitidos?: [no, ficha sin spoilers / sí, ficha con spoilers marcada como tal]
+
+Estructura de la ficha:
+1. Datos básicos: nombre, rol, edad, especie o condición, y lugar que ocupa en la historia.
+2. Personalidad: tres o cuatro rasgos definitorios, con un ejemplo concreto de cada uno.
+3. Motivaciones: qué quiere, qué teme y qué lo mueve.
+4. Evolución: cómo cambia a lo largo de la historia (si es sin spoilers, descríbelo en general sin revelar giros).
+5. Relaciones: vínculos clave con otros personajes y qué aportan.
+6. Si es protagonista: desarrollo y arco (¿se redime, sana, se vuelve más oscuro?).
+7. Si es secundario: relevancia, profundidad y por qué importa o no.
+8. Si es antagonista: objetivos, cómo está construido y qué tan creíble es.
+9. Etiquetas: arquetipo o tropes (por ejemplo: morally grey, cinnamon roll, antihero, grumpy, golden retriever), y si hay red flags o green flags.
+10. Veredicto sobre el personaje, respondiendo con honestidad: ¿se siente real?, ¿cambia durante la historia?, ¿es memorable?
+11. Calificación del personaje de 1 a 5 estrellas con una frase que la justifique.
+12. Un resumen de una línea, pensado para un carrusel o un pie de foto.
+
+Reglas:
+- Basa todo en mis notas; no inventes escenas, rasgos ni relaciones que yo no haya mencionado.
+- Si falta información para un apartado, déjalo con una pregunta breve para que la complete en lugar de rellenar con generalidades.
+- Si no se permiten spoilers, no reveles giros, muertes ni finales.
+- Tono personal y honesto, no de ficha técnica fría.</pre>
+</div>
+</details>
+</section>
+
+<section class="bloque">
+<h2><span class="n">6.</span> Descripción del mundo</h2>
+<p>Política, historia, geografía, culturas, creencias, reglas y sistema de magia, con valoración del worldbuilding.</p>
+<div class="botones prompt-acciones no-print"><button type="button" class="btn-prompt primario">Copiar este prompt</button></div>
+<details class="guia prompt" data-titulo="Prompt 5: descripción del mundo (worldbuilding)">
+<summary>Ver el texto del prompt</summary>
+<div class="prompt-cuerpo">
+<pre class="prompt-texto">Actúa como una lectora crítica especializada en fantasía y ciencia ficción, que describe y valora mundos literarios en español con claridad y criterio.
+
+Escribe la descripción del mundo de este libro a partir de mis notas:
+
+- Libro: [título] de [autor]
+- Género: [fantasía / ciencia ficción / romantasy / otro]
+- Mis notas en bruto (lugares, reglas, cultura, política, lo que me llamó la atención): [pega aquí tus apuntes]
+- ¿Hay spoilers permitidos?: [no / sí, marcados como tal]
+- ¿Tiene sistema de magia?: [sí / no]
+
+Estructura:
+1. Visión general: cómo es el mundo en pocas frases y qué atmósfera tiene.
+2. Sistema político: quién gobierna, cómo se organiza el poder y qué conflictos genera.
+3. Historia: hechos del pasado que explican el presente.
+4. Geografía: regiones o lugares principales y cómo son.
+5. Culturas: pueblos o razas, costumbres y su relación entre sí.
+6. Religiones y creencias.
+7. Tecnología o nivel de desarrollo.
+8. Reglas del mundo: qué es posible y qué no.
+9. Sistema de magia (solo si existe): reglas, límites, originalidad, consistencia e impacto en la historia.
+10. Valoración del worldbuilding, respondiendo con honestidad: ¿es coherente?, ¿está bien explicado?, ¿se siente vivo?, ¿qué lo hace original o qué le faltó?
+11. Calificación del mundo de 1 a 5 estrellas con una frase que la justifique.
+12. Resumen de una línea, pensado para un carrusel o un pie de foto.
+
+Reglas:
+- Basa todo en mis notas; no inventes lugares, nombres, reglas ni hechos que yo no haya mencionado.
+- Si falta información para un apartado, déjalo con una pregunta breve o márcalo como "no aplica" en lugar de rellenar con generalidades.
+- Si no se permiten spoilers, no reveles secretos del mundo ni giros de la trama.
+- Evita los clichés vacíos y escribe con voz propia.</pre>
+</div>
+</details>
+</section>
+</div>
 </main>
 <footer>
   <p>&copy; Diseñado e ideado por Paula Speciale, con la ayuda de Claude</p>
@@ -430,15 +667,17 @@
   var completa = document.getElementById("vista-completa");
   var corta = document.getElementById("vista-corta");
   var guiones = document.getElementById("vista-guiones");
+  var prompts = document.getElementById("vista-prompts");
   var msg = document.getElementById("plantilla-msg");
-  var VISTAS = { completa: completa, corta: corta, guiones: guiones };
+  var VISTAS = { completa: completa, corta: corta, guiones: guiones, prompts: prompts };
   var BOTONES = {
     completa: document.getElementById("ver-completa"),
     corta: document.getElementById("ver-corta"),
-    guiones: document.getElementById("ver-guiones")
+    guiones: document.getElementById("ver-guiones"),
+    prompts: document.getElementById("ver-prompts")
   };
-  var TITULOS = { completa: "", corta: " (versión corta)", guiones: " (guiones Reel / TikTok)" };
-  var ETIQUETAS = { completa: "completa", corta: "corta", guiones: "de guiones" };
+  var TITULOS = { completa: "", corta: " (versión corta)", guiones: " (guiones Reel / TikTok)", prompts: " (prompts para IA)" };
+  var ETIQUETAS = { completa: "completa", corta: "corta", guiones: "de guiones", prompts: "de prompts" };
   var actual = "completa";
 
   function mostrar(cual) {
@@ -523,7 +762,28 @@
     });
   }
 
+  // Todos los prompts juntos, cada uno con su título, para pegarlos en un documento
+  function textoPrompts() {
+    var out = [];
+    Array.prototype.forEach.call(prompts.querySelectorAll("details.prompt"), function (d) {
+      var pre = d.querySelector(".prompt-texto");
+      if (!pre) return;
+      out.push("=== " + (d.getAttribute("data-titulo") || "Prompt") + " ===\n\n" + pre.textContent.trim());
+    });
+    return out.join("\n\n\n") + "\n";
+  }
+
+  function copiarTodosPrompts(boton) {
+    copiar(textoPrompts()).then(function (ok) {
+      msg.textContent = ok
+        ? "Los prompts se copiaron juntos, cada uno con su título. Pégalos en un documento y usa el que necesites."
+        : "No se pudo copiar automáticamente. Abre cada prompt y selecciona el texto a mano.";
+      if (boton) parpadeo(boton, ok ? "¡Copiados!" : "No se pudo");
+    });
+  }
+
   document.getElementById("copiar-plantilla").addEventListener("click", function () {
+    if (actual === "prompts") { copiarTodosPrompts(null); return; }
     var etiqueta = ETIQUETAS[actual];
     copiar(textoVista()).then(function (ok) {
       msg.textContent = ok
@@ -550,6 +810,24 @@
     copiar(texto).then(function (ok) {
       parpadeo(b, ok ? "¡Copiado!" : "No se pudo");
       msg.textContent = ok ? "Copiado: " + texto : "No se pudo copiar automáticamente. Selecciona el texto a mano.";
+    });
+  });
+
+  // Botones de la vista de prompts: copiar uno (aunque esté plegado) o todos
+  prompts.addEventListener("click", function (e) {
+    var b = e.target.closest ? e.target.closest("button") : null;
+    if (!b) return;
+    if (b.id === "copiar-todos-prompts") { copiarTodosPrompts(b); return; }
+    if (!b.classList.contains("btn-prompt")) return;
+    var bloque = b.closest(".bloque");
+    var pre = bloque && bloque.querySelector(".prompt-texto");
+    if (!pre) return;
+    var texto = pre.textContent.trim();
+    copiar(texto).then(function (ok) {
+      parpadeo(b, ok ? "¡Copiado!" : "No se pudo");
+      msg.textContent = ok
+        ? "Prompt copiado. Rellena los corchetes [ ] y pégalo en tu IA."
+        : "No se pudo copiar automáticamente. Abre el prompt y selecciona el texto a mano.";
     });
   });
 

@@ -132,7 +132,31 @@ table.valoracion.ejemplo td { opacity: .75; }
   font-size: .95rem;
 }
 
+/* ---------- Prompts para IA (plegados al inicio, con botón de copiar) ---------- */
+.prompt-acciones { margin-top: .6rem; }
+
+.prompt-acciones button { min-height: 2.5rem; padding: .3rem .8rem; }
+
+details.prompt { margin-top: .75rem; }
+
+.prompt-cuerpo { padding-bottom: .9rem; }
+
+.prompt-texto {
+  max-height: 26rem;
+  margin: 0;
+  padding: .75rem .9rem;
+  overflow: auto;
+  border: 1px dashed var(--borde);
+  border-left: 2px solid var(--acento);
+  background: var(--fondo);
+  font: .85rem/1.6 var(--maquina);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  tab-size: 2;
+}
+
 @media print {
   .btn-gancho { display: none !important; }
   .gancho { break-inside: avoid; }
+  .prompt-acciones { display: none !important; }
 }
