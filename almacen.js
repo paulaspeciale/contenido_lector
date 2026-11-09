@@ -1,11 +1,19 @@
 /* almacen.js · Escritura segura de datos de Ideas desde otras páginas (por ahora, el Calendario).
    Se carga DESPUÉS de datos.js (que carga datos-ideas.json). Expone window.BT.almacen.guardarFecha(id, fecha).
 
+   No crea el progreso: si todavía no existe (nunca se abrió Ideas), devuelve un
+   error y no escribe nada. Tampoco toca otros campos de la idea.
+
    Sigue las mismas reglas que app.js para no romper nada:
    - Solo cambia datos[id].fecha; el resto del respaldo se conserva tal cual.
    - Sube la marca mod[id] con el reloj híbrido, para que la sincronización con la nube respete el cambio.
    - Actualiza ultimoCambio en ideas_post_90_meta (aviso de respaldo).
-   - No escribe si no hay datos o están dañados, ni si la idea no existe o está borrada. */
+   - No escribe si no hay datos o están dañados, ni si la idea no existe o está borrada.
+
+   Resultado de guardarFecha():
+     { ok: true, cambio, fecha, mod }        si todo fue bien
+     { ok: false, motivo, mensaje }          si se rechazó (motivo es un código)
+   ========================================================================== */
 (function () {
   "use strict";
   window.BT = window.BT || {};

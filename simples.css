@@ -1,8 +1,10 @@
 /* ==========================================================================
-   simples.css · Sugerencias y Sobre mí: formulario, donaciones y enlaces de redes.
-   Requiere base.css.
+   simples.css · Sugerencias y Sobre mí: formulario, donaciones y enlaces.
+   Requiere base.css. La lógica del formulario está en sugerencias.html y la
+   de copiar el alias, en sobre_mi.html.
    ========================================================================== */
 
+/* ---------- Formulario de sugerencias ---------- */
 input[type="email"] {
   display: block;
   width: 100%;
@@ -29,6 +31,7 @@ input[type="email"] {
 
 .formulario button[type="submit"] { justify-self: start; }
 
+/* ---------- Tarjetas de donación ---------- */
 .donaciones { display: grid; gap: 1rem; margin-top: 1rem; }
 
 .donacion {
@@ -52,7 +55,7 @@ input[type="email"] {
   font-family: var(--maquina);
 }
 
-/* Enlaces de redes en «Sobre mí» */
+/* ---------- Enlaces de redes en «Sobre mí» ---------- */
 .enlaces { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; }
 
 .enlaces a { display: inline-flex; align-items: center; min-height: 2.75rem; }

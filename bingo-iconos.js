@@ -60,6 +60,7 @@
     return String(t).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
   }
 
+  // Recorre REGLAS en orden: gana la primera que coincida con el texto.
   function nombreDe(texto) {
     const t = norm(texto);
     for (let i = 0; i < REGLAS.length; i++) { if (REGLAS[i][0].test(t)) return REGLAS[i][1]; }

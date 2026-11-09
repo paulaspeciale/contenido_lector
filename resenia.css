@@ -1,8 +1,10 @@
 /* ==========================================================================
-   resenia.css · Plantilla de reseña: índice, tabla de valoración, botones de versión y ejemplo.
-   Requiere base.css.
+   resenia.css · Plantilla de reseña: índice, tabla de valoración, botones de
+   versión (completa, corta, guiones y prompts) y ejemplo.
+   Requiere base.css. La lógica está en el <script> de resenia.html.
    ========================================================================== */
 
+/* ---------- Rótulos y tabla de valoración ---------- */
 .rotulo { margin: .9rem 0 .2rem; font: 400 .78rem/1.4 var(--maquina); letter-spacing: .1em; text-transform: uppercase; color: var(--suave); }
 
 .tabla-wrap { overflow-x: auto; margin-top: .5rem; }
@@ -34,6 +36,7 @@ button[aria-pressed="true"] {
   font-weight: 600;
 }
 
+/* ---------- Índice de la página ---------- */
 .indice ol {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

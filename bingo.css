@@ -1,4 +1,9 @@
-/* bingo.css · Estilos de la página Bingo. Requiere base.css. */
+/* ==========================================================================
+   bingo.css · Estilos de la página Bingo (tarjeta 5×5, casillas e iconos).
+   Requiere base.css. La lógica está en bingo.js y bingo-iconos.js.
+   ========================================================================== */
+
+/* ---------- Resumen y progreso ---------- */
 .bingo-resumen { margin-top: 1rem; text-align: center; }
 
 .bingo-estado { font: 400 1rem/1.4 var(--serif); }
@@ -7,6 +12,7 @@
 
 #bingo-prog { max-width: 20rem; margin: .6rem auto; }
 
+/* ---------- Tarjeta 5×5 ---------- */
 .bingo-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));

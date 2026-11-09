@@ -135,6 +135,23 @@
 <script src="datos.js" data-usa="ideas"></script>
 <script src="almacen.js"></script>
 <script>
+/* ==========================================================================
+   Calendario de publicaciones · lógica completa de calendario_ideas_90.html.
+
+   Depende de datos.js (ideas en window.BT.SECCIONES) y de almacen.js (para
+   escribir fechas en el progreso de Ideas). Todo el estado lo lee de:
+     - localStorage["ideas_post_90_v1"]  progreso de las ideas (solo lectura,
+       salvo la fecha, que se cambia con window.BT.almacen.guardarFecha)
+     - localStorage["calendario_config"] meta semanal
+     - localStorage["calendario_eventos"] eventos propios (lanzamientos, ARC…)
+     - localStorage["calendario_respaldo"] fechas para el aviso de respaldo
+   Este script NUNCA escribe las ideas completas: delega en almacen.js para no
+   pisar cambios que estén haciendo otras páginas.
+
+   Organización: al final de este bloque, arrancar() monta la rejilla mensual,
+   el detalle del día, la meta/racha y los eventos. Los banners «// ---- ... ----»
+   separan cada bloque.
+   ========================================================================== */
 (function (listo) {
   if (!listo) {
     const aviso = document.createElement("p");
@@ -287,6 +304,8 @@ function arrancar() {
   const KEY_EV = "calendario_eventos";   // clave propia: no forma parte del respaldo de Ideas
   const TIPOS_EV = { lanzamiento: "Lanzamiento", arc: "Plazo de ARC", colaboracion: "Colaboración", otro: "Otro" };
   const MAX_EV = 200, MAX_TIT_EV = 80;
+  // Valida los eventos guardados o los de un respaldo importado. Descarta los
+  // que no tengan id válido («e» + caracteres), título o fecha real.
   function leerEventos(crudo) {
     try {
       const o = crudo || JSON.parse(localStorage.getItem(KEY_EV));
@@ -303,6 +322,7 @@ function arrancar() {
       return out;
     } catch (err) { return []; }
   }
+  // Guarda los eventos y marca que hay cambios sin respaldar.
   function guardarEventos(arr) {
     try { localStorage.setItem(KEY_EV, JSON.stringify({ version: 1, eventos: arr })); marcarResp("cambio"); return true; }
     catch (err) { return false; }
@@ -421,6 +441,8 @@ function arrancar() {
     return (mapa[key] || []).filter(function (it) { return it.est !== "descartada"; });
   }
 
+  // Meta semanal: cuántas se publicaron y cuántas quedan planificadas esta
+  // semana, más los días libres que quedan de hoy al domingo.
   function renderMeta(mapa, semana) {
     let meta = config.metaSemanal, plan = 0, pub = 0, libres = [];
     semana.forEach(function (k, i) {
@@ -447,9 +469,13 @@ function arrancar() {
       : "No quedan días libres esta semana.";
   }
 
+  // Suma (o resta) días a una fecha ISO sin usar zonas horarias.
   function sumarDias(iso, n) { const d = deIso(iso); d.setDate(d.getDate() + n); return isoDe(d); }
 
-  // Racha y cumplimiento. Solo lee.
+  // Racha y cumplimiento. Solo lee:
+  //   - racha: semanas seguidas con al menos la meta (o 1) publicada;
+  //   - mejor racha histórica;
+  //   - % de ideas con fecha hasta hoy que ya están publicadas.
   function renderRacha(mapa) {
     const objetivo = config.metaSemanal > 0 ? config.metaSemanal : 1;
     let pubSem = Object.create(null), primera = null, pasadas = 0, hechas = 0;
@@ -495,6 +521,8 @@ function arrancar() {
     }
   }
 
+  // Lee el progreso de Ideas una sola vez por render (cacheDatos). Si se está
+  // viendo un respaldo cargado, se usa ese en lugar del localStorage.
   let cacheDatos;   // undefined = sin leer en este render
   function leerDatos() {
     if (fuente) return fuente;
@@ -506,7 +534,9 @@ function arrancar() {
     return cacheDatos;
   }
 
-  // Devuelve { "AAAA-MM-DD": [ {num, texto, formato, est, fav, propia} ] }
+  // Devuelve { "AAAA-MM-DD": [ {num, texto, formato, est, fav, propia} ] }.
+  // Es la lectura central del calendario: junta ideas base + propias, aplica el
+  // estado y calcula cuáles están vencidas. Los totales van en __total/__venc.
   function recopilar() {
     const o = leerDatos() || {};
     const datos = o.datos && typeof o.datos === "object" && !Array.isArray(o.datos) ? o.datos : {};
@@ -543,6 +573,7 @@ function arrancar() {
     return f.getDate() + " de " + MESES[f.getMonth()] + ": " + (n ? n + " publicación" + (n === 1 ? "" : "es") : "sin publicaciones");
   }
 
+  // Redibuja todo el calendario: rejilla del mes, resumen, meta, racha, aviso y detalle.
   function render() {
     cacheDatos = undefined;   // una lectura nueva por render
     const mapa = recopilar();
@@ -727,8 +758,10 @@ elDetalle.appendChild(el("h3", "", titulo.charAt(0).toUpperCase() + titulo.slice
     devolverBorrador(borrador);
   }
 
+  // Fija el mes visible a partir de una fecha.
   function irA(f) { vistaA = f.getFullYear(); vistaM = f.getMonth(); }
 
+  // Cambia de mes (+1 / -1) y descarta el día seleccionado si cae fuera.
   function mover(delta) {
     const f = new Date(vistaA, vistaM + delta, 1);
     irA(f);
@@ -744,6 +777,7 @@ elDetalle.appendChild(el("h3", "", titulo.charAt(0).toUpperCase() + titulo.slice
     render();
   });
 
+  // Clic en un día: se selecciona, se abre su detalle y (en móvil) se baja hasta él.
   elGrid.addEventListener("click", function (e) {
     const b = e.target.closest ? e.target.closest(".dia") : null;
     if (!b) return;
@@ -915,6 +949,7 @@ elDetalle.appendChild(el("h3", "", titulo.charAt(0).toUpperCase() + titulo.slice
     render();
   });
   elGrid.addEventListener("keydown", function (e) {
+    // Flechas: mueven el día seleccionado (una sola casilla en el orden de tabulación).
     const b = e.target.closest ? e.target.closest(".dia") : null;
     const paso = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[e.key];
     if (!b || !paso) return;

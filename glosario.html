@@ -86,10 +86,22 @@
 </footer>
 <script src="datos-glosario.js"></script>
 <script>
+/* ==========================================================================
+   Glosario · lógica de glosario.html.
+
+   Construye toda la página desde datos-glosario.js (no hay que tocar el HTML
+   al agregar términos):
+     - Imprescindibles, bloques, categorías y fichas.
+     - Buscador (sin tildes ni mayúsculas), filtros por categoría y
+       «Solo imprescindibles», y orden A–Z o por popularidad.
+     - «Ver los 8 restantes» por categoría y enlaces directos por hash
+       (#tbr abre su categoría y resalta el término).
+   No guarda nada en localStorage.
+   ========================================================================== */
 (function () {
   "use strict";
   const B = window.BT || {}, CATS = B.GLOSARIO_CATS || [], GR = B.GLOSARIO_GRUPOS || [], VER = B.GLOSARIO_VER_TAMBIEN || {};
-  const LIM = 8;
+  const LIM = 8;   // términos visibles por categoría antes de «Ver los restantes»
   function norm(t) { return String(t == null ? "" : t).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim(); }
   function el(tag, cls, txt) { const n = document.createElement(tag); if (cls) n.className = cls; if (txt !== undefined) n.textContent = txt; return n; }
   const $ = function (id) { return document.getElementById(id); };
@@ -99,6 +111,7 @@
   const porCat = {}; CATS.forEach(function (c) { porCat[c.id] = c; });
   (B.GLOSARIO || []).forEach(function (t) { porId[t.id] = t; });
 
+  // Añade un enlace al menú lateral «En esta página».
   function tocLink(href, n, txt) {
     const li = el("li"), a = el("a"); a.href = href;
     a.appendChild(el("span", "ni", n)); a.appendChild(document.createTextNode(txt));
@@ -166,6 +179,7 @@
     raiz.appendChild(gs); grupos.push(gref);
   });
 
+  // Reordena las fichas dentro de cada categoría (A–Z o por popularidad original).
   function ordenar() {
     const az = selOrd.value === "az";
     cats.forEach(function (x) {
@@ -174,6 +188,8 @@
     });
   }
 
+  // Aplica búsqueda + filtros y decide qué fichas se ven. Con cualquier filtro
+  // activo se muestran todos los resultados y se abren sus categorías.
   function aplicar() {
     let q = norm(buscar.value), cat = selCat.value, top = soloTop.checked, vis = 0;
     const hay = !!q || cat !== "todas" || top;
@@ -206,6 +222,7 @@
   selOrd.addEventListener("change", function () { ordenar(); aplicar(); });
   ordenar(); aplicar();
 
+  // Copia con respaldo (execCommand) para navegadores sin Clipboard API.
   function copiar(texto) {
     return new Promise(function (res) {
       function resp() {
@@ -220,6 +237,8 @@
     });
   }
 
+  // Lleva a un término: si está oculto por un filtro, lo limpia, abre su
+  // categoría y lo resalta unos segundos. Devuelve false si el id no existe.
   function irA(id) {
     const f = filas.filter(function (x) { return x.t.id === id; })[0];
     if (!f) return false;

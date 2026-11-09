@@ -1,8 +1,18 @@
+/* theme.js · Tema claro / oscuro y color de sección.
+
+   - Sigue la preferencia del dispositivo (prefers-color-scheme) hasta que la
+     persona elige un tema con el botón flotante; la elección se guarda en
+     localStorage["tema_preferido"] ("claro" | "oscuro").
+   - Coloca el botón y sincroniza el tema entre pestañas.
+   - Deduce la sección actual a partir del nombre del archivo y la deja en
+     data-seccion para que base.css aplique el color de «tela de encuadernación».
+   Se carga en el <head> de todas las páginas, antes del resto. */
 (function () {
   "use strict";
   const KEY = "tema_preferido";   // "claro" | "oscuro"; sin valor = sigue al dispositivo
   const root = document.documentElement;
-  // Color propio por sección: se deduce del nombre del archivo y lo aplica base.css
+  // Color propio por sección: se deduce del nombre del archivo y lo aplica base.css.
+  // Varias páginas comparten color (consistencia usa el de bio).
   const PAGINAS = { resenia: "resenia", ideas_post_90: "ideas", calendario_ideas_90: "calendario", glosario: "glosario", bio: "bio", consistencia: "bio", bingo: "bingo", sugerencias: "sugerencias", sobre_mi: "sobre-mi" };
   const archivo = (location.pathname.split("/").pop() || "index").replace(/\.html?$/, "");
   root.setAttribute("data-seccion", PAGINAS[archivo] || "inicio");
@@ -14,14 +24,17 @@
     catch (e) { return null; }
   }
   function guardar(v) { try { localStorage.setItem(KEY, v); } catch (e) { /* sin acción */ } }
+  // Tema realmente aplicado: el guardado o, si no hay, el del dispositivo.
   function efectivo() {
     return guardado() || (mq && mq.matches ? "oscuro" : "claro");
   }
+  // Pone o quita data-theme en <html>. Sin atributo, manda color-scheme del CSS.
   function aplicar() {
     const g = guardado();
     if (g) root.setAttribute("data-theme", g === "oscuro" ? "dark" : "light");
     else root.removeAttribute("data-theme");
   }
+  // Actualiza el icono y el texto accesible del botón.
   function pintarBoton() {
     if (!boton) return;
     const oscuro = efectivo() === "oscuro";
@@ -29,6 +42,7 @@
     boton.setAttribute("aria-label", oscuro ? "Cambiar a tema claro" : "Cambiar a tema oscuro");
     boton.title = oscuro ? "Tema claro" : "Tema oscuro";
   }
+  // Pequeña transición de color al cambiar de tema (se quita sola a los 600 ms).
   function conTransicion(fn) {
     root.classList.add("tema-anim");
     fn();

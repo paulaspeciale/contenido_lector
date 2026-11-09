@@ -664,6 +664,13 @@ Reglas:
   <p>&copy; Diseñado e ideado por Paula Speciale, con la ayuda de Claude</p>
 </footer>
 <script>
+/* ==========================================================================
+   Reseñas · lógica de resenia.html.
+
+   Cambia entre las cuatro vistas (completa, corta, guiones y prompts),
+   reconstruye el texto plano de la vista visible para el botón «Copiar» y
+   copia los prompts de IA. No guarda nada en localStorage.
+   ========================================================================== */
 (function () {
   "use strict";
   const completa = document.getElementById("vista-completa");
@@ -682,6 +689,7 @@ Reglas:
   const ETIQUETAS = { completa: "completa", corta: "corta", guiones: "de guiones", prompts: "de prompts" };
   let actual = "completa";
 
+  // Muestra una vista y marca su botón; oculta el resto.
   function mostrar(cual) {
     if (!VISTAS[cual]) return;
     actual = cual;
@@ -742,6 +750,7 @@ Reglas:
     return out.join("\n").replace(/\n{3,}/g, "\n\n").trim() + "\n";
   }
 
+  // Copia al portapapeles con respaldo para navegadores sin Clipboard API.
   function copiar(texto) {
     return new Promise(function (resolve) {
       function respaldo() {

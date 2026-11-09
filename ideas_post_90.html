@@ -243,6 +243,13 @@
 <script src="datos.js" data-usa="ideas"></script>
 <script src="app.js"></script>
 <script>
+/* Menú «En esta página» de la página de Ideas.
+
+   Construye la lista de secciones a partir de los <details> que crea app.js,
+   la sincroniza cuando aparecen o desaparecen secciones nuevas (evento
+   «secciones-cambiadas»), marca el enlace de la sección visible al hacer scroll
+   y abre el panel plegable al pulsar un enlace.
+   En pantallas anchas el menú está siempre abierto; en móvil es plegable. */
 (function () {
   "use strict";
   const toc = document.getElementById("toc");
@@ -305,6 +312,8 @@
     }
   }
 
+  // Marca el enlace de la sección que está más cerca del tercio superior de la
+  // pantalla (y el último enlace si se llegó al final de la página).
   function actualizar() {
     // Las secciones ocultas por filtros u orden también desaparecen del menú
     const vis = pares.filter(function (p) {

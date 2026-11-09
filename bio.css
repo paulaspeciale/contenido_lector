@@ -1,10 +1,13 @@
 /* ==========================================================================
-   bio.css · Página Bio: anatomía de un perfil, límites por red, fórmulas, contador y checklist.
-   Requiere base.css y toc.css. El color de sección lo aplica theme.js con data-seccion="bio".
+   bio.css · Página Bio: anatomía de un perfil, límites por red, fórmulas,
+   contador de caracteres por red y checklist de publicación.
+   Requiere base.css y toc.css. El color de sección lo aplica theme.js con
+   data-seccion="bio". La lógica está en el <script> de bio.html.
    ========================================================================== */
 
 /* El color de la sección Bio está en base.css (--c-bio). */
 
+/* ---------- Rótulos y anclas ---------- */
 .rotulo { margin: .9rem 0 .2rem; font: 400 .78rem/1.4 var(--maquina); letter-spacing: .1em; text-transform: uppercase; color: var(--suave); }
 
 #inicio, #piezas, #limites, #instagram, #tiktok, #youtube, #otras, #ejemplos, #principios, #dudas, #contador, #checklist { scroll-margin-top: 1rem; }

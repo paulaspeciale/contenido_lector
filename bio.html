@@ -397,6 +397,20 @@ Empieza aquí ↓</p><span class="ej-n" data-campo="ig-bio"></span></div><button
   <p>&copy; Diseñado e ideado por Paula Speciale, con la ayuda de Claude</p>
 </footer>
 <script>
+/* ==========================================================================
+   Bio · lógica de bio.html.
+
+   Tiene tres partes:
+     1. Contador de caracteres por red: mide el texto del usuario y lo compara
+        con el límite de cada campo (CAMPOS). Los emojis se cuentan aparte
+        porque algunas redes los cuentan como 2 o 3 caracteres.
+     2. Borradores: guarda lo escrito en localStorage["bio_borradores_v1"] y
+        muestra un resumen con el estado de cada campo.
+     3. Checklist: pasos marcados en localStorage["bio_checklist_v1"].
+
+   Estados del contador: «ok» (cabe), «dudoso» (cabe o no según cuánto cuente
+   cada emoji) y «exceso» (no cabe).
+   ========================================================================== */
 (function () {
   "use strict";
   const $ = function (id) { return document.getElementById(id); };
@@ -412,10 +426,14 @@ Empieza aquí ↓</p><span class="ej-n" data-campo="ig-bio"></span></div><button
   let reEmoji = null;
   try { reEmoji = new RegExp("\\p{Extended_Pictographic}", "u"); } catch (e) { reEmoji = null; }
 
+  // Divide el texto en «grafemas» (lo que la persona ve como un carácter),
+  // usando Intl.Segmenter si está disponible. Así un emoji compuesto no cuenta
+  // como varios caracteres.
   function partes(t) {
     t = String(t).replace(/\r\n?/g, "\n");
     return seg ? Array.from(seg.segment(t), function (s) { return s.segment; }) : Array.from(t);
   }
+  // Cuenta grafemas y emojis por separado.
   function medir(texto) {
     let p = partes(texto), emojis = 0;
     if (reEmoji) p.forEach(function (g) { if (reEmoji.test(g)) emojis++; });
@@ -423,7 +441,9 @@ Empieza aquí ↓</p><span class="ej-n" data-campo="ig-bio"></span></div><button
   }
 
   // ---------- Campos que se pueden medir ----------
-  // emoji: [mínimo, máximo] de caracteres que consume cada emoji (null = cuenta como 1)
+  // Cada campo: { id del HTML, red, nombre visible, limite, emoji, nota, ejemplo, checks? }
+  // emoji: [mínimo, máximo] de caracteres que consume cada emoji (null = cuenta como 1).
+  // checks: funciones que, si devuelven true, muestran un consejo debajo del contador.
   const CAMPOS = [
     { id: "ig-nombre", red: "Instagram", nombre: "Nombre", limite: 30, emoji: null,
       nota: "Es el campo más buscable. Algunas fuentes indican hasta 64 caracteres: deja lo importante en los primeros 30.",
@@ -467,7 +487,8 @@ Empieza aquí ↓</p><span class="ej-n" data-campo="ig-bio"></span></div><button
   const porId = {};
   CAMPOS.forEach(function (c) { porId[c.id] = c; });
 
-  // Estado de un texto frente al límite: ok | dudoso | exceso
+  // Estado de un texto frente al límite: ok | dudoso | exceso.
+  // «dudoso» solo ocurre con emojis cuyo ancho real no se sabe con certeza.
   function evaluar(c, m) {
     const minC = m.base + (c.emoji ? m.emojis * (c.emoji[0] - 1) : 0);
     const maxC = m.base + (c.emoji ? m.emojis * (c.emoji[1] - 1) : 0);
@@ -569,6 +590,7 @@ Empieza aquí ↓</p><span class="ej-n" data-campo="ig-bio"></span></div><button
     selCampo.appendChild(o);
   });
 
+  // Guarda solo borradores de campos conocidos y con texto; los vacíos se borran.
   function guardarBorradores() {
     const limpio = {};
     Object.keys(borradores).forEach(function (k) { if (porId[k] && typeof borradores[k] === "string" && borradores[k]) limpio[k] = borradores[k]; });
@@ -705,6 +727,7 @@ Empieza aquí ↓</p><span class="ej-n" data-campo="ig-bio"></span></div><button
   const cajas = Array.prototype.slice.call(document.querySelectorAll("input[data-ck]"));
   const grupos = Array.prototype.slice.call(document.querySelectorAll(".ck-grupo"));
 
+  // Repinta el progreso total y el de cada grupo del checklist.
   function pintarChecklist() {
     const tot = cajas.length, hechas = cajas.filter(function (c) { return c.checked; }).length;
     grupos.forEach(function (g) {

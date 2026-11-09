@@ -94,6 +94,9 @@
   <p>&copy; Diseñado e ideado por Paula Speciale, con la ayuda de Claude</p>
 </footer>
 <script>
+/* Copiar el alias de Mercado Pago con un botón.
+   Usa Clipboard API y, si no está disponible o falla, un <textarea> temporal
+   con execCommand. El mensaje de resultado se muestra junto al botón. */
 (function () {
   "use strict";
   function copiable(idBtn, idTexto, idMsg, queCopia) {

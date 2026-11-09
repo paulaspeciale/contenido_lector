@@ -1,4 +1,11 @@
+/* ==========================================================================
+   toc.css · Menú «En esta página» (Ideas, Calendario y Glosario).
 
+   - .toc: barra/panel con los enlaces de sección.
+   - .toc-ideas: variante con subsecciones plegables de la página de Ideas.
+   En pantallas anchas (min-width: 80rem) se fija a la derecha del contenido;
+   en móvil queda como panel plegable dentro de la página. Requiere base.css.
+   ========================================================================== */
 
 #inicio { scroll-margin-top: 1rem; }
 
@@ -43,6 +50,7 @@
 
 .toc a[aria-current="location"] { color: var(--acento); font-weight: 600; border-bottom-color: var(--acento); }
 
+/* ---------- Menú fijo en pantallas anchas ---------- */
 @media (min-width: 80rem) {
   .toc {
     position: fixed;
@@ -84,6 +92,7 @@
   .toc { display: none !important; }
 }
 
+/* ---------- Variante de Ideas: secciones plegables ---------- */
 .toc-ideas ol { display: block; }
 
 .toc-ideas ol ol { margin: 0 0 .3rem; }

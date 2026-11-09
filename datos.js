@@ -1,9 +1,22 @@
-/* datos.js · Cargador de datos. Se carga ANTES de app.js, almacen.js y del calendario.
-   Hace fetch de datos-ideas.json y datos-bingo.json, los valida y rellena
-   window.BT.SECCIONES y window.BT.BINGO. Expone window.BT.listo, una promesa que SIEMPRE se
-   resuelve con { ok, errores }: así cada página decide qué mostrar si algo falló.
-   Los datos quedan congelados (Object.freeze) para que ningún código los altere por accidente.
-   Nota: requiere abrir la web desde un servidor (hosting o servidor local), no con file://. */
+/* ==========================================================================
+   datos.js · Cargador común de datos.
+
+   Se carga ANTES de app.js, almacen.js y del script del Calendario. Hace fetch
+   de datos-ideas.json y datos-bingo.json, los valida y los deja congelados en:
+     - window.BT.SECCIONES  (ideas, para Ideas y Calendario)
+     - window.BT.BINGO     (retos del Bingo)
+   Además expone window.BT.listo, una promesa que SIEMPRE se resuelve con
+   { ok, errores }: así cada página decide qué mostrar si algo falló, sin
+   quedarse colgada.
+
+   Cada página pide solo lo que usa con el atributo data-usa:
+     <script src="datos.js" data-usa="ideas"></script>
+     <script src="datos.js" data-usa="bingo"></script>
+     <script src="datos.js" data-usa="ideas,bingo"></script>
+
+   Nota: requiere abrir la web desde un servidor (hosting o servidor local),
+   no con file://, porque fetch no puede leer archivos locales.
+   ========================================================================== */
 (function () {
   "use strict";
   window.BT = window.BT || {};
@@ -18,6 +31,8 @@
   function esObjeto(o) { return !!o && typeof o === "object" && !Array.isArray(o); }
   function esTexto(t, max) { return typeof t === "string" && t.trim().length > 0 && t.length <= max; }
 
+  // Congela el objeto y todo lo que contiene: si algún script intenta modificarlo,
+  // falla en modo estricto en vez de corromper los datos compartidos.
   function congelar(o) {
     if (o && typeof o === "object" && !Object.isFrozen(o)) {
       Object.freeze(o);
@@ -26,6 +41,7 @@
     return o;
   }
 
+  // Pide un JSON relativo a la carpeta de este script y lo convierte a objeto.
   function pedir(nombre) {
     return fetch(base + nombre, { credentials: "same-origin" }).then(function (r) {
       if (!r.ok) throw new Error(nombre + ": respuesta " + r.status);
@@ -34,6 +50,8 @@
   }
 
   // Devuelve la lista de secciones validada o lanza un error con el motivo.
+  // Se comprueba la forma mínima: versión, títulos, ideas con id/texto/formato
+  // y que no haya ids repetidos (el progreso guardado depende de ellos).
   function validarIdeas(d) {
     if (!esObjeto(d) || d.version !== 1 || !Array.isArray(d.secciones) || !d.secciones.length) {
       throw new Error("datos-ideas.json: formato no reconocido");
@@ -55,6 +73,7 @@
     return d.secciones;
   }
 
+  // Valida la tarjeta de Bingo: 5×5 con 24 retos y un texto de casilla libre.
   function validarBingo(d) {
     if (!esObjeto(d) || d.version !== 1 || !esTexto(d.titulo, MAX_TITULO) || d.tamano !== 5 ||
         !esTexto(d.libre, MAX_TITULO) || !Array.isArray(d.retos) || d.retos.length !== d.tamano * d.tamano - 1) {
@@ -70,6 +89,8 @@
   const usa = ((actual && actual.getAttribute("data-usa")) || "ideas").split(",").map(function (s) { return s.trim(); });
   const errores = [];
 
+  // Carga un JSON, lo valida y lo publica en window.BT[destino]. Los errores no
+  // rompen la promesa: se acumulan en «errores» para que la página los muestre.
   function cargar(nombre, validar, destino) {
     return pedir(nombre).then(function (d) {
       window.BT[destino] = congelar(validar(d));

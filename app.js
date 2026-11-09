@@ -1,3 +1,45 @@
+/* ==========================================================================
+   app.js · Lógica de la página de Ideas (ideas_post_90.html).
+
+   Qué hace: pinta las 90 ideas base más las ideas propias y guarda en
+   localStorage el estado de cada una (publicada, favorita, estado, fecha,
+   redes, checklist de producción, libro, hashtags y notas). También exporta e
+   importa respaldos y, en la versión publicada, sincroniza con la nube.
+
+   Orden de carga: datos.js (que carga datos-ideas.json en window.BT.SECCIONES)
+   debe ejecutarse ANTES que este archivo. Si datos.js falla, iniciar() muestra
+   un aviso en lugar de romper la página.
+
+   Organización interna (buscar los banners «// ---- ... ----»):
+     1. Comprobación de versión HTML/JS y constantes.
+     2. Utilidades y lectura/escritura de localStorage.
+     3. Limpieza y validación del estado guardado.
+     4. Marcas de modificación (mod) para sincronizar.
+     5. Referencias al DOM y avisos.
+     6. Construcción de la lista de ideas y secciones.
+     7. Contadores, avisos de libros repetidos y recordatorio de respaldo.
+     8. Deshacer, conjuntos de hashtags, filtros y orden.
+     9. Cambios en las ideas y celebración al publicar.
+    10. Descargas (JSON, CSV e ICS) e importación.
+    11. Diálogos, copiar y crear/editar/borrar/restaurar ideas.
+    12. Sincronización entre pestañas y con la nube.
+
+   Modelo de estado (lo que se guarda en localStorage["ideas_post_90_v1"]):
+     {
+       hechas:  { [id]: true },        // ideas marcadas como publicadas
+       datos:   { [id]: { ... } },     // campos válidos: ver limpiarDato()
+       sets:    [{ nombre, tags }],    // conjuntos de hashtags
+       mod:     { [id]: numero },      // marca de la última edición (sync)
+       modSets: numero                 // marca de los conjuntos (sync)
+     }
+   Los ids de las ideas base son texto ("1", "2"...); los de las ideas propias
+   empiezan por "c" (ver CUSTOM_RE). El estado se limpia SIEMPRE al leerlo para
+   que un archivo dañado no pueda inyectar datos inesperados.
+
+   Casi todo vive dentro de iniciar() porque necesita window.BT.SECCIONES ya
+   cargado; por eso el archivo se organiza con funciones internas, no con
+   módulos.
+   ========================================================================== */
 (function () {
   "use strict";
 
@@ -17,6 +59,8 @@
   function iniciar() {
 
   // ---- Comprobación: el HTML y este archivo tienen que ser de la misma versión ----
+  // Lista de ids que app.js espera encontrar en ideas_post_90.html. Si falta
+  // alguno, más abajo se muestra un aviso en lugar de fallar a mitad de carga.
   const REQUERIDOS = [
     "lista", "mensaje", "recordatorio", "sync-estado", "sync-ahora", "contador", "favoritas", "total", "progreso",
     "barra", "btn-filtros", "panel-filtros", "por-estado", "buscar", "f-estado", "f-formato", "f-fecha", "f-prod",
@@ -46,6 +90,8 @@
   // ---- Datos: las 90 ideas viven en datos-ideas.json (se carga antes que este archivo) ----
   const SECCIONES = (window.BT && window.BT.SECCIONES) || [];
 
+  // Claves de localStorage. Las dos «ANTIGUA» son de versiones anteriores de la
+  // app y solo se leen para migrar; nunca se borran.
   const KEY = "ideas_post_90_v1";
   const KEY_META = "ideas_post_90_meta";
   const KEY_DESHACER = "ideas_post_90_deshacer";
@@ -71,10 +117,12 @@
   const MAX_TEXTO = 300;
   const MAX_SECCION = 60;   // largo máximo del nombre de una sección nueva
   const CUSTOM_RE = /^c[a-z0-9]{6,24}$/;   // ids de las ideas que creas tú
-const FECHA_MIN = "2000-01-01", FECHA_MAX = "2100-12-31";
-function fechaAceptable(v) {
-  return /^\d{4}-\d{2}-\d{2}$/.test(v) && fechaReal(v) && v >= FECHA_MIN && v <= FECHA_MAX;
-}
+  // Rango de fechas aceptado en todos los campos (evita años absurdos o textos).
+  const FECHA_MIN = "2000-01-01", FECHA_MAX = "2100-12-31";
+  // Comprueba formato AAAA-MM-DD, que la fecha exista (no 2024-02-31) y el rango.
+  function fechaAceptable(v) {
+    return /^\d{4}-\d{2}-\d{2}$/.test(v) && fechaReal(v) && v >= FECHA_MIN && v <= FECHA_MAX;
+  }
   // Pasos de producción de cada idea (checklist)
   const PASOS = [
     ["guion", "Guion"],
@@ -102,6 +150,9 @@ function fechaAceptable(v) {
   function tituloSeccion(t) { return String(t).replace(/\s*\(\d+\)\s*$/, ""); }
 
   // ---- Utilidades ----
+  // Lectura/escritura de localStorage siempre con try/catch: si el navegador
+  // bloquea el almacenamiento (modo privado, permisos), la app sigue funcionando
+  // en memoria y avisa al usuario.
   function leer(key) {
     try {
       const raw = localStorage.getItem(key);
@@ -125,6 +176,7 @@ function fechaAceptable(v) {
     try { localStorage.removeItem(key); } catch (err) { /* sin acción */ }
   }
 
+  // Prueba rápida: algunos navegadores permiten leer pero no escribir.
   function almacenamientoDisponible() {
     try {
       localStorage.setItem("__prueba", "1");
@@ -135,14 +187,18 @@ function fechaAceptable(v) {
     }
   }
 
+  // Normaliza para buscar: quita tildes, pasa a minúsculas y unifica espacios.
   function normalizar(txt) {
     return String(txt).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
   }
 
+  // Comprueba que una cadena se pueda interpretar como fecha (para metadatos).
   function esFechaISO(s) {
     return typeof s === "string" && !isNaN(Date.parse(s));
   }
 
+  // ¿La fecha existe de verdad? Date «corrige» días fuera de rango; aquí se
+  // compara el resultado con los números originales para detectarlo.
   function fechaReal(s) {
     const p = s.split("-").map(Number);
     const d = new Date(Date.UTC(p[0], p[1] - 1, p[2]));
@@ -150,8 +206,10 @@ function fechaAceptable(v) {
   }
 
   function pad(n) { return (n < 10 ? "0" : "") + n; }
+  // Fecha local (no UTC) en formato AAAA-MM-DD, la que usan los <input type="date">.
   function isoLocal(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
 
+  // Pequeño helper para crear elementos: { text } asigna texto y el resto, atributos.
   function el(tag, props) {
     const n = document.createElement(tag);
     if (props) {
@@ -162,6 +220,7 @@ function fechaAceptable(v) {
     return n;
   }
 
+  // Texto visible del estado ("publicada", "grabando"...).
   function etiquetaEstado(valor) {
     for (let i = 0; i < ESTADOS.length; i++) { if (ESTADOS[i][0] === valor) return ESTADOS[i][1]; }
     return valor;
@@ -198,6 +257,11 @@ function fechaAceptable(v) {
   //   datos: {id: {fav, estado, fecha, libro, hashtags, nota, pasos}},
   //   sets: [{nombre, tags}],
   //   mod: {id: marca de tiempo}, modSets: marca de tiempo }   (mod* sirven para sincronizar)
+  //
+  // limpiarDato() y limpiarSets() son la «aduana» de los datos: todo lo que
+  // llega de localStorage, de un respaldo importado o de la nube pasa por aquí.
+  // Devuelven solo los campos conocidos, con tipo y longitud válidos; así un
+  // archivo manipulado no puede romper la app ni colar datos raros.
   function limpiarDato(d, hecha) {
     const limpio = {};
     if (!d || typeof d !== "object") return limpio;
@@ -231,6 +295,8 @@ function fechaAceptable(v) {
     return limpio;
   }
 
+  // Valida y normaliza los conjuntos de hashtags: nombre único, sin duplicados
+  // (comparando sin tildes ni mayúsculas) y con los tags en formato «#uno #dos».
   function limpiarSets(arr) {
     const out = [];
     const vistos = Object.create(null);
@@ -256,6 +322,9 @@ function fechaAceptable(v) {
     return CUSTOM_RE.test(id) && !!limpio && limpio.propia === true && (!!limpio.texto || limpio.borrada === true);
   }
 
+  // Reconstruye un estado válido a partir de un objeto cualquiera (localStorage,
+  // respaldo o nube). Devuelve null si no tiene forma de estado. Descarta ids
+  // desconocidos, campos inválidos y marcas que no sean números positivos.
   function limpiarEstado(obj) {
     if (!obj || typeof obj !== "object" || Array.isArray(obj)) return null;
     const candidatas = Object.create(null);
@@ -289,15 +358,19 @@ function fechaAceptable(v) {
 
   function estadoVacio() { return { hechas: {}, datos: {}, sets: [], mod: {}, modSets: 0 }; }
 
-  
+  // Forma que se guarda en localStorage y en los respaldos JSON. «version: 1»
+  // permite reconocer respaldos de esta versión al importar.
   function serializar() {
     return { version: 1, hechas: Object.keys(state.hechas), datos: state.datos, sets: state.sets, mod: state.mod, modSets: state.modSets };
   }
-    const KEY_CORRUPTO = "ideas_post_90_corrupto";
+
+  const KEY_CORRUPTO = "ideas_post_90_corrupto";
   let guardadoBloqueado = false;   // true si hay datos ilegibles y no se pudo copiar
   let crudoDaniado = "";           // copia en memoria del dato dañado
   let claveCopia = KEY_CORRUPTO;
 
+  // ¿El objeto se parece a un respaldo? Sirve para rechazar archivos ajenos
+  // antes de intentar limpiarlos.
   function tieneFormatoRespaldo(o) {
     return !!o && typeof o === "object" && !Array.isArray(o) &&
       (Array.isArray(o.hechas) || (!!o.datos && typeof o.datos === "object" && !Array.isArray(o.datos)));
@@ -326,14 +399,18 @@ function fechaAceptable(v) {
     } catch (err) { return null; }
   }
 
-  
-
+  // Guardado normal. Si hay datos dañados sin copia a salvo, no se escribe nada
+  // para no perder la única prueba de lo que había.
   function guardar() {
-    if (guardadoBloqueado) return false;   // nunca se sobrescribe un dato ilegible sin copia a salvo
+    if (guardadoBloqueado) return false;
     return escribir(KEY, serializar());
   }
 
-   let state;
+  // Carga inicial del estado, por orden de preferencia:
+  //   1) datos actuales legibles -> se usan tal cual (ya limpios);
+  //   2) datos dañados -> se resguardan y se arranca vacío;
+  //   3) no hay datos -> se migra desde las claves antiguas.
+  let state;
   let hayCorrupto = false;
   const insp = inspeccionarAlmacen();
   if (insp.tipo === "danado") {
@@ -351,18 +428,21 @@ function fechaAceptable(v) {
     state = limpiarEstado({ hechas: leer(KEY_ANTIGUA_HECHAS), datos: leer(KEY_ANTIGUA_DATOS) }) || estadoVacio();
     if (insp.tipo === "vacio") guardar();
   }
-  
 
+  // Estado visible de una idea: la casilla «hecha» manda sobre el campo estado.
   function estadoDe(id) {
     if (state.hechas[id]) return "publicada";
     const d = state.datos[id];
     return (d && d.estado) || "idea";
   }
 
+  // Pasos de producción completados (claves de PASOS, en su orden).
   function pasosDe(id) {
     return (state.datos[id] && state.datos[id].pasos) || [];
   }
 
+  // Campos de datos[id] que viajan a la nube y cuentan para detectar cambios.
+  // Si se añade un campo nuevo a una idea, hay que sumarlo aquí.
   const CAMPOS = ["fav", "estado", "fecha", "libro", "hashtags", "nota", "pasos", "redes", "texto", "formato", "sec", "secNombre", "orden", "propia", "borrada"];
 
   // Contenido de una idea tal como se guarda en la nube (y para comparar cambios).
@@ -374,6 +454,7 @@ function fechaAceptable(v) {
     return r;
   }
 
+  // ¿La idea tiene algo guardado (aunque sea solo la casilla «hecha»)?
   function tieneDatos(id) { return !!state.hechas[id] || !!state.datos[id]; }
 
   // Todos los ids con los que se puede trabajar: las 90 base y las propias (también las borradas).
@@ -386,6 +467,8 @@ function fechaAceptable(v) {
   // ---- Secciones nuevas (creadas por la persona) ----
   // No hay una lista aparte: cada idea guarda el nombre de su sección (secNombre) y las secciones
   // nuevas salen de esos nombres. Van después de las 9 base, en orden de creación aproximado.
+  // Clave de orden para las secciones nuevas: las ideas base van antes ("0...")
+  // y las propias después ("1..."), conservando un orden estable entre ellas.
   function claveId(id) { return CUSTOM_RE.test(id) ? "1" + id : "0" + ("0000" + id).slice(-4); }
 
   function nombresExtra() {
@@ -407,6 +490,8 @@ function fechaAceptable(v) {
     return nombres;
   }
 
+  // Índice de sección de una idea. Las secciones nuevas no tienen número fijo:
+  // se numeran después de las base según el orden en que aparecen sus nombres.
   function seccionDe(d, b) {
     const porDefecto = b ? b.sec : SECCIONES.length - 1;
     if (d.secNombre) {
@@ -434,6 +519,7 @@ function fechaAceptable(v) {
     };
   }
 
+  // Ideas que se muestran (todas menos las marcadas como borradas).
   function idsActivos() {
     return todosLosIds(state).filter(function (id) { const d = state.datos[id]; return !(d && d.borrada); });
   }
@@ -446,6 +532,8 @@ function fechaAceptable(v) {
   }
 
   // ---- Metadatos de respaldo: { ultimoRespaldo, ultimoCambio } ----
+  // Se guardan aparte del estado para poder avisar «hace X días que no exportas»
+  // sin cargar todo el progreso. ultimoCambio también alimenta las marcas.
   function leerMeta() {
     const m = leer(KEY_META);
     const r = { ultimoRespaldo: null, ultimoCambio: null };
@@ -517,6 +605,7 @@ function fechaAceptable(v) {
   const elSetMensaje = document.getElementById("set-mensaje");
 
   let avisoTimer = null;
+  // Mensaje breve en la parte superior de la página (se borra solo a los 8 s).
   function aviso(txt) {
     elMensaje.textContent = txt;
     clearTimeout(avisoTimer);
@@ -578,6 +667,7 @@ function fechaAceptable(v) {
   window.addEventListener("pagehide", vaciarPersistencia);
   document.addEventListener("visibilitychange", function () { if (document.hidden) vaciarPersistencia(); });
 
+  // Guarda los cambios de una idea y actualiza su marca de sincronización.
   function persistirIdea(id) {
     state.mod[id] = siguienteMod(state.mod[id]);
     const ok = persistir();
@@ -585,6 +675,7 @@ function fechaAceptable(v) {
     return ok;
   }
 
+  // Igual que persistirIdea(), pero para los conjuntos de hashtags.
   function persistirSets() {
     state.modSets = siguienteMod(state.modSets);
     const ok = persistir();
@@ -593,6 +684,8 @@ function fechaAceptable(v) {
   }
 
   // Reemplaza todo el estado (reinicio, importación, deshacer) y marca solo lo que cambió.
+  // Compara idea por idea contra el estado anterior para no reenviar a la nube
+  // documentos que no se tocaron.
   function firmaIdea(st, id) { return JSON.stringify(registroDe(id, st)); }
 
   function aplicarEstadoCompleto(nuevo) {
@@ -646,6 +739,8 @@ function fechaAceptable(v) {
   vistaFecha.appendChild(ulFecha);
   lista.appendChild(vistaFecha);
 
+  // Crea el <details> de una sección (título, contador y lista vacía de ideas).
+  // Las filas se añaden después en sincronizarEstructura()/reordenar().
   function crearSeccion(titulo, secIndex) {
     const section = el("details", { "data-sec": String(secIndex) });
     const sumSec = el("summary");
@@ -1047,21 +1142,26 @@ function fechaAceptable(v) {
   }
 
   // ---- Deshacer (reinicio o importación) ----
-function crearSnapshot(accion) {
-  const s = serializar();
-  s.accion = accion;
-  s.fecha = new Date().toISOString();
-  const ok = escribir(KEY_DESHACER, s);
-  if (!ok) borrar(KEY_DESHACER);   // no dejar una copia vieja que engañe
-  actualizarDeshacer();
-  return ok;
-}
+  // Antes de una acción destructiva se guarda una foto completa del estado en
+  // ideas_post_90_deshacer. Solo hay una: el botón «Deshacer» restaura esa foto.
+  function crearSnapshot(accion) {
+    const s = serializar();
+    s.accion = accion;
+    s.fecha = new Date().toISOString();
+    const ok = escribir(KEY_DESHACER, s);
+    if (!ok) borrar(KEY_DESHACER);   // no dejar una copia vieja que engañe
+    actualizarDeshacer();
+    return ok;
+  }
 
-function prepararDeshacer(accion) {
-  if (crearSnapshot(accion)) return Promise.resolve(true);
-  return confirmar("No hay espacio en el navegador para guardar una copia, así que no podrás deshacer esta acción. Si quieres conservar tu progreso actual, cancela y expórtalo primero. ¿Continuar de todos modos?");
-}
+  // Si no hay espacio para la copia, se pregunta antes de seguir sin posibilidad
+  // de deshacer. Devuelve una promesa con true para continuar.
+  function prepararDeshacer(accion) {
+    if (crearSnapshot(accion)) return Promise.resolve(true);
+    return confirmar("No hay espacio en el navegador para guardar una copia, así que no podrás deshacer esta acción. Si quieres conservar tu progreso actual, cancela y expórtalo primero. ¿Continuar de todos modos?");
+  }
 
+  // Lee la foto guardada y la valida como cualquier otro estado.
   function leerSnapshot() {
     const s = leer(KEY_DESHACER);
     const est = limpiarEstado(s);
@@ -1194,23 +1294,26 @@ function prepararDeshacer(accion) {
     avisoSet("");
   });
 
-function aplicarSet(id, k, boton) {
-  const s = state.sets[k];
-  if (!s) return;
-  const actual = (state.datos[id] || {}).hashtags || "";
-  const deseados = partirTags(actual + " " + s.tags);
-  const nuevo = tagsATexto(deseados, MAX_HASHTAGS);
-  const perdidos = deseados.length - partirTags(nuevo).length;
-  if (perdidos > 0) {
-    const msg = "Límite de " + MAX_HASHTAGS + " caracteres: no se añadieron " + perdidos + " hashtag" + (perdidos === 1 ? "" : "s") + ".";
-    anunciar(msg);
-    if (boton) parpadeo(boton, "Sin espacio");
+  // Añade a una idea los hashtags de un conjunto guardado, sin duplicar y sin
+  // pasarse del límite. Si no cabe todo, avisa cuántos se omitieron.
+  function aplicarSet(id, k, boton) {
+    const s = state.sets[k];
+    if (!s) return;
+    const actual = (state.datos[id] || {}).hashtags || "";
+    const deseados = partirTags(actual + " " + s.tags);
+    const nuevo = tagsATexto(deseados, MAX_HASHTAGS);
+    const perdidos = deseados.length - partirTags(nuevo).length;
+    if (perdidos > 0) {
+      const msg = "Límite de " + MAX_HASHTAGS + " caracteres: no se añadieron " + perdidos + " hashtag" + (perdidos === 1 ? "" : "s") + ".";
+      anunciar(msg);
+      if (boton) parpadeo(boton, "Sin espacio");
+    }
+    if (nuevo === actual) return;
+    refs[id].hashtags.value = nuevo;
+    setDato(id, "hashtags", nuevo);
+    actualizarResumen(id);
   }
-  if (nuevo === actual) return;
-  refs[id].hashtags.value = nuevo;
-  setDato(id, "hashtags", nuevo);
-  actualizarResumen(id);
-}
+
   // ---- Filtros y orden ----
   function cmpOrden(a, b) {
     if (a.orden !== b.orden) return a.orden - b.orden;
@@ -1400,6 +1503,8 @@ function aplicarSet(id, k, boton) {
   }
 
   // ---- Cambios en las ideas ----
+  // setDatoMem solo toca la memoria; setDato además lo persiste y actualiza
+  // contadores. Se separan para poder cambiar varios campos antes de guardar.
   function setDatoMem(id, campo, valor) {
     const d = state.datos[id] || {};
     if (valor) { d[campo] = valor; } else { delete d[campo]; }
@@ -1412,6 +1517,7 @@ function aplicarSet(id, k, boton) {
     contar();
   }
 
+  // Cambiar de estado: «publicada» es la casilla «hecha»; el resto va en datos[id].estado.
   function setEstado(id, nuevo) {
     const antes = estadoDe(id);
     if (nuevo === "publicada") {
@@ -1429,6 +1535,7 @@ function aplicarSet(id, k, boton) {
     if (nuevo === "publicada" && antes !== "publicada") celebrar(id);
   }
 
+  // Marca/desmarca un paso de producción, guardándolos siempre en el orden de PASOS.
   function setPaso(id, clave, marcado) {
     const actuales = pasosDe(id).filter(function (k) { return k !== clave; });
     if (marcado) actuales.push(clave);
@@ -1437,6 +1544,7 @@ function aplicarSet(id, k, boton) {
     actualizarPasos(id);
   }
 
+  // Marca/desmarca una red (Instagram, TikTok, YouTube), guardándolas en orden fijo.
   function setRed(id, clave, marcado) {
     const actuales = ((state.datos[id] || {}).redes || []).filter(function (k) { return k !== clave; });
     if (marcado) actuales.push(clave);
@@ -1460,11 +1568,11 @@ function aplicarSet(id, k, boton) {
       setDato(idFav, "fav", t.checked);
     } else if (idFecha) {
       if (t.value && !fechaAceptable(t.value)) {
-    t.value = (state.datos[idFecha] || {}).fecha || "";   // se restaura la anterior
-    anunciar("Fecha no válida: usa un año entre 2000 y 2100.");
-    return;
-  }
-  setDato(idFecha, "fecha", t.value);
+        t.value = (state.datos[idFecha] || {}).fecha || "";   // se restaura la anterior
+        anunciar("Fecha no válida: usa un año entre 2000 y 2100.");
+        return;
+      }
+      setDato(idFecha, "fecha", t.value);
     } else if (paso) {
       setPaso(t.getAttribute("data-pid"), paso, t.checked);
     } else if (red) {
@@ -1655,19 +1763,20 @@ function aplicarSet(id, k, boton) {
     renderBorradas();
   }
 
-document.getElementById("reiniciar").addEventListener("click", function () {
-  confirmar("¿Desmarcar todas las ideas hechas? Tus favoritas, fechas, libros, notas y conjuntos se mantienen. Podrás deshacerlo después.").then(function (ok) {
-    if (!ok) return;
-    return prepararDeshacer("reinicio").then(function (seguir) {
-      if (!seguir) return;
-      const nuevo = limpiarEstado(serializar());
-      nuevo.hechas = {};
-      aplicarEstadoCompleto(nuevo);
-      refrescarTodo();
-      aviso("Se desmarcaron todas las ideas hechas." + (btnDeshacer.hidden ? "" : " Puedes usar el botón «Deshacer»."));
+  // Reinicia solo las casillas «hecha» (el resto del progreso se conserva).
+  document.getElementById("reiniciar").addEventListener("click", function () {
+    confirmar("¿Desmarcar todas las ideas hechas? Tus favoritas, fechas, libros, notas y conjuntos se mantienen. Podrás deshacerlo después.").then(function (ok) {
+      if (!ok) return;
+      return prepararDeshacer("reinicio").then(function (seguir) {
+        if (!seguir) return;
+        const nuevo = limpiarEstado(serializar());
+        nuevo.hechas = {};
+        aplicarEstadoCompleto(nuevo);
+        refrescarTodo();
+        aviso("Se desmarcaron todas las ideas hechas." + (btnDeshacer.hidden ? "" : " Puedes usar el botón «Deshacer»."));
+      });
     });
   });
-});
 
   btnDeshacer.addEventListener("click", function () {
     const snap = leerSnapshot();
@@ -1687,7 +1796,9 @@ document.getElementById("reiniciar").addEventListener("click", function () {
     if (!archivo) return;
     const lector = new FileReader();
     lector.onload = function () {
-           let crudo = null, nuevo = null, motivo = "";
+      // 1) Leer y comprobar el archivo; 2) limpiarlo; 3) contar lo que trae;
+      // 4) pedir confirmación; 5) guardar una foto para «Deshacer» y aplicarlo.
+      let crudo = null, nuevo = null, motivo = "";
       try { crudo = JSON.parse(lector.result); } catch (err) { motivo = "no es un JSON válido"; }
       if (!motivo) {
         if (!crudo || typeof crudo !== "object" || Array.isArray(crudo)) motivo = "no tiene el formato de un respaldo";
@@ -1727,15 +1838,15 @@ document.getElementById("reiniciar").addEventListener("click", function () {
         nuevo.sets.length + " conjuntos de hashtags" +
         (ignoradas ? "; " + ignoradas + " entradas del archivo no se reconocieron y se omitirán" : "") +
         ". Esto reemplazará tu progreso actual (" + actuales + " ideas con datos). Podrás deshacerlo. ¿Continuar?").then(function (ok) {
-    input.value = "";
-    if (!ok) return;
-    return prepararDeshacer("importación").then(function (seguir) {
-      if (!seguir) return;
-      aplicarEstadoCompleto(nuevo);
-      refrescarTodo();
-      aviso("Progreso importado." + (btnDeshacer.hidden ? "" : " Puedes usar el botón «Deshacer» si te equivocaste de archivo."));
-    });
-  });
+        input.value = "";
+        if (!ok) return;
+        return prepararDeshacer("importación").then(function (seguir) {
+          if (!seguir) return;
+          aplicarEstadoCompleto(nuevo);
+          refrescarTodo();
+          aviso("Progreso importado." + (btnDeshacer.hidden ? "" : " Puedes usar el botón «Deshacer» si te equivocaste de archivo."));
+        });
+      });
     };
     lector.onerror = function () {
       aviso("No se pudo leer el archivo.");
@@ -2103,11 +2214,13 @@ document.getElementById("reiniciar").addEventListener("click", function () {
   }
 
   // ---- Sincronización entre pestañas del mismo navegador ----
+  // localStorage lanza «storage» en las demás pestañas cuando cambia una clave.
+  // Aquí se relee el estado y se repinta para que todas vean lo mismo.
   window.addEventListener("storage", function (e) {
     if (e.key !== null && e.key !== KEY && e.key !== KEY_META && e.key !== KEY_DESHACER) return;
     // Si hay una edición local en espera, se guarda y no se relee: así no se pierde al pisar el estado.
     if (persistPendiente) { vaciarPersistencia(); return; }
-        const insp2 = inspeccionarAlmacen();
+    const insp2 = inspeccionarAlmacen();
     if (insp2.tipo === "ok") { state = insp2.estado; }
     else if (insp2.tipo === "vacio") state = estadoVacio();
     else return;   // dañado o inaccesible: se conserva lo que hay en memoria
@@ -2287,6 +2400,9 @@ document.getElementById("reiniciar").addEventListener("click", function () {
     renderSets();
   }
 
+  // Compara un documento de la nube con la copia local y decide quién gana.
+  // Regla: la marca (mod) más alta. Si gana la nube se aplica; si gana lo local
+  // se vuelve a subir.
   function conciliarDoc(doc) {
     if (!doc || !doc.exists) return;
     const data = doc.data() || {};
@@ -2323,6 +2439,7 @@ document.getElementById("reiniciar").addEventListener("click", function () {
     guardar();
   }
 
+  // Primer snapshot: además de conciliar, sube lo que existe solo en local.
   function alSnapshot(snap) {
     const definitivo = !snap.metadata || !snap.metadata.fromCache;
     snap.docChanges().forEach(function (c) {
@@ -2335,6 +2452,8 @@ document.getElementById("reiniciar").addEventListener("click", function () {
     if (definitivo && !sync.enCurso && !Object.keys(sync.sucios).length && !sync.sucioSets) estadoReposo();
   }
 
+  // Conecta con la colección privada de la persona. Si no hay base de datos o
+  // sesión, la app sigue en modo local sin mostrar errores.
   function iniciarSync(db, user) {
     if (!db || !user) { estadoSync("local"); return; }
     let pid;
@@ -2379,6 +2498,8 @@ document.getElementById("reiniciar").addEventListener("click", function () {
     return Promise.resolve(null);
   }
 
+  // Pide al entorno las capacidades opcionales. Fuera de la versión publicada
+  // no existen y todo queda en modo local.
   function iniciarCapacidades() {
     if (!window.claude || typeof window.claude.use !== "function") { estadoSync("local"); return; }
     estadoSync("conectando");
@@ -2408,7 +2529,7 @@ document.getElementById("reiniciar").addEventListener("click", function () {
   // ---- Inicio ----
   refrescarTodo();
   estadoSync("local");
-   iniciarCapacidades();
+  iniciarCapacidades();
 
   }   // fin de iniciar()
 })();

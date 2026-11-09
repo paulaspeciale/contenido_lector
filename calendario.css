@@ -1,4 +1,10 @@
-/* calendario.css · Estilos de la página Calendario. Requiere base.css. */
+/* ==========================================================================
+   calendario.css · Estilos del Calendario mensual: rejilla, días, detalle del
+   día, meta semanal, racha, eventos y fechas bookish.
+   Requiere base.css (y toc.css para el menú «En esta página»).
+   ========================================================================== */
+
+/* ---------- Rejilla mensual ---------- */
 .dia {
   border-radius: .15rem;
   display: flex;
@@ -87,6 +93,7 @@
   .puntos { display: flex; }
 }
 
+/* ---------- Leyenda, detalle del día y estados ---------- */
 .leyenda { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .75rem; }
 
 #detalle { margin-top: 1rem; }

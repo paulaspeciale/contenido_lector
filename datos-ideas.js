@@ -1,8 +1,15 @@
-/* datos-ideas.js
-   Las 90 ideas base y sus secciones. Para agregar o cambiar ideas, edita SOLO este archivo.
-   Cada idea necesita id (texto único), texto y formato ("Post", "Carrusel" o "Reel").
-   Se carga ANTES de app.js (y de cualquier otra página que use las ideas, como el calendario).
-   Comparte los datos mediante un único objeto global: window.BT.SECCIONES. */
+/* datos-ideas.js · ARCHIVO HEREDADO (no se carga en ninguna página).
+
+   Contiene una copia de las 90 ideas base en formato JavaScript. La fuente real
+   que usan Ideas y Calendario es datos-ideas.json, cargada por datos.js.
+
+   Este archivo se conserva solo como referencia histórica. Si actualizas las
+   ideas, hazlo en datos-ideas.json; este archivo no se lee y puede quedar
+   desactualizado. No lo enlaces con <script> en ninguna página.
+
+   Formato (por si se recupera algo de aquí):
+   - Cada idea necesita id (texto único), texto y formato ("Post", "Carrusel" o "Reel").
+   - Se expone como window.BT.SECCIONES. */
 (function () {
   "use strict";
   window.BT = window.BT || {};

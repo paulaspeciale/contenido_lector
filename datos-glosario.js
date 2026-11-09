@@ -1,9 +1,25 @@
-/* datos-glosario.js
-   Glosario bookish inglés → español. Edita SOLO este archivo para agregar o cambiar términos.
-   Cada categoría: { id, titulo, intro, items }. Cada término: [inglés, español, explicación, imprescindible?, ejemplo?]
-   Orden: las categorías van de las más usadas a las menos, y dentro de cada una los términos también
-   (de más a menos habituales). El 4.º valor en 1 marca los imprescindibles.
-   Comparte los datos en window.BT.GLOSARIO_CATS y, aplanados, en window.BT.GLOSARIO. */
+/* ==========================================================================
+   datos-glosario.js · Glosario bookish inglés → español.
+
+   Edita SOLO este archivo para agregar o cambiar términos.
+
+   Estructura:
+     C = [ { id, titulo, intro, items: [ [inglés, español, explicación, top?, ejemplo?], ... ] }, ... ]
+     - El 4.º valor en 1 marca el término como «Imprescindible».
+     - La explicación y el ejemplo pueden ir vacíos ("").
+     - El orden importa: las categorías van de las más usadas a las menos, y
+       dentro de cada una los términos también.
+
+   Al cargar, este archivo construye y expone en window.BT:
+     - GLOSARIO_CATS        categorías completas (con los términos ya normalizados)
+     - GLOSARIO             lista plana de todos los términos (lo que usa glosario.html)
+     - GLOSARIO_GRUPOS      bloques que agrupan categorías
+     - GLOSARIO_DESTACADOS  ids de los imprescindibles de acceso rápido
+     - GLOSARIO_VER_TAMBIEN ids relacionados («Ver también»)
+
+   El id de cada término (el ancla de la URL) se genera solo a partir del inglés:
+   «Enemies to Lovers» → «enemies-to-lovers». No se escribe a mano.
+   ========================================================================== */
 (function () {
   "use strict";
   window.BT = window.BT || {};
@@ -315,11 +331,16 @@
     ["Negative Space", "Espacio negativo", ""]
   ]}
   ];
+  // Filas con varios términos separados por « · » que deben mostrarse como
+  // fichas independientes. La lista es explícita para no dividir otras filas
+  // que usan « · » como parte del nombre.
   const SPLIT = {};
   ["PNR · UF · DF · HR","ACOTAR · TOG · CC","Snowed In · Stranded Together","Page-Turner · Unputdownable","Spin-Off · Sequel · Prequel","Dubcon · Noncon · CNC","Red Flag · Green Flag","Feral · Unhinged","Self-Harm · Suicide","Paperback · Hardcover","Ebook · Audiobook","Box Set · Omnibus","Indie · Self-Published","Preorder · Release Day","Signed Copy · Bookplate","Buddy Read · Readalong","Unpopular Opinion · Hot Take","Bookstagrammer · BookTokker","Reading Challenge · Reading Goal"].forEach(function (k) { SPLIT[k] = 1; });
+  // Genera el id/ancla: minúsculas, sin tildes y con guiones.
   function slug(t) {
     return t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   }
+  // «usados» evita ids repetidos; «plano» acumula todos los términos para GLOSARIO.
   const usados = {}, plano = [];
   C.forEach(function (c) {
     const filas = [];
@@ -337,6 +358,8 @@
       return t;
     });
   });
+  // Índices que glosario.html consume. No hace falta tocar glosario.html al
+  // agregar términos: todo se construye a partir de estas listas.
   window.BT.GLOSARIO_CATS = C;
   window.BT.GLOSARIO = plano;
   // Bloques que agrupan las categorías (de lo más básico a lo más específico)

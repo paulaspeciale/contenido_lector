@@ -1,5 +1,8 @@
-/* portada.css · Estilos de la portada (index.html): estantería de lomos, botones y tarjetas por sección.
-   Requiere base.css. */
+/* ==========================================================================
+   portada.css · Estilos de la portada (index.html): estantería de lomos,
+   botones de entrada y tarjetas de cada sección.
+   Requiere base.css. Los colores de lomo y madera se definen aquí en :root.
+   ========================================================================== */
 
 :root {
   --lomo-1: light-dark(#7a2e3b, #a8485a);
