@@ -67,6 +67,7 @@
   --c-bingo: light-dark(#8a4a22, #e8a878);        /* cobre */
   --c-sugerencias: light-dark(#8e2540, #f0909f);  /* burdeos rosado */
   --c-sobre-mi: light-dark(#7a5a0e, #e8c566);     /* mostaza */
+  --c-bio: light-dark(#2a6670, #4a9aa6);          /* verde azulado */
   --oro: light-dark(#b8923e, #e3b86a);
 
   /* Tipografía, papel y marco (definidos aquí arriba, antes de usarse) */
@@ -597,6 +598,7 @@ html { scroll-behavior: smooth; }
 :root[data-seccion="bingo"] { --acento: var(--c-bingo); }
 :root[data-seccion="sugerencias"] { --acento: var(--c-sugerencias); }
 :root[data-seccion="sobre-mi"] { --acento: var(--c-sobre-mi); }
+:root[data-seccion="bio"] { --acento: var(--c-bio); }
 
 /* Tarjetas con un filete de color en el borde superior */
 .guia, .formulario, .donacion, .herramientas, .toc { border-top: 2px solid var(--acento); }

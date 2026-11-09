@@ -1,32 +1,38 @@
 /* bingo.js · Tarjeta de Bingo lector 2027.
-   Para cambiar los retos, edita SOLO la lista RETOS (25 casillas; la 13.ª, la del centro, es el espacio libre).
+   Para cambiar los retos, edita datos-bingo.json (24 retos; el espacio libre se coloca solo en el centro).
    Guarda en localStorage["bingo_2027_v1"] la lista de casillas marcadas. */
 (function () {
   "use strict";
-  var KEY = "bingo_2027_v1";
-  var LIBRE = 12;   // índice de la casilla central (0 a 24)
-  var RETOS = [
-    "Relectura", "Doble POV", "Autor o autora nueva", "Libro de Pinterest", "Romance deportivo",
+  const KEY = "bingo_2027_v1";
+  const LIBRE = 12;   // índice de la casilla central (0 a 24)
+  // Los retos viven en datos-bingo.json (los carga datos.js). Esta lista solo es el respaldo si el JSON no carga.
+  const RESPALDO = ["Relectura", "Doble POV", "Autor o autora nueva", "Libro de Pinterest", "Romance deportivo",
     "Portada de mi color favorito", "Lectura compartida", "Libro escrito por un hombre", "Leer un día de lluvia", "Novedad editorial",
-    "Leer una novela corta", "Más de 500 páginas", null, "Comparte inicial con el autor o autora", "Lectura de temporada",
+    "Leer una novela corta", "Más de 500 páginas", "Comparte inicial con el autor o autora", "Lectura de temporada",
     "Género nuevo", "Título de dos palabras", "Terminar una saga", "Libro de la infancia", "Mi trope favorito",
-    "Intercambio de libros", "Libro elegido por una amiga", "Juzgar un libro por su portada", "Terminar un libro en un día", "Libro 5 estrellas de un booktuber"
-  ];
-  var LINEAS = [];
-  var i, j, f, c;
-  for (f = 0; f < 5; f++) { var fila = [], col = []; for (c = 0; c < 5; c++) { fila.push(f * 5 + c); col.push(c * 5 + f); } LINEAS.push(fila, col); }
+    "Intercambio de libros", "Libro elegido por una amiga", "Juzgar un libro por su portada", "Terminar un libro en un día", "Libro 5 estrellas de un booktuber"];
+  let RETOS = [], TXT_LIBRE = "Espacio libre";
+  const LINEAS = [];
+  let i, j, f, c;
+  for (f = 0; f < 5; f++) { const fila = [], col = []; for (c = 0; c < 5; c++) { fila.push(f * 5 + c); col.push(c * 5 + f); } LINEAS.push(fila, col); }
   LINEAS.push([0, 6, 12, 18, 24], [4, 8, 12, 16, 20]);
 
-  var elGrid = document.getElementById("bingo-grid");
-  var elEstado = document.getElementById("bingo-estado");
-  var elProg = document.getElementById("bingo-prog");
-  var elDlg = document.getElementById("dialogo");
-  var marcadas = {};
-  var botones = [];
+  function iniciar() {
+    const B = window.BT && window.BT.BINGO;
+    const lista = B && B.retos && B.retos.length === 24 ? Array.prototype.slice.call(B.retos) : RESPALDO.slice();
+    if (B && B.libre) TXT_LIBRE = B.libre;
+    lista.splice(LIBRE, 0, null);
+    RETOS = lista;
+  const elGrid = document.getElementById("bingo-grid");
+  const elEstado = document.getElementById("bingo-estado");
+  const elProg = document.getElementById("bingo-prog");
+  const elDlg = document.getElementById("dialogo");
+  let marcadas = {};
+  const botones = [];
 
   function leer() {
     try {
-      var a = JSON.parse(localStorage.getItem(KEY));
+      const a = JSON.parse(localStorage.getItem(KEY));
       if (Array.isArray(a)) a.forEach(function (n) { if (Number.isInteger(n) && n >= 0 && n < 25 && n !== LIBRE) marcadas[n] = true; });
     } catch (e) { /* sin datos o dañados: se empieza en blanco */ }
   }
@@ -37,7 +43,8 @@
   function activa(n) { return n === LIBRE || !!marcadas[n]; }
 
   function pintar() {
-    var hechos = Object.keys(marcadas).length, bingos = 0, enLinea = {};
+    const hechos = Object.keys(marcadas).length, enLinea = {};
+    let bingos = 0;
     LINEAS.forEach(function (l) {
       if (l.every(activa)) { bingos++; l.forEach(function (n) { enLinea[n] = true; }); }
     });
@@ -56,12 +63,12 @@
   }
 
   RETOS.forEach(function (txt, n) {
-    var b = document.createElement("button");
+    const b = document.createElement("button");
     b.type = "button";
     b.className = "bingo-casilla";
     if (n === LIBRE) {
       b.className += " libre";
-      b.textContent = "Espacio libre";
+      b.textContent = TXT_LIBRE;
       b.disabled = true;
     } else {
       b.textContent = txt;
@@ -95,4 +102,8 @@
 
   leer();
   pintar();
+  }
+
+  const listo = window.BT && window.BT.listo;
+  if (listo) listo.then(iniciar, iniciar); else iniciar();
 })();

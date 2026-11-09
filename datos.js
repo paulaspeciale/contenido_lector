@@ -8,12 +8,12 @@
   "use strict";
   window.BT = window.BT || {};
 
-  var FORMATOS = ["Post", "Carrusel", "Reel"];
-  var MAX_TEXTO = 400, MAX_TITULO = 120, MAX_ID = 40;
+  const FORMATOS = ["Post", "Carrusel", "Reel"];
+  const MAX_TEXTO = 400, MAX_TITULO = 120, MAX_ID = 40;
 
   // Carpeta de este script: los JSON viven junto a él
-  var actual = document.currentScript;
-  var base = actual && actual.src ? actual.src.replace(/[^\/?#]*(?:[?#].*)?$/, "") : "";
+  const actual = document.currentScript;
+  const base = actual && actual.src ? actual.src.replace(/[^\/?#]*(?:[?#].*)?$/, "") : "";
 
   function esObjeto(o) { return !!o && typeof o === "object" && !Array.isArray(o); }
   function esTexto(t, max) { return typeof t === "string" && t.trim().length > 0 && t.length <= max; }
@@ -38,13 +38,13 @@
     if (!esObjeto(d) || d.version !== 1 || !Array.isArray(d.secciones) || !d.secciones.length) {
       throw new Error("datos-ideas.json: formato no reconocido");
     }
-    var ids = Object.create(null);
+    const ids = Object.create(null);
     d.secciones.forEach(function (s, i) {
       if (!esObjeto(s) || !esTexto(s.titulo, MAX_TITULO) || !Array.isArray(s.ideas)) {
         throw new Error("datos-ideas.json: sección " + (i + 1) + " no válida");
       }
       s.ideas.forEach(function (idea, j) {
-        var donde = "sección " + (i + 1) + ", idea " + (j + 1);
+        const donde = "sección " + (i + 1) + ", idea " + (j + 1);
         if (!esObjeto(idea) || !esTexto(idea.id, MAX_ID) || !esTexto(idea.texto, MAX_TEXTO) || FORMATOS.indexOf(idea.formato) === -1) {
           throw new Error("datos-ideas.json: " + donde + " no válida");
         }
@@ -67,8 +67,8 @@
   }
 
   // Cada página pide solo lo que usa: <script src="datos.js" data-usa="ideas,bingo">
-  var usa = ((actual && actual.getAttribute("data-usa")) || "ideas").split(",").map(function (s) { return s.trim(); });
-  var errores = [];
+  const usa = ((actual && actual.getAttribute("data-usa")) || "ideas").split(",").map(function (s) { return s.trim(); });
+  const errores = [];
 
   function cargar(nombre, validar, destino) {
     return pedir(nombre).then(function (d) {
@@ -78,7 +78,7 @@
     });
   }
 
-  var tareas = [];
+  const tareas = [];
   if (usa.indexOf("ideas") !== -1) tareas.push(cargar("datos-ideas.json", validarIdeas, "SECCIONES"));
   if (usa.indexOf("bingo") !== -1) tareas.push(cargar("datos-bingo.json", validarBingo, "BINGO"));
 

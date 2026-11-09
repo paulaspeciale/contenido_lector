@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <meta name="description" content="90 ideas de contenido para Bookstagram y BookTok con estados, fechas, checklist de producción, hashtags y notas. Organiza tus publicaciones en un solo lugar.">
-<meta name="theme-color" content="#e8e3df" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#353436" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#efe6d6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#211b24" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%9A%3C/text%3E%3C/svg%3E">
 <title>90 ideas de posts para Bookstagram y BookTok (gratis)</title>
 <meta name="robots" content="index,follow,max-image-preview:large">
@@ -35,6 +35,8 @@
 <a href="ideas_post_90.html" aria-current="page">Ideas</a>
 <a href="calendario_ideas_90.html">Calendario</a>
 <a href="glosario.html">Glosario</a>
+<a href="bio.html">Bio</a>
+<a href="consistencia.html">Feed</a>
 <a href="bingo.html">Bingo</a>
 <a href="sugerencias.html">Sugerencias</a>
 <a href="sobre_mi.html">Sobre mí</a>
@@ -243,12 +245,12 @@
 <script>
 (function () {
   "use strict";
-  var toc = document.getElementById("toc");
-  var det = document.getElementById("toc-det");
-  var sub = document.getElementById("toc-secciones");
+  const toc = document.getElementById("toc");
+  const det = document.getElementById("toc-det");
+  const sub = document.getElementById("toc-secciones");
   if (!toc || !det || !sub) return;
 
-  var links = [], pares = [];
+  let links = [], pares = [];
 
   // Un enlace por cada sección de ideas (los títulos los crea app.js).
   // Se vuelve a llamar cuando app.js crea o quita una sección nueva.
@@ -256,14 +258,14 @@
   sub.textContent = "";
   Array.prototype.forEach.call(document.querySelectorAll("#lista > details[data-sec]"), function (d, k) {
     d.id = "seccion-" + (k + 1);
-    var h = d.querySelector("summary h2");
-    var txt = h ? h.textContent.trim() : "Sección " + (k + 1);
-    var m = /^(\d+\.)\s*(.*)$/.exec(txt);
-    var num = m ? m[1] : "", t = m ? m[2] : txt;
+    const h = d.querySelector("summary h2");
+    const txt = h ? h.textContent.trim() : "Sección " + (k + 1);
+    const m = /^(\d+\.)\s*(.*)$/.exec(txt);
+    let num = m ? m[1] : "", t = m ? m[2] : txt;
     if (t === t.toUpperCase()) t = t.charAt(0) + t.slice(1).toLowerCase();
-    var li = document.createElement("li"), a = document.createElement("a");
+    const li = document.createElement("li"), a = document.createElement("a");
     a.href = "#" + d.id;
-    if (num) { var s = document.createElement("span"); s.className = "ni"; s.textContent = num; a.appendChild(s); }
+    if (num) { const s = document.createElement("span"); s.className = "ni"; s.textContent = num; a.appendChild(s); }
     a.appendChild(document.createTextNode(t));
     li.appendChild(a);
     sub.appendChild(li);
@@ -277,11 +279,11 @@
   construirSecciones();
   document.addEventListener("secciones-cambiadas", function () { construirSecciones(); actualizar(); });
 
-  var mq = window.matchMedia ? window.matchMedia("(min-width: 80rem)") : null;
+  const mq = window.matchMedia ? window.matchMedia("(min-width: 80rem)") : null;
   function ancho() { return !!(mq && mq.matches); }
 
   // En pantalla ancha el menú está siempre abierto; en móvil es un panel plegable
-  var resumen = det.querySelector("summary");
+  const resumen = det.querySelector("summary");
   function ajustar() {
     det.open = ancho();
     resumen.tabIndex = ancho() ? -1 : 0;
@@ -297,7 +299,7 @@
     });
     // Si el menú tiene scroll propio, deja visible el enlace activo
     if (ancho() && a && toc.scrollHeight > toc.clientHeight) {
-      var r = a.getBoundingClientRect(), tr = toc.getBoundingClientRect();
+      const r = a.getBoundingClientRect(), tr = toc.getBoundingClientRect();
       if (r.top < tr.top + 8) toc.scrollTop -= tr.top + 8 - r.top;
       else if (r.bottom > tr.bottom - 8) toc.scrollTop += r.bottom - tr.bottom + 8;
     }
@@ -305,19 +307,19 @@
 
   function actualizar() {
     // Las secciones ocultas por filtros u orden también desaparecen del menú
-    var vis = pares.filter(function (p) {
-      var v = !p.t.hidden && p.t.getClientRects().length > 0;
+    const vis = pares.filter(function (p) {
+      const v = !p.t.hidden && p.t.getClientRects().length > 0;
       p.a.parentNode.hidden = !v;
       return v;
     });
     if (!vis.length) return;
-    var linea = window.innerHeight * 0.3, actual = vis[0];
+    let linea = window.innerHeight * 0.3, actual = vis[0];
     vis.forEach(function (p) { if (p.t.getBoundingClientRect().top <= linea) actual = p; });
     if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) actual = vis[vis.length - 1];
     marcar(actual.a);
   }
 
-  var ticking = false;
+  let ticking = false;
   function pedir() {
     if (ticking) return;
     ticking = true;
@@ -325,16 +327,16 @@
   }
   window.addEventListener("scroll", pedir, { passive: true });
   window.addEventListener("resize", pedir);
-  var lista = document.getElementById("lista");
+  const lista = document.getElementById("lista");
   if (lista && window.MutationObserver) {
     new MutationObserver(pedir).observe(lista, { subtree: true, attributes: true, attributeFilter: ["hidden", "open"] });
   }
 
   // Al saltar a una sección o panel plegable, se abre
   toc.addEventListener("click", function (e) {
-    var a = e.target.closest ? e.target.closest("a") : null;
+    const a = e.target.closest ? e.target.closest("a") : null;
     if (!a) return;
-    var t = document.getElementById(a.getAttribute("href").slice(1));
+    const t = document.getElementById(a.getAttribute("href").slice(1));
     if (t && t.tagName === "DETAILS") t.open = true;
   });
   actualizar();

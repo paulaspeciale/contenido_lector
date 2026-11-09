@@ -43,7 +43,7 @@
     return;
   }
 
-  // ---- Datos: las 90 ideas viven en datos-ideas.js (se carga antes que este archivo) ----
+  // ---- Datos: las 90 ideas viven en datos-ideas.json (se carga antes que este archivo) ----
   const SECCIONES = (window.BT && window.BT.SECCIONES) || [];
 
   const KEY = "ideas_post_90_v1";

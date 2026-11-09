@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <meta name="description" content="Plantilla de reseña de 22 secciones, versión corta para TikTok y Reels, guiones con ganchos para BookTok y prompts para IA. Cópiala como texto o guárdala en PDF.">
-<meta name="theme-color" content="#e8e3df" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#353436" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#efe6d6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#211b24" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%9A%3C/text%3E%3C/svg%3E">
 <title>Plantilla de reseña de libros y guiones para Reels y TikTok</title>
 <meta name="robots" content="index,follow,max-image-preview:large">
@@ -34,6 +34,8 @@
 <a href="ideas_post_90.html">Ideas</a>
 <a href="calendario_ideas_90.html">Calendario</a>
 <a href="glosario.html">Glosario</a>
+<a href="bio.html">Bio</a>
+<a href="consistencia.html">Feed</a>
 <a href="bingo.html">Bingo</a>
 <a href="sugerencias.html">Sugerencias</a>
 <a href="sobre_mi.html">Sobre mí</a>
@@ -664,21 +666,21 @@ Reglas:
 <script>
 (function () {
   "use strict";
-  var completa = document.getElementById("vista-completa");
-  var corta = document.getElementById("vista-corta");
-  var guiones = document.getElementById("vista-guiones");
-  var prompts = document.getElementById("vista-prompts");
-  var msg = document.getElementById("plantilla-msg");
-  var VISTAS = { completa: completa, corta: corta, guiones: guiones, prompts: prompts };
-  var BOTONES = {
+  const completa = document.getElementById("vista-completa");
+  const corta = document.getElementById("vista-corta");
+  const guiones = document.getElementById("vista-guiones");
+  const prompts = document.getElementById("vista-prompts");
+  const msg = document.getElementById("plantilla-msg");
+  const VISTAS = { completa: completa, corta: corta, guiones: guiones, prompts: prompts };
+  const BOTONES = {
     completa: document.getElementById("ver-completa"),
     corta: document.getElementById("ver-corta"),
     guiones: document.getElementById("ver-guiones"),
     prompts: document.getElementById("ver-prompts")
   };
-  var TITULOS = { completa: "", corta: " (versión corta)", guiones: " (guiones Reel / TikTok)", prompts: " (prompts para IA)" };
-  var ETIQUETAS = { completa: "completa", corta: "corta", guiones: "de guiones", prompts: "de prompts" };
-  var actual = "completa";
+  const TITULOS = { completa: "", corta: " (versión corta)", guiones: " (guiones Reel / TikTok)", prompts: " (prompts para IA)" };
+  const ETIQUETAS = { completa: "completa", corta: "corta", guiones: "de guiones", prompts: "de prompts" };
+  let actual = "completa";
 
   function mostrar(cual) {
     if (!VISTAS[cual]) return;
@@ -693,15 +695,15 @@ Reglas:
     BOTONES[k].addEventListener("click", function () { mostrar(k); });
   });
   function desdeHash() {
-    var h = location.hash.slice(1);
+    const h = location.hash.slice(1);
     if (Object.prototype.hasOwnProperty.call(VISTAS, h)) mostrar(h);
   }
   desdeHash();
   window.addEventListener("hashchange", desdeHash);
   // «Volver al índice» reabre el índice si se había cerrado
   document.addEventListener("click", function (e) {
-    var a = e.target.closest ? e.target.closest(".subir a") : null;
-    var ind = document.getElementById("indice");
+    const a = e.target.closest ? e.target.closest(".subir a") : null;
+    const ind = document.getElementById("indice");
     if (a && ind) ind.open = true;
   });
 
@@ -709,28 +711,28 @@ Reglas:
 
   // Texto de un <li> sin los botones «Copiar»
   function textoLi(li) {
-    var c = li.cloneNode(true);
+    const c = li.cloneNode(true);
     Array.prototype.forEach.call(c.querySelectorAll("button"), function (b) { b.remove(); });
     return limpio(c.textContent);
   }
 
   // Texto plano de la versión visible (sin el índice ni los enlaces de volver)
   function textoVista() {
-    var cont = VISTAS[actual];
-    var out = [document.querySelector("h1").textContent.trim() + TITULOS[actual], ""];
+    const cont = VISTAS[actual];
+    const out = [document.querySelector("h1").textContent.trim() + TITULOS[actual], ""];
     cont.querySelectorAll(".bloque").forEach(function (sec) {
       Array.prototype.forEach.call(sec.children, function (n) {
         if (n.classList.contains("subir")) return;
-        var tag = n.tagName;
+        const tag = n.tagName;
         if (tag === "H2") { out.push(limpio(n.textContent).toUpperCase()); }
         else if (tag === "H3") { out.push(limpio(n.textContent)); }
         else if (tag === "P") { out.push(limpio(n.textContent) + (n.classList.contains("rotulo") ? ":" : "")); }
         else if (tag === "UL") { n.querySelectorAll("li").forEach(function (li) { out.push("- " + textoLi(li)); }); }
         else if (n.classList.contains("tabla-wrap")) {
-          var cap = n.querySelector("caption");
+          const cap = n.querySelector("caption");
           if (cap) out.push(limpio(cap.textContent));
           n.querySelectorAll("tbody tr").forEach(function (tr) {
-            var c = tr.children;
+            const c = tr.children;
             out.push("- " + limpio(c[0].textContent) + ": " + limpio(c[1].querySelector("[aria-label]") ? c[1].querySelector("[aria-label]").getAttribute("aria-label") : c[1].textContent));
           });
         }
@@ -744,14 +746,14 @@ Reglas:
     return new Promise(function (resolve) {
       function respaldo() {
         try {
-          var ta = document.createElement("textarea");
+          const ta = document.createElement("textarea");
           ta.value = texto;
           ta.setAttribute("readonly", "");
           ta.style.cssText = "position:fixed;top:0;left:0;opacity:0";
           document.body.appendChild(ta);
           ta.select();
           ta.setSelectionRange(0, texto.length);
-          var ok = !!(document.execCommand && document.execCommand("copy"));
+          const ok = !!(document.execCommand && document.execCommand("copy"));
           ta.remove();
           resolve(ok);
         } catch (err) { resolve(false); }
@@ -764,9 +766,9 @@ Reglas:
 
   // Todos los prompts juntos, cada uno con su título, para pegarlos en un documento
   function textoPrompts() {
-    var out = [];
+    const out = [];
     Array.prototype.forEach.call(prompts.querySelectorAll("details.prompt"), function (d) {
-      var pre = d.querySelector(".prompt-texto");
+      const pre = d.querySelector(".prompt-texto");
       if (!pre) return;
       out.push("=== " + (d.getAttribute("data-titulo") || "Prompt") + " ===\n\n" + pre.textContent.trim());
     });
@@ -784,7 +786,7 @@ Reglas:
 
   document.getElementById("copiar-plantilla").addEventListener("click", function () {
     if (actual === "prompts") { copiarTodosPrompts(null); return; }
-    var etiqueta = ETIQUETAS[actual];
+    const etiqueta = ETIQUETAS[actual];
     copiar(textoVista()).then(function (ok) {
       msg.textContent = ok
         ? "Plantilla " + etiqueta + " copiada. Pégala en tus notas y rellénala."
@@ -794,19 +796,19 @@ Reglas:
 
   // Botón «Copiar» de cada gancho, cierre o idea de POV
   function parpadeo(boton, txt) {
-    var original = boton.getAttribute("data-texto") || boton.textContent;
+    const original = boton.getAttribute("data-texto") || boton.textContent;
     boton.setAttribute("data-texto", original);
     boton.textContent = txt;
     clearTimeout(boton._t);
     boton._t = setTimeout(function () { boton.textContent = original; }, 1800);
   }
   guiones.addEventListener("click", function (e) {
-    var b = e.target.closest ? e.target.closest(".btn-gancho") : null;
+    const b = e.target.closest ? e.target.closest(".btn-gancho") : null;
     if (!b) return;
-    var li = b.closest("li");
-    var s = li && li.querySelector(".gancho-texto");
+    const li = b.closest("li");
+    const s = li && li.querySelector(".gancho-texto");
     if (!s) return;
-    var texto = limpio(s.textContent).replace(/^«/, "").replace(/»$/, "");
+    const texto = limpio(s.textContent).replace(/^«/, "").replace(/»$/, "");
     copiar(texto).then(function (ok) {
       parpadeo(b, ok ? "¡Copiado!" : "No se pudo");
       msg.textContent = ok ? "Copiado: " + texto : "No se pudo copiar automáticamente. Selecciona el texto a mano.";
@@ -815,14 +817,14 @@ Reglas:
 
   // Botones de la vista de prompts: copiar uno (aunque esté plegado) o todos
   prompts.addEventListener("click", function (e) {
-    var b = e.target.closest ? e.target.closest("button") : null;
+    const b = e.target.closest ? e.target.closest("button") : null;
     if (!b) return;
     if (b.id === "copiar-todos-prompts") { copiarTodosPrompts(b); return; }
     if (!b.classList.contains("btn-prompt")) return;
-    var bloque = b.closest(".bloque");
-    var pre = bloque && bloque.querySelector(".prompt-texto");
+    const bloque = b.closest(".bloque");
+    const pre = bloque && bloque.querySelector(".prompt-texto");
     if (!pre) return;
-    var texto = pre.textContent.trim();
+    const texto = pre.textContent.trim();
     copiar(texto).then(function (ok) {
       parpadeo(b, ok ? "¡Copiado!" : "No se pudo");
       msg.textContent = ok

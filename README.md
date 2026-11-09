@@ -15,21 +15,24 @@ Diseñada e ideada por Paula Speciale, con la ayuda de Claude.
 | `ideas_post_90.html` | Ideas | Gestor de 90 ideas de post, con estados, fechas, checklist de producción, hashtags y notas. |
 | `calendario_ideas_90.html` | Calendario | Calendario mensual con las ideas que tienen fecha. |
 | `glosario.html` | Glosario | Glosario bookish inglés-español (más de 300 términos en 13 categorías): buscador, filtros, imprescindibles, ejemplos y botón de copiar. |
-| `bingo.html` | Bingo | Marcador «Próximamente». |
+| `bingo.html` | Bingo | Tarjeta «Bingo lector 2027» de 5×5 (24 retos y un espacio libre central). Marca los retos cumplidos, avisa de líneas completas y guarda el progreso en el navegador. |
+| `bio.html` | Bio | Guía para optimizar la bio de Instagram, TikTok y YouTube: límites por red, fórmulas para copiar, contador de caracteres con borradores y checklist. |
+| `consistencia.html` | Feed | Guía de 10 pasos para un feed de Instagram consistente, con probador de paleta 60-30-10. |
 | `sugerencias.html` | Sugerencias | Formulario para enviar ideas o comentarios. |
 | `sobre_mi.html` | Sobre mí | Presentación, redes, enlace a YouTube y formas de donar. |
 
 Archivos compartidos:
 
 - `base.css`: variables, tema, tipografía, controles, menú, pie y bloques de lectura. Se carga siempre primero.
-- `ideas.css`, `calendario.css`, `resenia.css`, `glosario.css`, `simples.css`: estilos propios de cada página.
+- `ideas.css`, `calendario.css`, `resenia.css`, `glosario.css`, `bingo.css`, `bio.css`, `simples.css`: estilos propios de cada página.
 - `toc.css`: menú «En esta página» (Ideas, Calendario y Glosario).
+- `bingo.js` y `bingo-iconos.js`: lógica de la tarjeta y sus iconos decorativos.
 - `datos-glosario.js`: los términos del glosario (`window.BT.GLOSARIO`).
 - `theme.js`: botón de tema claro / oscuro.
 - `fonts/`: carpeta con `courier-prime-latin-400-normal.woff2` y `courier-prime-latin-700-normal.woff2` (los carga `base.css`; sin ella se usa Courier New).
 - `reseniabooktook.txt`: nota de trabajo con los cuatro pilares de contenido; no forma parte de la web.
 - `datos-ideas.json`: las 90 ideas base y sus secciones. `datos-bingo.json`: los retos del Book Bingo. Ninguno se edita desde el navegador.
-- `datos.js`: carga esos JSON con `fetch` y los deja en `window.BT.SECCIONES` y `window.BT.BINGO` (`BT.cargarIdeas()` y `BT.cargarBingo()` devuelven una promesa). Hace falta un hosting o servidor local: con doble clic (`file://`) los JSON no cargan.
+- `datos.js`: carga esos JSON con `fetch` y los deja en `window.BT.SECCIONES` y `window.BT.BINGO` (`BT.listo` es una promesa que se resuelve cuando terminan; cada página indica qué necesita con `data-usa`). Hace falta un hosting o servidor local: con doble clic (`file://`) los JSON no cargan.
 - `app.js`: lógica de la página de Ideas.
 - `almacen.js`: escritura segura de datos de Ideas desde otras páginas (`guardarFecha`); lo usa el Calendario.
 
@@ -171,7 +174,7 @@ La capacidad `downloads` también es propia de la versión publicada; en ella se
 
 ## Diseño
 
-Estética de **librería antigua (cottagecore)**: papel con grano generado con un filtro SVG, dobles filetes, versalitas y tipografía de máquina de escribir. Paleta de seis colores: Forged Iron `#414143`, Smoked Amethyst `#594752`, Old Lavender `#7B6B7A`, Maud `#867C7D`, Weathered Stone `#BAB8B5` y Brume `#E8E3DF`.
+Estética de **librería antigua (cottagecore)**: papel con grano generado con un filtro SVG, dobles filetes, versalitas y tipografía de máquina de escribir. Paleta de papel crema, tinta berenjena, burdeos y dorado, con un color de «tela de encuadernación» por sección. Todo está en las variables de `:root` de `base.css` (`light-dark(claro, oscuro)`).
 
 ## Accesibilidad
 
@@ -196,6 +199,8 @@ Estética de **librería antigua (cottagecore)**: papel con grano generado con u
 - **Una sola fuente de ideas**: tanto Ideas como Calendario leen `datos-ideas.json`, así que no hay nada más que actualizar.
 - **Agregar términos al glosario**: edita `datos-glosario.js`. Dentro de la categoría que corresponda, añade una fila `[inglés, español, explicación, imprescindible, ejemplo]`: la explicación y el ejemplo pueden ir vacíos (`""`) y el cuarto valor es `1` para marcar un imprescindible. El `id` (el ancla) se genera solo a partir del inglés. Para que una fila con varios términos separados por « · » se divida en fichas, añade su texto inglés a la lista `SPLIT`. Una categoría nueva se añade a la lista `C` y a un bloque de `GLOSARIO_GRUPOS`; los imprescindibles de acceso rápido están en `GLOSARIO_DESTACADOS` y los enlaces «Ver también» en `GLOSARIO_VER_TAMBIEN`. `glosario.html` no hay que tocarlo: lo construye todo desde los datos.
 - **Cambiar estados o pasos de producción**: modifica `ESTADOS` y `PASOS` en `app.js` y los colores correspondientes en `base.css`.
+- **Retos del bingo**: edita `datos-bingo.json` (exactamente 24 retos; el espacio libre se coloca en el centro). Si el JSON no carga, `bingo.js` usa su lista de respaldo. Los iconos se asignan por palabras clave en `bingo-iconos.js`.
+- **Menú principal**: está copiado en cada HTML. Al añadir una página, actualiza el `<nav class="menu">` en todas (y la tarjeta de `index.html`).
 - **Colores**: están en las variables de `:root` al inicio de `base.css`.
 - **Formulario de sugerencias**: pega en `FORM_URL` la dirección con código aleatorio de FormSubmit (no el correo).
 - **Versiones coherentes**: `app.js` comprueba al iniciar que el HTML tenga todos los elementos que necesita. Si copias un archivo nuevo sin el otro, muestra un aviso en lugar de fallar en silencio. Tu progreso no se toca.
@@ -208,7 +213,6 @@ Estética de **librería antigua (cottagecore)**: papel con grano generado con u
 - Si un dispositivo llegó a tener el reloj muy adelantado y subió una marca enorme, los demás la superarán a partir de ahí: no se pierden ediciones, pero las marcas quedan grandes.
 - El botón de exportar espera a que se resuelva la capacidad `downloads`, pero sin tiempo límite ni aviso si tarda o falla.
 - Las ideas propias son privadas; para que otros las vean hay que enviarlas por Sugerencias.
-- Inicio y Bingo están pendientes de contenido.
 - La racha y el cumplimiento usan la fecha puesta a cada idea (no el día real de publicación) y la meta semanal actual, así que cambiar la meta recalcula todo el historial.
 - El Calendario solo lee el `localStorage` del dispositivo: en un segundo dispositivo aparece vacío hasta abrir Ideas (que es quien sincroniza con la nube).
 - Una fecha cambiada desde el Calendario se sube a la nube cuando se carga Ideas. Si Ideas ya estaba abierta en otra pestaña, no se sube hasta recargarla o pulsar «Sincronizar ahora».

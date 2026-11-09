@@ -1,5 +1,5 @@
 /* almacen.js · Escritura segura de datos de Ideas desde otras páginas (por ahora, el Calendario).
-   Se carga DESPUÉS de datos-ideas.js. Expone window.BT.almacen.guardarFecha(id, fecha).
+   Se carga DESPUÉS de datos.js (que carga datos-ideas.json). Expone window.BT.almacen.guardarFecha(id, fecha).
 
    Sigue las mismas reglas que app.js para no romper nada:
    - Solo cambia datos[id].fecha; el resto del respaldo se conserva tal cual.
@@ -10,10 +10,10 @@
   "use strict";
   window.BT = window.BT || {};
 
-  var KEY = "ideas_post_90_v1";
-  var KEY_META = "ideas_post_90_meta";
-  var CUSTOM_RE = /^c[a-z0-9]{6,24}$/;   // ids de las ideas propias (igual que en app.js)
-  var FECHA_MIN = "2000-01-01", FECHA_MAX = "2100-12-31";
+  const KEY = "ideas_post_90_v1";
+  const KEY_META = "ideas_post_90_meta";
+  const CUSTOM_RE = /^c[a-z0-9]{6,24}$/;   // ids de las ideas propias (igual que en app.js)
+  const FECHA_MIN = "2000-01-01", FECHA_MAX = "2100-12-31";
 
   function falla(motivo, mensaje) { return { ok: false, motivo: motivo, mensaje: mensaje }; }
   function esObjeto(o) { return !!o && typeof o === "object" && !Array.isArray(o); }
@@ -21,22 +21,22 @@
 
   function fechaAceptable(v) {
     if (typeof v !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return false;
-    var p = v.split("-").map(Number);
-    var d = new Date(Date.UTC(p[0], p[1] - 1, p[2]));
-    var real = d.getUTCFullYear() === p[0] && d.getUTCMonth() === p[1] - 1 && d.getUTCDate() === p[2];
+    const p = v.split("-").map(Number);
+    const d = new Date(Date.UTC(p[0], p[1] - 1, p[2]));
+    const real = d.getUTCFullYear() === p[0] && d.getUTCMonth() === p[1] - 1 && d.getUTCDate() === p[2];
     return real && v >= FECHA_MIN && v <= FECHA_MAX;
   }
 
   function hayDatosBase() {
-    var secs = (window.BT && window.BT.SECCIONES) || [];
+    const secs = (window.BT && window.BT.SECCIONES) || [];
     return secs.length > 0;
   }
 
   function esBase(id) {
-    var secs = (window.BT && window.BT.SECCIONES) || [];
-    for (var i = 0; i < secs.length; i++) {
-      var ideas = secs[i].ideas || [];
-      for (var j = 0; j < ideas.length; j++) {
+    const secs = (window.BT && window.BT.SECCIONES) || [];
+    for (let i = 0; i < secs.length; i++) {
+      const ideas = secs[i].ideas || [];
+      for (let j = 0; j < ideas.length; j++) {
         if (String(ideas[j].id) === id) return true;
       }
     }
@@ -45,7 +45,7 @@
 
   function leerMeta() {
     try {
-      var m = JSON.parse(localStorage.getItem(KEY_META));
+      const m = JSON.parse(localStorage.getItem(KEY_META));
       return esObjeto(m) ? m : {};
     } catch (e) { return {}; }
   }
@@ -54,7 +54,7 @@
   // cambio anterior (o del último respaldo; o 1). Se hace ANTES de actualizar ultimoCambio, para que
   // las ideas antiguas no pasen a tener una marca "de hoy" y le ganen a la copia de la nube.
   function marcaBase(meta) {
-    var b = 0;
+    let b = 0;
     if (typeof meta.ultimoCambio === "string") b = Date.parse(meta.ultimoCambio) || 0;
     if (!b && typeof meta.ultimoRespaldo === "string") b = Date.parse(meta.ultimoRespaldo) || 0;
     return b || 1;
@@ -68,48 +68,48 @@
     if (fecha !== "" && !fechaAceptable(fecha)) {
       return falla("fecha-invalida", "Fecha no válida: usa AAAA-MM-DD con un año entre 2000 y 2100.");
     }
-    if (!hayDatosBase()) return falla("sin-datos-base", "Falta cargar datos-ideas.js antes de almacen.js.");
+    if (!hayDatosBase()) return falla("sin-datos-base", "Falta cargar datos.js (y datos-ideas.json) antes de almacen.js.");
 
-    var crudo;
+    let crudo;
     try { crudo = localStorage.getItem(KEY); } catch (e) { return falla("sin-almacen", "El navegador no permite acceder al almacenamiento."); }
     if (crudo === null) return falla("vacio", "Todavía no hay progreso guardado. Abre Ideas una vez primero.");
 
-    var o;
+    let o;
     try { o = JSON.parse(crudo); } catch (e) { return falla("danado", "Los datos guardados están dañados; no se escribió nada."); }
-    var formatoOk = esObjeto(o) && (Array.isArray(o.hechas) || esObjeto(o.datos));
+    const formatoOk = esObjeto(o) && (Array.isArray(o.hechas) || esObjeto(o.datos));
     if (!formatoOk || (o.datos !== undefined && !esObjeto(o.datos))) {
       return falla("danado", "Los datos guardados están dañados; no se escribió nada.");
     }
 
-    var base = esBase(id);
+    const base = esBase(id);
     if (!base && !CUSTOM_RE.test(id)) return falla("id-invalido", "Esa idea no existe.");
     if (!esObjeto(o.datos)) o.datos = {};
-    var d = o.datos[id];
+    const d = o.datos[id];
     if (!base && !(esObjeto(d) && d.propia === true)) return falla("idea-no-existe", "No se encontró esa idea propia.");
     if (esObjeto(d) && d.borrada === true) return falla("borrada", "Esa idea está borrada. Restáurala desde Ideas.");
 
-    var actual = esObjeto(d) && typeof d.fecha === "string" ? d.fecha : "";
+    const actual = esObjeto(d) && typeof d.fecha === "string" ? d.fecha : "";
     if (actual === fecha) return { ok: true, cambio: false, fecha: fecha };
 
     // 1) Cambiar solo la fecha
-    var nuevo = esObjeto(d) ? d : {};
+    const nuevo = esObjeto(d) ? d : {};
     if (fecha) { nuevo.fecha = fecha; } else { delete nuevo.fecha; }
     if (Object.keys(nuevo).length) { o.datos[id] = nuevo; } else { delete o.datos[id]; }
 
     // 2) Marcas de modificación
     if (!esObjeto(o.mod)) o.mod = {};
-    var meta = leerMeta();
-    var baseMarca = marcaBase(meta);
-    var conDatos = Object.keys(o.datos);
+    const meta = leerMeta();
+    const baseMarca = marcaBase(meta);
+    const conDatos = Object.keys(o.datos);
     if (Array.isArray(o.hechas)) {
       o.hechas.forEach(function (h) { h = String(h); if (esBase(h) && conDatos.indexOf(h) === -1) conDatos.push(h); });
     }
     conDatos.forEach(function (k) { if (!marcaValida(o.mod[k])) o.mod[k] = baseMarca; });
     if (Array.isArray(o.sets) && o.sets.length && !marcaValida(o.modSets)) o.modSets = baseMarca;
 
-    var maxVisto = marcaValida(o.modSets);
+    let maxVisto = marcaValida(o.modSets);
     Object.keys(o.mod).forEach(function (k) { if (marcaValida(o.mod[k]) > maxVisto) maxVisto = o.mod[k]; });
-    var marca = Math.max(Date.now(), marcaValida(o.mod[id]) + 1, maxVisto + 1);   // reloj híbrido, igual que app.js
+    const marca = Math.max(Date.now(), marcaValida(o.mod[id]) + 1, maxVisto + 1);   // reloj híbrido, igual que app.js
     o.mod[id] = marca;
 
     // 3) Guardar (si falla, no se toca nada más)

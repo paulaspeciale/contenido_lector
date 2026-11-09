@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <meta name="description" content="Envíame tus ideas o comentarios para mejorar las herramientas para lectores creadores, o escríbeme por TikTok e Instagram.">
-<meta name="theme-color" content="#e8e3df" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#353436" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#efe6d6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#211b24" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%9A%3C/text%3E%3C/svg%3E">
 <title>Sugerencias e ideas | Contenido BookTok</title>
 <meta name="robots" content="noindex,follow">
@@ -34,6 +34,8 @@
 <a href="ideas_post_90.html">Ideas</a>
 <a href="calendario_ideas_90.html">Calendario</a>
 <a href="glosario.html">Glosario</a>
+<a href="bio.html">Bio</a>
+<a href="consistencia.html">Feed</a>
 <a href="bingo.html">Bingo</a>
 <a href="sugerencias.html" aria-current="page">Sugerencias</a>
 <a href="sobre_mi.html">Sobre mí</a>
@@ -95,14 +97,14 @@
   // Dirección del formulario en FormSubmit. NO pongas aquí tu correo: usa la dirección con código
   // aleatorio que te da FormSubmit al activar el formulario (formato https://formsubmit.co/el/CODIGO).
   // Con la dirección vacía el formulario se oculta y se muestra un aviso (no se simula el envío).
-  var FORM_URL = "";
-  var form = document.getElementById("form-sugerencias");
-  var exito = document.getElementById("form-exito");
-  var error = document.getElementById("form-error");
-  var btn = document.getElementById("btn-enviar");
-  var pronto = document.getElementById("form-pronto");
-  var siguiente = document.getElementById("form-next");
-  var abierto = Date.now();
+  const FORM_URL = "";
+  const form = document.getElementById("form-sugerencias");
+  const exito = document.getElementById("form-exito");
+  const error = document.getElementById("form-error");
+  const btn = document.getElementById("btn-enviar");
+  const pronto = document.getElementById("form-pronto");
+  const siguiente = document.getElementById("form-next");
+  const abierto = Date.now();
 
   if (FORM_URL) { form.setAttribute("action", FORM_URL); }
   else { form.hidden = true; pronto.hidden = false; }
@@ -122,7 +124,7 @@
 
   form.addEventListener("submit", function (e) {
     error.textContent = "";
-    var trampa = form.elements["_honey"];
+    const trampa = form.elements["_honey"];
     if (trampa && trampa.value) { e.preventDefault(); return; }          // un robot rellenó el campo oculto
     if (!form.checkValidity()) { e.preventDefault(); form.reportValidity(); return; }
     if (!FORM_URL) { e.preventDefault(); return; }

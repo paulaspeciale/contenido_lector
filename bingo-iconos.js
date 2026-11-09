@@ -5,9 +5,9 @@
    y una regla en REGLAS: [expresión sobre el texto sin tildes y en minúsculas, nombre del icono]. */
 (function () {
   "use strict";
-  var NS = "http://www.w3.org/2000/svg";
+  const NS = "http://www.w3.org/2000/svg";
 
-  var ICONOS = {
+  const ICONOS = {
     repetir: '<path d="M4 12a8 8 0 0 1 13.5-5.8L20 8.5M20 4v4.5h-4.5M20 12a8 8 0 0 1-13.5 5.8L4 15.5M4 20v-4.5h4.5"/>',
     dual: '<circle cx="9" cy="12" r="5.5"/><circle cx="15" cy="12" r="5.5"/>',
     pluma: '<path d="M12 3l5 8-5 10-5-10z"/><path d="M12 3v10M9.5 13h5"/>',
@@ -32,7 +32,7 @@
   };
 
   // Sin icono a propósito: Debut Novel, Book Hangover, Book Club Pick y Hardcover (no todas las casillas lo llevan)
-  var REGLAS = [
+  const REGLAS = [
     [/espacio libre|free space/, "corazon"],
     [/re-?read|relectura/, "repetir"],
     [/dual|doble pov/, "dual"],
@@ -40,7 +40,7 @@
     [/sports|deportiv/, "pelota"],
     [/buddy|compartida/, "burbujas"],
     [/\b500\b|pages|paginas/, "pila"],
-    [/judge|cover|portada/, "lupa"],
+    [/judge|juzgar/, "lupa"],
     [/enemies|enemigos/, "espadas"],
     [/slow burn|fuego lento/, "llama"],
     [/standalone|autoconclusivo/, "libro"],
@@ -61,16 +61,16 @@
   }
 
   function nombreDe(texto) {
-    var t = norm(texto);
-    for (var i = 0; i < REGLAS.length; i++) { if (REGLAS[i][0].test(t)) return REGLAS[i][1]; }
+    const t = norm(texto);
+    for (let i = 0; i < REGLAS.length; i++) { if (REGLAS[i][0].test(t)) return REGLAS[i][1]; }
     return null;
   }
 
   function crear(nombre) {
-    var span = document.createElement("span");
+    const span = document.createElement("span");
     span.className = "bingo-icono";
     span.setAttribute("aria-hidden", "true");
-    var svg = document.createElementNS(NS, "svg");
+    const svg = document.createElementNS(NS, "svg");
     svg.setAttribute("viewBox", "0 0 24 24");
     svg.setAttribute("focusable", "false");
     svg.innerHTML = ICONOS[nombre];
@@ -81,12 +81,12 @@
   function decorar(grid) {
     Array.prototype.forEach.call(grid.querySelectorAll(".bingo-casilla"), function (b) {
       if (b.querySelector(".bingo-icono")) return;
-      var nombre = nombreDe(b.textContent);
+      const nombre = nombreDe(b.textContent);
       if (nombre && ICONOS[nombre]) b.insertBefore(crear(nombre), b.firstChild);
     });
   }
 
-  var grid = document.getElementById("bingo-grid");
+  const grid = document.getElementById("bingo-grid");
   if (!grid) return;
   decorar(grid);
   // Si la tarjeta se vuelve a dibujar (p. ej. al cargar los retos desde el JSON), se decora de nuevo

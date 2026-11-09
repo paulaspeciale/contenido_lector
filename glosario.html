@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <meta name="description" content="Más de 300 términos bookish explicados en español: siglas (TBR, DNF, ARC), tropes románticos, géneros, spice level y jerga de BookTok y Bookstagram.">
-<meta name="theme-color" content="#e8e3df" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#353436" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#efe6d6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#211b24" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%9A%3C/text%3E%3C/svg%3E">
 <title>Glosario bookish inglés-español: TBR, DNF, tropes, spice y más</title>
 <meta name="robots" content="index,follow,max-image-preview:large">
@@ -35,6 +35,8 @@
 <a href="ideas_post_90.html">Ideas</a>
 <a href="calendario_ideas_90.html">Calendario</a>
 <a href="glosario.html" aria-current="page">Glosario</a>
+<a href="bio.html">Bio</a>
+<a href="consistencia.html">Feed</a>
 <a href="bingo.html">Bingo</a>
 <a href="sugerencias.html">Sugerencias</a>
 <a href="sobre_mi.html">Sobre mí</a>
@@ -86,32 +88,32 @@
 <script>
 (function () {
   "use strict";
-  var B = window.BT || {}, CATS = B.GLOSARIO_CATS || [], GR = B.GLOSARIO_GRUPOS || [], VER = B.GLOSARIO_VER_TAMBIEN || {};
-  var LIM = 8;
+  const B = window.BT || {}, CATS = B.GLOSARIO_CATS || [], GR = B.GLOSARIO_GRUPOS || [], VER = B.GLOSARIO_VER_TAMBIEN || {};
+  const LIM = 8;
   function norm(t) { return String(t == null ? "" : t).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim(); }
-  function el(tag, cls, txt) { var n = document.createElement(tag); if (cls) n.className = cls; if (txt !== undefined) n.textContent = txt; return n; }
-  var $ = function (id) { return document.getElementById(id); };
-  var raiz = $("categorias"), toc = $("toc-cats"), selCat = $("f-cat"), selOrd = $("f-orden"), buscar = $("buscar"), soloTop = $("f-top");
-  var dlg = $("dialogo-copiar"), filas = [], porId = {}, cats = [], grupos = [], imp = null;
+  function el(tag, cls, txt) { const n = document.createElement(tag); if (cls) n.className = cls; if (txt !== undefined) n.textContent = txt; return n; }
+  const $ = function (id) { return document.getElementById(id); };
+  const raiz = $("categorias"), toc = $("toc-cats"), selCat = $("f-cat"), selOrd = $("f-orden"), buscar = $("buscar"), soloTop = $("f-top");
+  let dlg = $("dialogo-copiar"), filas = [], porId = {}, cats = [], grupos = [], imp = null;
   if (!CATS.length) { $("total-glosario").textContent = "No se pudo cargar el glosario (falta datos-glosario.js)."; return; }
-  var porCat = {}; CATS.forEach(function (c) { porCat[c.id] = c; });
+  const porCat = {}; CATS.forEach(function (c) { porCat[c.id] = c; });
   (B.GLOSARIO || []).forEach(function (t) { porId[t.id] = t; });
 
   function tocLink(href, n, txt) {
-    var li = el("li"), a = el("a"); a.href = href;
+    const li = el("li"), a = el("a"); a.href = href;
     a.appendChild(el("span", "ni", n)); a.appendChild(document.createTextNode(txt));
     li.appendChild(a); toc.appendChild(li); return li;
   }
 
   // Imprescindibles
-  var dest = (B.GLOSARIO_DESTACADOS || []).filter(function (id) { return porId[id]; });
+  const dest = (B.GLOSARIO_DESTACADOS || []).filter(function (id) { return porId[id]; });
   if (dest.length) {
     imp = el("section", "cat imp"); imp.id = "imprescindibles";
-    var hi = el("h2"); hi.appendChild(el("span", "n", "★")); hi.appendChild(document.createTextNode("Imprescindibles")); imp.appendChild(hi);
+    const hi = el("h2"); hi.appendChild(el("span", "n", "★")); hi.appendChild(document.createTextNode("Imprescindibles")); imp.appendChild(hi);
     imp.appendChild(el("p", "intro", "Si solo vas a aprender unos pocos, empieza por estos. Toca uno para ir a su ficha."));
-    var ci = el("ul", "chips-imp");
+    const ci = el("ul", "chips-imp");
     dest.forEach(function (id) {
-      var t = porId[id], li = el("li"), a = el("a", "chip-term"); a.href = "#" + id; a.setAttribute("data-ir", id);
+      const t = porId[id], li = el("li"), a = el("a", "chip-term"); a.href = "#" + id; a.setAttribute("data-ir", id);
       a.appendChild(el("span", "en", t.termino.length > 20 ? t.termino.split(" / ")[0] : t.termino)); a.appendChild(el("span", "es", t.es));
       li.appendChild(a); ci.appendChild(li);
     });
@@ -120,43 +122,43 @@
   }
 
   GR.forEach(function (g, gi) {
-    var gs = el("section", "grupo"); gs.id = g.id; gs.setAttribute("data-g", g.id);
-    var h = el("h2"); h.appendChild(document.createTextNode(g.titulo)); gs.appendChild(h);
+    const gs = el("section", "grupo"); gs.id = g.id; gs.setAttribute("data-g", g.id);
+    const h = el("h2"); h.appendChild(document.createTextNode(g.titulo)); gs.appendChild(h);
     gs.appendChild(el("p", "intro", g.intro));
-    var o = document.createElement("optgroup"); o.label = g.titulo; selCat.appendChild(o);
-    var gref = { g: g, s: gs, cats: [], li: tocLink("#" + g.id, (gi + 1) + ".", g.titulo) };
+    const o = document.createElement("optgroup"); o.label = g.titulo; selCat.appendChild(o);
+    const gref = { g: g, s: gs, cats: [], li: tocLink("#" + g.id, (gi + 1) + ".", g.titulo) };
     g.cats.forEach(function (cid) {
-      var c = porCat[cid]; if (!c) return;
-      var op = el("option", "", c.titulo); op.value = c.id; o.appendChild(op);
-      var d = el("details", "cat"); d.id = c.id; d.open = c.id !== "spice" && c.id !== "cw";
-      var sum = el("summary"); sum.appendChild(el("h3", "", c.titulo));
-      var cnt = el("span", "cuenta-seccion"); sum.appendChild(cnt); d.appendChild(sum);
+      const c = porCat[cid]; if (!c) return;
+      const op = el("option", "", c.titulo); op.value = c.id; o.appendChild(op);
+      const d = el("details", "cat"); d.id = c.id; d.open = c.id !== "spice" && c.id !== "cw";
+      const sum = el("summary"); sum.appendChild(el("h3", "", c.titulo));
+      const cnt = el("span", "cuenta-seccion"); sum.appendChild(cnt); d.appendChild(sum);
       d.appendChild(el("p", "intro", c.intro));
-      var ul = el("ul", "terminos"); d.appendChild(ul);
-      var x = { c: c, d: d, ul: ul, cnt: cnt, rows: [], exp: false, mas: el("button", "btn-mas", "") };
+      const ul = el("ul", "terminos"); d.appendChild(ul);
+      const x = { c: c, d: d, ul: ul, cnt: cnt, rows: [], exp: false, mas: el("button", "btn-mas", "") };
       x.mas.type = "button"; x.mas.setAttribute("data-mas", c.id); d.appendChild(x.mas);
       c.items.forEach(function (t, k) {
-        var compacto = !t.def && !t.ejemplo;
-        var li2 = el("li", "termino" + (t.top ? " top" : "") + (compacto ? " compacto" : "")); li2.id = t.id;
+        const compacto = !t.def && !t.ejemplo;
+        const li2 = el("li", "termino" + (t.top ? " top" : "") + (compacto ? " compacto" : "")); li2.id = t.id;
         li2.appendChild(el("p", "en", t.termino));
         li2.appendChild(el("p", "es", t.es));
         if (t.def) li2.appendChild(el("p", "def", t.def));
         if (t.ejemplo) li2.appendChild(el("p", "ejemplo", "«" + t.ejemplo + "»"));
-        var rel = (VER[t.id] || []).filter(function (r) { return porId[r]; });
+        const rel = (VER[t.id] || []).filter(function (r) { return porId[r]; });
         if (rel.length) {
-          var pv = el("p", "ver", "Ver también: ");
+          const pv = el("p", "ver", "Ver también: ");
           rel.forEach(function (r, j) {
             if (j) pv.appendChild(document.createTextNode(" · "));
-            var a = el("a", "", porId[r].termino); a.href = "#" + r; a.setAttribute("data-ir", r); pv.appendChild(a);
+            const a = el("a", "", porId[r].termino); a.href = "#" + r; a.setAttribute("data-ir", r); pv.appendChild(a);
           });
           li2.appendChild(pv);
         }
-        var pie = el("div", "pie");
+        const pie = el("div", "pie");
         if (t.top) pie.appendChild(el("span", "estrella", "★ Imprescindible"));
-        var b = el("button", "btn-chico", "Copiar"); b.type = "button"; b.setAttribute("data-copiar", t.id);
+        const b = el("button", "btn-chico", "Copiar"); b.type = "button"; b.setAttribute("data-copiar", t.id);
         b.setAttribute("aria-label", "Copiar " + t.termino); pie.appendChild(b);
         li2.appendChild(pie); ul.appendChild(li2);
-        var f = { t: t, li: li2, i: k, x: x, txt: norm([t.termino, t.es, t.def, t.ejemplo].join(" ")) };
+        const f = { t: t, li: li2, i: k, x: x, txt: norm([t.termino, t.es, t.def, t.ejemplo].join(" ")) };
         x.rows.push(f); filas.push(f);
       });
       gs.appendChild(d); gref.cats.push(x); cats.push(x);
@@ -165,7 +167,7 @@
   });
 
   function ordenar() {
-    var az = selOrd.value === "az";
+    const az = selOrd.value === "az";
     cats.forEach(function (x) {
       x.rows.sort(function (a, b) { return az ? norm(a.t.termino).localeCompare(norm(b.t.termino)) : a.i - b.i; });
       x.rows.forEach(function (f) { x.ul.appendChild(f.li); });
@@ -173,14 +175,14 @@
   }
 
   function aplicar() {
-    var q = norm(buscar.value), cat = selCat.value, top = soloTop.checked, vis = 0;
-    var hay = !!q || cat !== "todas" || top;
+    let q = norm(buscar.value), cat = selCat.value, top = soloTop.checked, vis = 0;
+    const hay = !!q || cat !== "todas" || top;
     cats.forEach(function (x) {
-      var pasan = 0, shown = 0, lim = (hay || x.exp) ? 1e9 : LIM;
+      let pasan = 0, shown = 0, lim = (hay || x.exp) ? 1e9 : LIM;
       x.rows.forEach(function (f) {
-        var ok = (cat === "todas" || f.t.categoria === cat) && (!top || f.t.top) && (!q || f.txt.indexOf(q) !== -1);
+        const ok = (cat === "todas" || f.t.categoria === cat) && (!top || f.t.top) && (!q || f.txt.indexOf(q) !== -1);
         if (ok) pasan++;
-        var mostrar = ok && shown < lim; if (mostrar) shown++;
+        const mostrar = ok && shown < lim; if (mostrar) shown++;
         f.li.hidden = !mostrar;
       });
       vis += pasan;
@@ -191,7 +193,7 @@
       x.mas.textContent = x.exp ? "Ver menos" : "Ver los " + (pasan - LIM) + " restantes";
     });
     grupos.forEach(function (g) {
-      var v = g.cats.some(function (x) { return !x.d.hidden; });
+      const v = g.cats.some(function (x) { return !x.d.hidden; });
       g.s.hidden = !v; g.li.hidden = !v;
     });
     if (imp) { imp.hidden = hay; toc.firstChild.hidden = hay; }
@@ -199,7 +201,7 @@
     $("resultados-glosario").textContent = "Mostrando " + vis + " de " + filas.length + " términos.";
   }
   $("total-glosario").textContent = filas.length + " términos en " + CATS.length + " categorías";
-  var timer; buscar.addEventListener("input", function () { clearTimeout(timer); timer = setTimeout(aplicar, 150); });
+  let timer; buscar.addEventListener("input", function () { clearTimeout(timer); timer = setTimeout(aplicar, 150); });
   selCat.addEventListener("change", aplicar); soloTop.addEventListener("change", aplicar);
   selOrd.addEventListener("change", function () { ordenar(); aplicar(); });
   ordenar(); aplicar();
@@ -208,10 +210,10 @@
     return new Promise(function (res) {
       function resp() {
         try {
-          var ta = document.createElement("textarea"); ta.value = texto; ta.setAttribute("readonly", "");
+          const ta = document.createElement("textarea"); ta.value = texto; ta.setAttribute("readonly", "");
           ta.style.cssText = "position:fixed;top:0;left:0;opacity:0"; document.body.appendChild(ta);
           ta.select(); ta.setSelectionRange(0, texto.length);
-          var ok = !!(document.execCommand && document.execCommand("copy")); ta.remove(); res(ok);
+          const ok = !!(document.execCommand && document.execCommand("copy")); ta.remove(); res(ok);
         } catch (e) { res(false); }
       }
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(texto).then(function () { res(true); }, resp); else resp();
@@ -219,7 +221,7 @@
   }
 
   function irA(id) {
-    var f = filas.filter(function (x) { return x.t.id === id; })[0];
+    const f = filas.filter(function (x) { return x.t.id === id; })[0];
     if (!f) return false;
     if (f.li.hidden) {
       if (buscar.value || selCat.value !== "todas" || soloTop.checked) { buscar.value = ""; selCat.value = "todas"; soloTop.checked = false; }
@@ -233,24 +235,24 @@
   }
 
   $("glosario").addEventListener("click", function (e) {
-    var t = e.target.closest ? e.target : null; if (!t) return;
-    var ir = t.closest("a[data-ir]");
+    const t = e.target.closest ? e.target : null; if (!t) return;
+    const ir = t.closest("a[data-ir]");
     if (ir) { e.preventDefault(); irA(ir.getAttribute("data-ir")); return; }
-    var m = t.closest("button[data-mas]");
+    const m = t.closest("button[data-mas]");
     if (m) {
-      var x = cats.filter(function (c) { return c.c.id === m.getAttribute("data-mas"); })[0];
+      const x = cats.filter(function (c) { return c.c.id === m.getAttribute("data-mas"); })[0];
       if (x) { x.exp = !x.exp; aplicar(); if (!x.exp) x.d.scrollIntoView({ block: "start" }); }
       return;
     }
-    var b = t.closest("button[data-copiar]");
+    const b = t.closest("button[data-copiar]");
     if (!b) return;
-    var f = filas.filter(function (z) { return z.t.id === b.getAttribute("data-copiar"); })[0];
+    const f = filas.filter(function (z) { return z.t.id === b.getAttribute("data-copiar"); })[0];
     if (!f) return;
-    var texto = f.t.termino + " = " + f.t.es + (f.t.def ? ". " + f.t.def : "");
+    const texto = f.t.termino + " = " + f.t.es + (f.t.def ? ". " + f.t.def : "");
     copiar(texto).then(function (ok) {
       if (ok) {
         $("copiado").textContent = ""; setTimeout(function () { $("copiado").textContent = "Copiado al portapapeles."; }, 30);
-        var o = b.getAttribute("data-texto") || b.textContent; b.setAttribute("data-texto", o); b.textContent = "¡Copiado!";
+        const o = b.getAttribute("data-texto") || b.textContent; b.setAttribute("data-texto", o); b.textContent = "¡Copiado!";
         clearTimeout(b._t); b._t = setTimeout(function () { b.textContent = o; }, 1800);
       } else {
         $("copiar-texto").value = texto;
@@ -262,8 +264,8 @@
   $("copiar-cerrar").addEventListener("click", function () { try { dlg.close(); } catch (e) { dlg.removeAttribute("open"); } });
 
   function irAlHash() {
-    var id = ""; try { id = decodeURIComponent(location.hash.slice(1)); } catch (e) { return; }
-    if (!irA(id)) { var d = porCat[id] && $(id); if (d && d.tagName === "DETAILS") { d.open = true; d.scrollIntoView(); } }
+    let id = ""; try { id = decodeURIComponent(location.hash.slice(1)); } catch (e) { return; }
+    if (!irA(id)) { const d = porCat[id] && $(id); if (d && d.tagName === "DETAILS") { d.open = true; d.scrollIntoView(); } }
   }
   window.addEventListener("hashchange", irAlHash); irAlHash();
 })();

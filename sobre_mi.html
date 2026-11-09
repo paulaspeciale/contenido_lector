@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <meta name="description" content="Soy Paula Speciale: amo el romantasy y desarrollo apps gratuitas para creadores de contenido literario. Conoce mis redes, mi canal de YouTube y cómo apoyar el proyecto.">
-<meta name="theme-color" content="#e8e3df" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#353436" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#efe6d6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#211b24" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%9A%3C/text%3E%3C/svg%3E">
 <title>Sobre mí: Paula Speciale, lectora y creadora de herramientas para BookTok</title>
 <meta name="robots" content="index,follow,max-image-preview:large">
@@ -34,6 +34,8 @@
 <a href="ideas_post_90.html">Ideas</a>
 <a href="calendario_ideas_90.html">Calendario</a>
 <a href="glosario.html">Glosario</a>
+<a href="bio.html">Bio</a>
+<a href="consistencia.html">Feed</a>
 <a href="bingo.html">Bingo</a>
 <a href="sugerencias.html">Sugerencias</a>
 <a href="sobre_mi.html" aria-current="page">Sobre mí</a>
@@ -95,20 +97,20 @@
 (function () {
   "use strict";
   function copiable(idBtn, idTexto, idMsg, queCopia) {
-    var btn = document.getElementById(idBtn);
-    var msg = document.getElementById(idMsg);
-    var texto = document.getElementById(idTexto).textContent;
+    const btn = document.getElementById(idBtn);
+    const msg = document.getElementById(idMsg);
+    const texto = document.getElementById(idTexto).textContent;
     function aviso(ok) { msg.textContent = ok ? queCopia + " copiado." : "No se pudo copiar. Selecciónalo y cópialo a mano."; }
     function respaldo() {
       try {
-        var ta = document.createElement("textarea");
+        const ta = document.createElement("textarea");
         ta.value = texto;
         ta.setAttribute("readonly", "");
         ta.style.cssText = "position:fixed;top:0;left:0;opacity:0";
         document.body.appendChild(ta);
         ta.select();
         ta.setSelectionRange(0, texto.length);
-        var ok = !!(document.execCommand && document.execCommand("copy"));
+        const ok = !!(document.execCommand && document.execCommand("copy"));
         ta.remove();
         aviso(ok);
       } catch (err) { aviso(false); }

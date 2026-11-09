@@ -7,7 +7,7 @@
 (function () {
   "use strict";
   window.BT = window.BT || {};
-  var C = [
+  const C = [
   { id: "siglas", titulo: "Siglas y abreviaturas", intro: "Lo primero que verás en cualquier reseña, caption o comentario.", items: [
     ["TBR", "Libros pendientes de leer", "To Be Read. Tu lista de pendientes.", 1, "Mi TBR del mes: cinco libros y ninguna fuerza de voluntad."],
     ["DNF", "Libro abandonado", "Did Not Finish. Conviene explicar el motivo.", 1, "DNF en la página 120: el ritmo no me funcionó."],
@@ -315,24 +315,24 @@
     ["Negative Space", "Espacio negativo", ""]
   ]}
   ];
-  var SPLIT = {};
+  const SPLIT = {};
   ["PNR · UF · DF · HR","ACOTAR · TOG · CC","Snowed In · Stranded Together","Page-Turner · Unputdownable","Spin-Off · Sequel · Prequel","Dubcon · Noncon · CNC","Red Flag · Green Flag","Feral · Unhinged","Self-Harm · Suicide","Paperback · Hardcover","Ebook · Audiobook","Box Set · Omnibus","Indie · Self-Published","Preorder · Release Day","Signed Copy · Bookplate","Buddy Read · Readalong","Unpopular Opinion · Hot Take","Bookstagrammer · BookTokker","Reading Challenge · Reading Goal"].forEach(function (k) { SPLIT[k] = 1; });
   function slug(t) {
     return t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   }
-  var usados = {}, plano = [];
+  const usados = {}, plano = [];
   C.forEach(function (c) {
-    var filas = [];
+    const filas = [];
     c.items.forEach(function (r) {
-      var a = r[0].split(" · "), b = r[1].split(" · ");
+      const a = r[0].split(" · "), b = r[1].split(" · ");
       if (SPLIT[r[0]] && a.length === b.length) a.forEach(function (x, k) { filas.push([x, b[k], r[2], r[3], k ? "" : r[4]]); });
       else filas.push(r);
     });
     c.items = filas.map(function (r) {
-      var id = slug(r[0]), n = 2;
+      let id = slug(r[0]), n = 2;
       while (usados[id]) { id = slug(r[0]) + "-" + n++; }
       usados[id] = true;
-      var t = { id: id, termino: r[0], es: r[1], def: r[2] || "", top: r[3] === 1, ejemplo: r[4] || "", categoria: c.id };
+      const t = { id: id, termino: r[0], es: r[1], def: r[2] || "", top: r[3] === 1, ejemplo: r[4] || "", categoria: c.id };
       plano.push(t);
       return t;
     });

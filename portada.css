@@ -99,6 +99,8 @@
 .tarjetas li.t-ideas { --c: var(--c-ideas); }
 .tarjetas li.t-calendario { --c: var(--c-calendario); }
 .tarjetas li.t-glosario { --c: var(--c-glosario); }
+.tarjetas li.t-bio, .tarjetas li.t-feed { --c: var(--c-bio); }
+.tarjetas li.t-bingo { --c: var(--c-bingo); }
 .tarjetas li.t-sugerencias { --c: var(--c-sugerencias); }
 .tarjetas li.t-sobre-mi { --c: var(--c-sobre-mi); }
 

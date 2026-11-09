@@ -1,13 +1,13 @@
 {
  "version": 1,
- "titulo": "Book Bingo 2027",
+ "titulo": "Bingo lector 2027",
  "tamano": 5,
- "libre": "Free Space",
+ "libre": "Espacio libre",
  "retos": [
-  "Re-Read", "Dual POV", "New Author", "Sports Romance", "Buddy Read",
-  "Over 500 Pages", "Judge a Book by Cover", "Enemies to Lovers", "Slow Burn", "Standalone",
-  "Romantasy", "Debut Novel", "Book Hangover", "Comfort Read", "Hidden Gem",
-  "Found Family", "Plot Twist", "Series Starter", "Book Club Pick", "Cliffhanger",
-  "Hardcover", "Audiobook", "Translated Book", "Adapted to Screen"
+  "Relectura", "Doble POV", "Autor o autora nueva", "Libro de Pinterest", "Romance deportivo",
+  "Portada de mi color favorito", "Lectura compartida", "Libro escrito por un hombre", "Leer un día de lluvia", "Novedad editorial",
+  "Leer una novela corta", "Más de 500 páginas", "Comparte inicial con el autor o autora", "Lectura de temporada",
+  "Género nuevo", "Título de dos palabras", "Terminar una saga", "Libro de la infancia", "Mi trope favorito",
+  "Intercambio de libros", "Libro elegido por una amiga", "Juzgar un libro por su portada", "Terminar un libro en un día", "Libro 5 estrellas de un booktuber"
  ]
 }
