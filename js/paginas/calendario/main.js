@@ -1,145 +1,9 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="color-scheme" content="light dark">
-<meta name="description" content="Calendario mensual para planificar tus posts, carruseles y reels literarios, con el formato y el estado de cada publicación.">
-<meta name="theme-color" content="#efe6d6" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#211b24" media="(prefers-color-scheme: dark)">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%9A%3C/text%3E%3C/svg%3E">
-<title>Calendario de publicaciones para Bookstagram y BookTok</title>
-<meta name="robots" content="index,follow,max-image-preview:large">
-<link rel="canonical" href="https://TU-DOMINIO.com/calendario_ideas_90.html">
-<link rel="alternate" hreflang="es" href="https://TU-DOMINIO.com/calendario_ideas_90.html">
-<meta property="og:type" content="website">
-<meta property="og:locale" content="es_ES">
-<meta property="og:site_name" content="Contenido BookTok">
-<meta property="og:title" content="Calendario de publicaciones para Bookstagram y BookTok">
-<meta property="og:description" content="Calendario mensual para planificar tus posts, carruseles y reels literarios, con el formato y el estado de cada publicación.">
-<meta property="og:url" content="https://TU-DOMINIO.com/calendario_ideas_90.html">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Calendario de publicaciones para Bookstagram y BookTok">
-<meta name="twitter:description" content="Calendario mensual para planificar tus posts, carruseles y reels literarios, con el formato y el estado de cada publicación.">
-<link rel="preload" href="fonts/courier-prime-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebPage", "url": "https://TU-DOMINIO.com/calendario_ideas_90.html", "name": "Calendario de publicaciones para Bookstagram y BookTok", "description": "Calendario mensual para planificar tus posts, carruseles y reels literarios, con el formato y el estado de cada publicación.", "inLanguage": "es"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://TU-DOMINIO.com/"}, {"@type": "ListItem", "position": 2, "name": "Calendario", "item": "https://TU-DOMINIO.com/calendario_ideas_90.html"}]}]}</script>
-<link rel="stylesheet" href="base.css">
-<link rel="stylesheet" href="calendario.css">
-<link rel="stylesheet" href="toc.css">
-<script src="theme.js"></script>
-</head>
-<body>
-<nav class="menu" aria-label="Principal">
-<a href="index.html">Inicio</a>
-<a href="resenia.html">Reseñas</a>
-<a href="ideas_post_90.html">Ideas</a>
-<a href="calendario_ideas_90.html" aria-current="page">Calendario</a>
-<a href="glosario.html">Glosario</a>
-<a href="bio.html">Bio</a>
-<a href="consistencia.html">Feed</a>
-<a href="bingo.html">Bingo</a>
-<a href="sugerencias.html">Sugerencias</a>
-<a href="sobre_mi.html">Sobre mí</a>
-</nav>
-<header class="encabezado" id="inicio">
-<h1>Calendario de publicaciones</h1>
-<p class="intro">Aquí aparecen las ideas a las que les pusiste fecha en <a href="ideas_post_90.html">Ideas</a>.</p>
-<p id="resumen-mes" class="ayuda" aria-live="polite"></p>
-<p id="aviso-resp" class="ayuda aviso-resp" role="status" hidden><span id="aviso-resp-txt"></span> <button type="button" id="aviso-resp-btn">Exportar ahora</button></p>
-</header>
-<nav class="toc" id="toc" aria-label="En esta página">
-<p class="toc-titulo">En esta página</p>
-<ol>
-<li><a href="#calendario">Calendario</a></li>
-<li><a href="#detalle">Detalle del día</a></li>
-<li><a href="#meta">Meta semanal</a></li>
-<li><a href="#racha">Racha</a></li>
-<li><a href="#leyenda">Leyenda</a></li>
-<li><a href="#ayuda-datos">Ver un respaldo</a></li>
-</ol>
-</nav>
-<main>
-<section id="calendario" aria-label="Calendario mensual">
-<div class="cal-nav">
-<button type="button" id="mes-ant" aria-label="Mes anterior">‹</button>
-<h2 id="mes-titulo"></h2>
-<button type="button" id="mes-sig" aria-label="Mes siguiente">›</button>
-</div>
-<div class="botones centrado"><button type="button" id="mes-hoy">Ir a hoy</button></div>
-<div class="cal-grid" id="cal-grid"></div>
-</section>
-
-<p id="anuncio" class="solo-lector" role="status" aria-live="polite"></p>
-<section id="detalle" aria-label="Detalle del día" tabindex="-1"></section>
-<p class="ayuda" id="msg-fecha-wrap" role="status"><span id="msg-fecha"></span> <button type="button" id="msg-deshacer" hidden>Deshacer</button></p>
-
-<section id="meta" class="meta-semanal" aria-label="Meta semanal">
-<div class="meta-fila">
-<label class="campo"><span>Meta: publicaciones por semana</span>
-<input type="number" id="meta-n" min="0" max="21" step="1" inputmode="numeric" autocomplete="off"></label>
-<p id="meta-estado" class="meta-estado" aria-live="polite"></p>
-</div>
-<progress id="meta-prog" max="1" value="0" hidden aria-hidden="true"></progress>
-<p id="meta-libres" class="ayuda"></p>
-<p class="ayuda">Escribe 0 para quitar la meta. La semana va de lunes a domingo y no cuenta las ideas descartadas.</p>
-<p id="meta-msg" class="ayuda" role="status"></p>
-</section>
-
-<section id="racha" class="meta-semanal" aria-label="Racha y cumplimiento">
-<p id="racha-estado" class="meta-estado" aria-live="polite"></p>
-<p id="racha-mejor" class="ayuda"></p>
-<progress id="cumpl-prog" max="100" value="0" hidden aria-label="Porcentaje de cumplimiento"></progress>
-<p id="cumpl-estado" class="meta-estado" aria-live="polite"></p>
-<p class="ayuda">Solo lectura. Una semana (lunes a domingo) cuenta si tiene tantas publicadas como tu meta semanal, o al menos 1 si no tienes meta. Se usa la fecha que le pusiste a cada idea; las descartadas no cuentan.</p>
-</section>
-
-<section id="leyenda" aria-label="Leyenda">
-<div class="leyenda">
-<span class="chip formato-post">Post</span>
-<span class="chip formato-carrusel">Carrusel</span>
-<span class="chip formato-reel">Reel</span>
-<span class="ev" data-est="idea">Idea</span>
-<span class="ev" data-est="grabando">Grabando</span>
-<span class="ev" data-est="editando">Editando</span>
-<span class="ev" data-est="programada">Programada</span>
-<span class="ev" data-est="publicada">Publicada</span>
-<span class="ev" data-est="descartada">Descartada</span>
-<span class="ev vencida" data-est="idea">Vencida</span>
-<span class="chip libre-leg">Día libre</span>
-<span class="chip evento-chip">Evento</span>
-<span class="chip sug-leg">✦ Fecha bookish</span>
-<label class="check"><input type="checkbox" id="ver-bookish" checked> Mostrar fechas bookish</label>
-</div>
-</section>
-
-
-<details class="guia" id="ayuda-datos">
-<summary>Ver un respaldo</summary>
-<div style="padding-bottom:.9rem">
-<p class="ayuda">Puedes cargar un respaldo JSON (el que se descarga en Ideas) solo para verlo. No cambia tu progreso.</p>
-<label class="campo" style="margin-top:.6rem"><span>Archivo de respaldo</span>
-<input type="file" id="importar" accept="application/json,.json"></label>
-<div class="botones" style="margin-top:.6rem"><button type="button" id="volver-mios" hidden>Volver a mis datos</button></div>
-<p id="msg" class="ayuda" role="status" style="margin-top:.6rem"></p>
-<p class="ayuda" style="margin-top:1rem">Tus eventos y tu meta semanal solo viven en este navegador y no van en el respaldo de Ideas. Descárgalos aparte para no perderlos.</p>
-<div class="botones" style="margin-top:.6rem"><button type="button" id="exp-cal">Exportar eventos y meta</button></div>
-<label class="campo" style="margin-top:.6rem"><span>Importar eventos y meta (se suman a los actuales)</span>
-<input type="file" id="imp-cal" accept="application/json,.json"></label>
-<p id="msg-cal" class="ayuda" role="status" style="margin-top:.6rem"></p>
-</div>
-</details>
-</main>
-<footer>
-  <p>&copy; Diseñado e ideado por Paula Speciale, con la ayuda de Claude</p>
-</footer>
-<script src="datos.js" data-usa="ideas"></script>
-<script src="almacen.js"></script>
-<script>
 /* ==========================================================================
-   Calendario de publicaciones · lógica completa de calendario_ideas_90.html.
+   main.js · Entrada de la página del Calendario (calendario.html).
 
-   Depende de datos.js (ideas en window.BT.SECCIONES) y de almacen.js (para
-   escribir fechas en el progreso de Ideas). Todo el estado lo lee de:
+   Depende de js/nucleo/datos.js (ideas en window.BT.SECCIONES) y de
+   js/nucleo/almacen.js (para escribir fechas en el progreso de Ideas). Todo el
+   estado lo lee de:
      - localStorage["ideas_post_90_v1"]  progreso de las ideas (solo lectura,
        salvo la fecha, que se cambia con window.BT.almacen.guardarFecha)
      - localStorage["calendario_config"] meta semanal
@@ -148,16 +12,23 @@
    Este script NUNCA escribe las ideas completas: delega en almacen.js para no
    pisar cambios que estén haciendo otras páginas.
 
-   Organización: al final de este bloque, arrancar() monta la rejilla mensual,
-   el detalle del día, la meta/racha y los eventos. Los banners «// ---- ... ----»
-   separan cada bloque.
+   Los módulos vecinos separan lo reutilizable: constantes.js (claves, listas y
+   fechas bookish) y util.js (fechas, DOM y ayudantes). Este archivo es la
+   entrada: arrancar() monta la rejilla mensual, el detalle del día, la
+   meta/racha y los eventos. Los banners «// ---- ... ----» separan cada bloque.
    ========================================================================== */
+import {
+  KEY, NOTA_SYNC, KEY_CFG, KEY_RESP, META_MAX, FORMATOS, ESTADOS, DOW, MESES,
+  NOMBRES_EST, REDES, BOOKISH, KEY_EV, TIPOS_EV, MAX_EV, MAX_TIT_EV
+} from "./constantes.js";
+import { tiene, pad, isoDe, deIso, fechaValida, el, partir, juevesMarzo } from "./util.js";
+
 (function (listo) {
   if (!listo) {
     const aviso = document.createElement("p");
     aviso.setAttribute("role", "alert");
     aviso.className = "vacio-msg";
-    aviso.textContent = "No se pudieron cargar los datos: falta datos.js (o datos-ideas.json). Sube todos los archivos a la misma carpeta y abre la página desde un servidor, no con file://.";
+    aviso.textContent = "No se pudieron cargar los datos: falta js/nucleo/datos.js (o datos/datos-ideas.json). Conserva la estructura de carpetas y abre la página desde un servidor, no con file://.";
     const m = document.querySelector("main");
     if (m) m.insertBefore(aviso, m.firstChild);
   }
@@ -166,64 +37,16 @@
 
 function arrancar() {
   "use strict";
-  const KEY = "ideas_post_90_v1";
-  const NOTA_SYNC = " Se sincroniza con tus otros dispositivos al abrir Ideas.";
-  const KEY_CFG = "calendario_config";   // clave propia: solo guarda la meta semanal
-  const KEY_RESP = "calendario_respaldo"; // fechas (ms) del último cambio y del último respaldo de eventos y meta
-  const META_MAX = 21;
-  const FORMATOS = ["Post", "Carrusel", "Reel"];
-  const ESTADOS = { idea: 1, grabando: 1, editando: 1, programada: 1, publicada: 1, descartada: 1 };
-  const DOW = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
-  const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-  const NOMBRES_EST = { idea: "Idea", grabando: "Grabando", editando: "Editando", programada: "Programada", publicada: "Publicada", descartada: "Descartada" };
-
-  const REDES = { instagram: "Instagram", tiktok: "TikTok", youtube: "YouTube" };
 
   const base = Object.create(null);
   ((window.BT && window.BT.SECCIONES) || []).forEach(function (s) {
     s.ideas.forEach(function (i) { base[i.id] = { texto: i.texto, formato: i.formato }; });
   });
 
-  function tiene(o, k) { return Object.prototype.hasOwnProperty.call(o, k); }
-  function pad(n) { return (n < 10 ? "0" : "") + n; }
-  function isoDe(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
-  function deIso(s) { const p = s.split("-").map(Number); return new Date(p[0], p[1] - 1, p[2]); }
-  function fechaValida(s) {
-    if (typeof s !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
-    const d = deIso(s);
-    return isoDe(d) === s && s >= "2000-01-01" && s <= "2100-12-31";
-  }
-  function el(tag, cls, txt) {
-    const n = document.createElement(tag);
-    if (cls) n.className = cls;
-    if (txt !== undefined) n.textContent = txt;
-    return n;
-  }
-  function partir(t) {
-    return String(t).replace(/^[★◆]\s*/, "").replace(/\s*\[(?:Post|Carrusel|Reel)\]\s*$/, "");
-  }
 
   // Fechas bookish: lista fija por mes-día. Solo sugerencias; no se guarda nada.
-  const BOOKISH = {
-    "02-14": ["San Valentín", "Tropes románticos o tu pareja literaria favorita."],
-    "03-21": ["Día Mundial de la Poesía", "Un libro de poesía o una frase subrayada."],
-    "04-02": ["Día del Libro Infantil", "El libro que te hizo lectora."],
-    "04-23": ["Día del Libro", "Tu libro favorito o tu mejor regalo literario."],
-    "06-13": ["Día del Escritor (Argentina)", "Una autora o autor con quien serías amiga."],
-    "06-15": ["Día Nacional del Libro (Argentina)", "Joyas escondidas o autoras hispanohablantes."],
-    "06-30": ["Mitad de año", "Mid-Year Freak Out Tag: mejores y peores lecturas."],
-    "08-24": ["Día del Lector (Argentina)", "Tu ritual de lectura o tu rincón favorito."],
-    "09-08": ["Día de la Alfabetización", "Cómo te hiciste lectora."],
-    "08-09": ["Día del Amante de los Libros", "Tu historia de amor con los libros en una foto o reel."],
-    "09-06": ["Día de Leer un Libro (EE. UU.)", "Lo que estás leyendo hoy."],
-    "10-24": ["Día de las Bibliotecas", "Tu biblioteca favorita o tu último préstamo."],
-    "10-31": ["Halloween", "Libros oscuros: dark academia, gótico, terror."],
-    "12-25": ["Navidad", "Árbol de libros o libros de confort."],
-    "12-31": ["Cierre de año", "Wrap-up anual y balance de compras vs. lecturas."]
-  };
   let verBookish = true;
   // Primer jueves de marzo: Día Mundial del Libro en Reino Unido (fecha móvil)
-  function juevesMarzo(y) { const d = new Date(y, 2, 1); return "03-" + pad(1 + ((4 - d.getDay() + 7) % 7)); }
   function bookishDe(key) {
     if (!verBookish) return null;
     const md = key.slice(5);
@@ -301,9 +124,6 @@ function arrancar() {
   }
 
   // ---- Eventos propios (calendario_eventos: { version: 1, eventos: [{id, fecha, titulo, tipo}] }) ----
-  const KEY_EV = "calendario_eventos";   // clave propia: no forma parte del respaldo de Ideas
-  const TIPOS_EV = { lanzamiento: "Lanzamiento", arc: "Plazo de ARC", colaboracion: "Colaboración", otro: "Otro" };
-  const MAX_EV = 200, MAX_TIT_EV = 80;
   // Valida los eventos guardados o los de un respaldo importado. Descarta los
   // que no tengan id válido («e» + caracteres), título o fecha real.
   function leerEventos(crudo) {
@@ -1021,6 +841,3 @@ elDetalle.appendChild(el("h3", "", titulo.charAt(0).toUpperCase() + titulo.slice
   render();
   espiarToc();
 }
-</script>
-</body>
-</html>

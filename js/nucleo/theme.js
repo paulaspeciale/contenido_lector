@@ -13,7 +13,7 @@
   const root = document.documentElement;
   // Color propio por sección: se deduce del nombre del archivo y lo aplica base.css.
   // Varias páginas comparten color (consistencia usa el de bio).
-  const PAGINAS = { resenia: "resenia", ideas_post_90: "ideas", calendario_ideas_90: "calendario", glosario: "glosario", bio: "bio", consistencia: "bio", bingo: "bingo", sugerencias: "sugerencias", sobre_mi: "sobre-mi" };
+  const PAGINAS = { resena: "resenia", ideas: "ideas", calendario: "calendario", glosario: "glosario", bio: "bio", consistencia: "bio", bingo: "bingo", sugerencias: "sugerencias", "sobre-mi": "sobre-mi" };
   const archivo = (location.pathname.split("/").pop() || "index").replace(/\.html?$/, "");
   root.setAttribute("data-seccion", PAGINAS[archivo] || "inicio");
   const mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;

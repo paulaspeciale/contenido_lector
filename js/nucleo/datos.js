@@ -1,7 +1,7 @@
 /* ==========================================================================
    datos.js · Cargador común de datos.
 
-   Se carga ANTES de app.js, almacen.js y del script del Calendario. Hace fetch
+   Se carga ANTES de js/paginas/ideas/main.js, almacen.js y js/paginas/calendario/main.js. Hace fetch
    de datos-ideas.json y datos-bingo.json, los valida y los deja congelados en:
      - window.BT.SECCIONES  (ideas, para Ideas y Calendario)
      - window.BT.BINGO     (retos del Bingo)
@@ -10,9 +10,9 @@
    quedarse colgada.
 
    Cada página pide solo lo que usa con el atributo data-usa:
-     <script src="datos.js" data-usa="ideas"></script>
-     <script src="datos.js" data-usa="bingo"></script>
-     <script src="datos.js" data-usa="ideas,bingo"></script>
+     <script src="js/nucleo/datos.js" data-usa="ideas"></script>
+     <script src="js/nucleo/datos.js" data-usa="bingo"></script>
+     <script src="js/nucleo/datos.js" data-usa="ideas,bingo"></script>
 
    Nota: requiere abrir la web desde un servidor (hosting o servidor local),
    no con file://, porque fetch no puede leer archivos locales.
@@ -24,9 +24,9 @@
   const FORMATOS = ["Post", "Carrusel", "Reel"];
   const MAX_TEXTO = 400, MAX_TITULO = 120, MAX_ID = 40;
 
-  // Carpeta de este script: los JSON viven junto a él
+  // Los JSON viven en /datos/, dos niveles por encima de js/nucleo/.
   const actual = document.currentScript;
-  const base = actual && actual.src ? actual.src.replace(/[^\/?#]*(?:[?#].*)?$/, "") : "";
+  const base = actual && actual.src ? new URL("../../datos/", actual.src).href : "datos/";
 
   function esObjeto(o) { return !!o && typeof o === "object" && !Array.isArray(o); }
   function esTexto(t, max) { return typeof t === "string" && t.trim().length > 0 && t.length <= max; }
@@ -85,7 +85,7 @@
     return { titulo: d.titulo, tamano: d.tamano, libre: d.libre, retos: d.retos };
   }
 
-  // Cada página pide solo lo que usa: <script src="datos.js" data-usa="ideas,bingo">
+  // Cada página pide solo lo que usa: <script src="js/nucleo/datos.js" data-usa="ideas,bingo">
   const usa = ((actual && actual.getAttribute("data-usa")) || "ideas").split(",").map(function (s) { return s.trim(); });
   const errores = [];
 

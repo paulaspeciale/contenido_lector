@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Calendario mensual para planificar tus posts, carruseles y reels literarios, con el formato y el estado de cada publicación.">
+<meta name="theme-color" content="#efe6d6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#211b24" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%9A%3C/text%3E%3C/svg%3E">
+<title>Calendario de publicaciones para Bookstagram y BookTok</title>
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://TU-DOMINIO.com/calendario.html">
+<link rel="alternate" hreflang="es" href="https://TU-DOMINIO.com/calendario.html">
+<link rel="alternate" hreflang="x-default" href="https://TU-DOMINIO.com/calendario.html">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:site_name" content="Contenido BookTok">
+<meta property="og:title" content="Calendario de publicaciones para Bookstagram y BookTok">
+<meta property="og:description" content="Calendario mensual para planificar tus posts, carruseles y reels literarios, con el formato y el estado de cada publicación.">
+<meta property="og:url" content="https://TU-DOMINIO.com/calendario.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Calendario de publicaciones para Bookstagram y BookTok">
+<meta name="twitter:description" content="Calendario mensual para planificar tus posts, carruseles y reels literarios, con el formato y el estado de cada publicación.">
+<link rel="preload" href="fonts/courier-prime-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebPage", "url": "https://TU-DOMINIO.com/calendario.html", "name": "Calendario de publicaciones para Bookstagram y BookTok", "description": "Calendario mensual para planificar tus posts, carruseles y reels literarios, con el formato y el estado de cada publicación.", "inLanguage": "es"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://TU-DOMINIO.com/"}, {"@type": "ListItem", "position": 2, "name": "Calendario", "item": "https://TU-DOMINIO.com/calendario.html"}]}]}</script>
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/paginas/calendario.css">
+<link rel="stylesheet" href="css/toc.css">
+<script src="js/nucleo/theme.js"></script>
+</head>
+<body>
+<nav class="menu" aria-label="Principal">
+<a href="index.html">Inicio</a>
+<a href="resena.html">Reseñas</a>
+<a href="ideas.html">Ideas</a>
+<a href="calendario.html" aria-current="page">Calendario</a>
+<a href="glosario.html">Glosario</a>
+<a href="bio.html">Bio</a>
+<a href="consistencia.html">Feed</a>
+<a href="bingo.html">Bingo</a>
+<a href="sugerencias.html">Sugerencias</a>
+<a href="sobre-mi.html">Sobre mí</a>
+</nav>
+<header class="encabezado" id="inicio">
+<h1>Calendario de publicaciones</h1>
+<p class="intro">Aquí aparecen las ideas a las que les pusiste fecha en <a href="ideas.html">Ideas</a>.</p>
+<p id="resumen-mes" class="ayuda" aria-live="polite"></p>
+<p id="aviso-resp" class="ayuda aviso-resp" role="status" hidden><span id="aviso-resp-txt"></span> <button type="button" id="aviso-resp-btn">Exportar ahora</button></p>
+</header>
+<nav class="toc" id="toc" aria-label="En esta página">
+<p class="toc-titulo">En esta página</p>
+<ol>
+<li><a href="#calendario">Calendario</a></li>
+<li><a href="#detalle">Detalle del día</a></li>
+<li><a href="#meta">Meta semanal</a></li>
+<li><a href="#racha">Racha</a></li>
+<li><a href="#leyenda">Leyenda</a></li>
+<li><a href="#ayuda-datos">Ver un respaldo</a></li>
+</ol>
+</nav>
+<main>
+<section id="calendario" aria-label="Calendario mensual">
+<div class="cal-nav">
+<button type="button" id="mes-ant" aria-label="Mes anterior">‹</button>
+<h2 id="mes-titulo"></h2>
+<button type="button" id="mes-sig" aria-label="Mes siguiente">›</button>
+</div>
+<div class="botones centrado"><button type="button" id="mes-hoy">Ir a hoy</button></div>
+<div class="cal-grid" id="cal-grid"></div>
+</section>
+
+<p id="anuncio" class="solo-lector" role="status" aria-live="polite"></p>
+<section id="detalle" aria-label="Detalle del día" tabindex="-1"></section>
+<p class="ayuda" id="msg-fecha-wrap" role="status"><span id="msg-fecha"></span> <button type="button" id="msg-deshacer" hidden>Deshacer</button></p>
+
+<section id="meta" class="meta-semanal" aria-label="Meta semanal">
+<div class="meta-fila">
+<label class="campo"><span>Meta: publicaciones por semana</span>
+<input type="number" id="meta-n" min="0" max="21" step="1" inputmode="numeric" autocomplete="off"></label>
+<p id="meta-estado" class="meta-estado" aria-live="polite"></p>
+</div>
+<progress id="meta-prog" max="1" value="0" hidden aria-hidden="true"></progress>
+<p id="meta-libres" class="ayuda"></p>
+<p class="ayuda">Escribe 0 para quitar la meta. La semana va de lunes a domingo y no cuenta las ideas descartadas.</p>
+<p id="meta-msg" class="ayuda" role="status"></p>
+</section>
+
+<section id="racha" class="meta-semanal" aria-label="Racha y cumplimiento">
+<p id="racha-estado" class="meta-estado" aria-live="polite"></p>
+<p id="racha-mejor" class="ayuda"></p>
+<progress id="cumpl-prog" max="100" value="0" hidden aria-label="Porcentaje de cumplimiento"></progress>
+<p id="cumpl-estado" class="meta-estado" aria-live="polite"></p>
+<p class="ayuda">Solo lectura. Una semana (lunes a domingo) cuenta si tiene tantas publicadas como tu meta semanal, o al menos 1 si no tienes meta. Se usa la fecha que le pusiste a cada idea; las descartadas no cuentan.</p>
+</section>
+
+<section id="leyenda" aria-label="Leyenda">
+<div class="leyenda">
+<span class="chip formato-post">Post</span>
+<span class="chip formato-carrusel">Carrusel</span>
+<span class="chip formato-reel">Reel</span>
+<span class="ev" data-est="idea">Idea</span>
+<span class="ev" data-est="grabando">Grabando</span>
+<span class="ev" data-est="editando">Editando</span>
+<span class="ev" data-est="programada">Programada</span>
+<span class="ev" data-est="publicada">Publicada</span>
+<span class="ev" data-est="descartada">Descartada</span>
+<span class="ev vencida" data-est="idea">Vencida</span>
+<span class="chip libre-leg">Día libre</span>
+<span class="chip evento-chip">Evento</span>
+<span class="chip sug-leg">✦ Fecha bookish</span>
+<label class="check"><input type="checkbox" id="ver-bookish" checked> Mostrar fechas bookish</label>
+</div>
+</section>
+
+
+<details class="guia" id="ayuda-datos">
+<summary>Ver un respaldo</summary>
+<div style="padding-bottom:.9rem">
+<p class="ayuda">Puedes cargar un respaldo JSON (el que se descarga en Ideas) solo para verlo. No cambia tu progreso.</p>
+<label class="campo" style="margin-top:.6rem"><span>Archivo de respaldo</span>
+<input type="file" id="importar" accept="application/json,.json"></label>
+<div class="botones" style="margin-top:.6rem"><button type="button" id="volver-mios" hidden>Volver a mis datos</button></div>
+<p id="msg" class="ayuda" role="status" style="margin-top:.6rem"></p>
+<p class="ayuda" style="margin-top:1rem">Tus eventos y tu meta semanal solo viven en este navegador y no van en el respaldo de Ideas. Descárgalos aparte para no perderlos.</p>
+<div class="botones" style="margin-top:.6rem"><button type="button" id="exp-cal">Exportar eventos y meta</button></div>
+<label class="campo" style="margin-top:.6rem"><span>Importar eventos y meta (se suman a los actuales)</span>
+<input type="file" id="imp-cal" accept="application/json,.json"></label>
+<p id="msg-cal" class="ayuda" role="status" style="margin-top:.6rem"></p>
+</div>
+</details>
+</main>
+<footer>
+  <p>&copy; Diseñado e ideado por Paula Speciale, con la ayuda de Claude</p>
+</footer>
+<script src="js/nucleo/datos.js" data-usa="ideas"></script>
+<script src="js/nucleo/almacen.js"></script>
+<script type="module" src="js/paginas/calendario/main.js"></script>
+</body>
+</html>

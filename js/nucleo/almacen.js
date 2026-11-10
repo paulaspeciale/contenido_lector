@@ -1,10 +1,10 @@
 /* almacen.js · Escritura segura de datos de Ideas desde otras páginas (por ahora, el Calendario).
-   Se carga DESPUÉS de datos.js (que carga datos-ideas.json). Expone window.BT.almacen.guardarFecha(id, fecha).
+   Se carga DESPUÉS de js/nucleo/datos.js (que carga datos/datos-ideas.json). Expone window.BT.almacen.guardarFecha(id, fecha).
 
    No crea el progreso: si todavía no existe (nunca se abrió Ideas), devuelve un
    error y no escribe nada. Tampoco toca otros campos de la idea.
 
-   Sigue las mismas reglas que app.js para no romper nada:
+   Sigue las mismas reglas que js/paginas/ideas/main.js para no romper nada:
    - Solo cambia datos[id].fecha; el resto del respaldo se conserva tal cual.
    - Sube la marca mod[id] con el reloj híbrido, para que la sincronización con la nube respete el cambio.
    - Actualiza ultimoCambio en ideas_post_90_meta (aviso de respaldo).
@@ -20,7 +20,7 @@
 
   const KEY = "ideas_post_90_v1";
   const KEY_META = "ideas_post_90_meta";
-  const CUSTOM_RE = /^c[a-z0-9]{6,24}$/;   // ids de las ideas propias (igual que en app.js)
+  const CUSTOM_RE = /^c[a-z0-9]{6,24}$/;   // ids de las ideas propias (igual que en js/paginas/ideas/main.js)
   const FECHA_MIN = "2000-01-01", FECHA_MAX = "2100-12-31";
 
   function falla(motivo, mensaje) { return { ok: false, motivo: motivo, mensaje: mensaje }; }
@@ -58,7 +58,7 @@
     } catch (e) { return {}; }
   }
 
-  // Misma regla que prepararMarcas() de app.js: las ideas sin marca reciben la fecha del último
+  // Misma regla que prepararMarcas() de js/paginas/ideas/main.js: las ideas sin marca reciben la fecha del último
   // cambio anterior (o del último respaldo; o 1). Se hace ANTES de actualizar ultimoCambio, para que
   // las ideas antiguas no pasen a tener una marca "de hoy" y le ganen a la copia de la nube.
   function marcaBase(meta) {
@@ -76,7 +76,7 @@
     if (fecha !== "" && !fechaAceptable(fecha)) {
       return falla("fecha-invalida", "Fecha no válida: usa AAAA-MM-DD con un año entre 2000 y 2100.");
     }
-    if (!hayDatosBase()) return falla("sin-datos-base", "Falta cargar datos.js (y datos-ideas.json) antes de almacen.js.");
+    if (!hayDatosBase()) return falla("sin-datos-base", "Falta cargar js/nucleo/datos.js (y datos/datos-ideas.json) antes de js/nucleo/almacen.js.");
 
     let crudo;
     try { crudo = localStorage.getItem(KEY); } catch (e) { return falla("sin-almacen", "El navegador no permite acceder al almacenamiento."); }
@@ -117,7 +117,7 @@
 
     let maxVisto = marcaValida(o.modSets);
     Object.keys(o.mod).forEach(function (k) { if (marcaValida(o.mod[k]) > maxVisto) maxVisto = o.mod[k]; });
-    const marca = Math.max(Date.now(), marcaValida(o.mod[id]) + 1, maxVisto + 1);   // reloj híbrido, igual que app.js
+    const marca = Math.max(Date.now(), marcaValida(o.mod[id]) + 1, maxVisto + 1);   // reloj híbrido, igual que js/paginas/ideas/main.js
     o.mod[id] = marca;
 
     // 3) Guardar (si falla, no se toca nada más)

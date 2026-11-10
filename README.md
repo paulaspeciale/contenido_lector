@@ -11,30 +11,32 @@ Diseñada e ideada por Paula Speciale, con la ayuda de Claude.
 | Archivo | Sección | Qué hace |
 |---|---|---|
 | `index.html` | Inicio | Portada con presentación y tarjetas a cada sección. |
-| `resenia.html` | Reseñas | Plantilla de reseña de 22 secciones, con versión completa, versión corta, guiones para Reels/TikTok y prompts para IA. |
-| `ideas_post_90.html` | Ideas | Gestor de 90 ideas de post, con estados, fechas, checklist de producción, hashtags y notas. |
-| `calendario_ideas_90.html` | Calendario | Calendario mensual con las ideas que tienen fecha. |
+| `resena.html` | Reseñas | Plantilla de reseña de 22 secciones, con versión completa, versión corta, guiones para Reels/TikTok y prompts para IA. |
+| `ideas.html` | Ideas | Gestor de 90 ideas de post, con estados, fechas, checklist de producción, hashtags y notas. |
+| `calendario.html` | Calendario | Calendario mensual con las ideas que tienen fecha. |
 | `glosario.html` | Glosario | Glosario bookish inglés-español (más de 300 términos en 13 categorías): buscador, filtros, imprescindibles, ejemplos y botón de copiar. |
 | `bingo.html` | Bingo | Tarjeta «Bingo lector 2027» de 5×5 (24 retos y un espacio libre central). Marca los retos cumplidos, avisa de líneas completas y guarda el progreso en el navegador. |
 | `bio.html` | Bio | Guía para optimizar la bio de Instagram, TikTok y YouTube: límites por red, fórmulas para copiar, contador de caracteres con borradores y checklist. |
 | `consistencia.html` | Feed | Guía de 10 pasos para un feed de Instagram consistente, con probador de paleta 60-30-10. |
 | `sugerencias.html` | Sugerencias | Formulario para enviar ideas o comentarios. |
-| `sobre_mi.html` | Sobre mí | Presentación, redes, enlace a YouTube y formas de donar. |
+| `sobre-mi.html` | Sobre mí | Presentación, redes, enlace a YouTube y formas de donar. |
 
 Archivos compartidos:
 
-- `base.css`: variables, tema, tipografía, controles, menú, pie y bloques de lectura. Se carga siempre primero.
-- `portada.css`, `ideas.css`, `calendario.css`, `resenia.css`, `glosario.css`, `bingo.css`, `bio.css`, `simples.css`: estilos propios de cada página (portada, Ideas, Calendario, Reseñas, Glosario, Bingo, Bio y las páginas simples).
-- `toc.css`: menú «En esta página» (Ideas, Calendario, Glosario y Bio).
-- `bingo.js` y `bingo-iconos.js`: lógica de la tarjeta y sus iconos decorativos.
-- `datos-glosario.js`: los términos del glosario (`window.BT.GLOSARIO`).
-- `theme.js`: botón de tema claro / oscuro.
-- `fonts/`: carpeta con `courier-prime-latin-400-normal.woff2` y `courier-prime-latin-700-normal.woff2` (los carga `base.css`; sin ella se usa Courier New).
-- `datos-ideas.json`: las 90 ideas base y sus secciones. `datos-bingo.json`: los retos del Book Bingo. Ninguno se edita desde el navegador.
-- `datos.js`: carga esos JSON con `fetch` y los deja en `window.BT.SECCIONES` y `window.BT.BINGO` (`BT.listo` es una promesa que se resuelve cuando terminan; cada página indica qué necesita con `data-usa`). Hace falta un hosting o servidor local: con doble clic (`file://`) los JSON no cargan.
-- `app.js`: lógica de la página de Ideas.
-- `almacen.js`: escritura segura de datos de Ideas desde otras páginas (`guardarFecha`); lo usa el Calendario.
-- `datos-ideas.js`: **archivo heredado** con una copia antigua de las ideas en JavaScript. No lo carga ninguna página y no se debe editar: la fuente real es `datos-ideas.json`. Se conserva solo como referencia histórica.
+- `css/base.css`: variables, tema, tipografía, controles, menú, pie y bloques de lectura. Se carga siempre primero.
+- `css/paginas/portada.css`, `ideas.css`, `calendario.css`, `resena.css`, `glosario.css`, `bingo.css`, `bio.css`, `simples.css`: estilos propios de cada página (portada, Ideas, Calendario, Reseñas, Glosario, Bingo, Bio y las páginas simples).
+- `css/toc.css`: menú «En esta página» (Ideas, Calendario, Glosario y Bio).
+- `js/bingo/bingo.js` y `js/bingo/bingo-iconos.js`: lógica de la tarjeta y sus iconos decorativos.
+- `js/datos/datos-glosario.js`: los términos del glosario (`window.BT.GLOSARIO`).
+- `js/nucleo/theme.js`: botón de tema claro / oscuro.
+- `fonts/`: carpeta con `courier-prime-latin-400-normal.woff2` y `courier-prime-latin-700-normal.woff2` (los carga `css/base.css`; sin ella se usa Courier New).
+- `datos/datos-ideas.json`: las 90 ideas base y sus secciones. `datos/datos-bingo.json`: los retos del Book Bingo. Ninguno se edita desde el navegador.
+- `js/nucleo/datos.js`: carga esos JSON con `fetch` y los deja en `window.BT.SECCIONES` y `window.BT.BINGO` (`BT.listo` es una promesa que se resuelve cuando terminan; cada página indica qué necesita con `data-usa`). Hace falta un hosting o servidor local: con doble clic (`file://`) los JSON no cargan.
+- `js/paginas/ideas/`: módulos de la página de Ideas (`main.js` como entrada, `constantes.js`, `util.js`, `almacenamiento.js`, `estado.js` y `toc.js`).
+- `js/paginas/calendario/`: módulos del Calendario (`main.js`, `constantes.js` y `util.js`).
+- `js/nucleo/almacen.js`: escritura segura de datos de Ideas desde otras páginas (`guardarFecha`); lo usa el Calendario.
+- `js/paginas/`: scripts clásicos del resto de páginas (`bio.js`, `resena.js`, `glosario.js`, `sugerencias.js`, `consistencia.js`, `sobre-mi.js`).
+- `robots.txt`: permite el rastreo y enlaza el sitemap. `sitemap.xml`: las 9 páginas indexables (Sugerencias queda fuera porque lleva `noindex`).
 
 ---
 
@@ -42,22 +44,47 @@ Archivos compartidos:
 
 La web es estática: no hay compilación, frameworks ni servidor propio. Cada página es un HTML con su CSS y su JavaScript. Para entender o modificar el código conviene tener en cuenta estas reglas.
 
+```text
+/
+├─ index.html, ideas.html, calendario.html, resena.html, glosario.html,
+│  bingo.html, bio.html, consistencia.html, sugerencias.html, sobre-mi.html
+├─ css/
+│  ├─ base.css
+│  ├─ toc.css
+│  └─ paginas/        estilos propios de cada página
+├─ js/
+│  ├─ nucleo/         theme.js, datos.js, almacen.js
+│  ├─ paginas/
+│  │  ├─ ideas/       main.js, constantes.js, util.js, almacenamiento.js,
+│  │  │               estado.js, toc.js
+│  │  ├─ calendario/  main.js, constantes.js, util.js
+│  │  └─ bio.js, resena.js, glosario.js, sugerencias.js, consistencia.js,
+│  │                  sobre-mi.js
+│  ├─ bingo/          bingo.js, bingo-iconos.js
+│  └─ datos/          datos-glosario.js
+├─ datos/             datos-ideas.json, datos-bingo.json
+├─ robots.txt         rastreo permitido + enlace al sitemap
+├─ sitemap.xml        9 páginas indexables
+├─ fonts/             Courier Prime (SIL OFL)
+└─ README.md
+```
+
 ### Orden de carga
 
-1. **`base.css`** siempre primero; después el CSS propio de la página.
-2. **`theme.js`** en el `<head>` de todas las páginas. Aplica el tema antes de pintar para que no parpadee.
-3. **`datos.js`** (solo Ideas, Calendario y Bingo), con `data-usa` indicando qué JSON necesita:
-   - `data-usa="ideas"`: `datos-ideas.json` → `window.BT.SECCIONES`.
-   - `data-usa="bingo"`: `datos-bingo.json` → `window.BT.BINGO`.
-4. **`app.js`** (Ideas) o **`almacen.js` + script inline** (Calendario), o **`bingo.js` + `bingo-iconos.js`** (Bingo).
-5. Glosario, Bio, Reseñas, Sugerencias, Sobre mí y Consistencia no usan `datos.js`: su lógica vive en un `<script>` al final del HTML (el Glosario además carga `datos-glosario.js`).
+1. **`css/base.css`** siempre primero; después el CSS propio de la página.
+2. **`js/nucleo/theme.js`** en el `<head>` de todas las páginas. Aplica el tema antes de pintar para que no parpadee.
+3. **`js/nucleo/datos.js`** (solo Ideas, Calendario y Bingo), con `data-usa` indicando qué JSON necesita:
+   - `data-usa="ideas"`: `datos/datos-ideas.json` → `window.BT.SECCIONES`.
+   - `data-usa="bingo"`: `datos/datos-bingo.json` → `window.BT.BINGO`.
+4. **`js/paginas/ideas/main.js`** (Ideas, módulo ES), **`js/nucleo/almacen.js` + `js/paginas/calendario/main.js`** (Calendario, módulo ES) o **`js/bingo/bingo.js` + `js/bingo/bingo-iconos.js`** (Bingo).
+5. Glosario, Bio, Reseñas, Sugerencias, Sobre mí y Consistencia no usan `js/nucleo/datos.js`: cada una carga su script de `js/paginas/` al final del HTML (el Glosario además carga `js/datos/datos-glosario.js`).
 
-`datos.js` expone `window.BT.listo`, una promesa que **siempre** se resuelve con `{ ok, errores }`. Ninguna página debe quedarse esperando: si un JSON falla, se muestra un aviso y se usa lo que haya (por ejemplo, `bingo.js` tiene una lista de retos de respaldo).
+`js/nucleo/datos.js` expone `window.BT.listo`, una promesa que **siempre** se resuelve con `{ ok, errores }`. Ninguna página debe quedarse esperando: si un JSON falla, se muestra un aviso y se usa lo que haya (por ejemplo, `js/bingo/bingo.js` tiene una lista de retos de respaldo).
 
 ### Datos y estado
 
-- **Datos fijos**: `datos-ideas.json` y `datos-bingo.json` se leen, se validan y se congelan (`Object.freeze`) para que ningún script los altere. `datos-glosario.js` se carga como JavaScript y también queda disponible en `window.BT`.
-- **Progreso de la persona** (`localStorage`): se escribe solo desde `app.js`, `almacen.js`, `theme.js`, `bingo.js` y los scripts de Calendario y Bio. Las claves están en la tabla de [Almacenamiento de datos](#almacenamiento-de-datos).
+- **Datos fijos**: `datos/datos-ideas.json` y `datos/datos-bingo.json` se leen, se validan y se congelan (`Object.freeze`) para que ningún script los altere. `js/datos/datos-glosario.js` se carga como JavaScript y también queda disponible en `window.BT`.
+- **Progreso de la persona** (`localStorage`): se escribe solo desde `js/paginas/ideas/main.js`, `js/nucleo/almacen.js`, `js/nucleo/theme.js`, `js/bingo/bingo.js` y los scripts de Calendario y Bio. Las claves están en la tabla de [Almacenamiento de datos](#almacenamiento-de-datos).
 - **Ideas** es la fuente de verdad del progreso de las ideas. El Calendario **solo lee** ese estado y cambia la fecha mediante `window.BT.almacen.guardarFecha()`; nunca reescribe el progreso completo.
 - **Todo dato que llega de fuera** (localStorage, un JSON importado o la nube) pasa por una función de limpieza (`limpiarEstado`, `limpiarDato`, `limpiarSets`, `leerEventos`…). Se descartan ids, campos y tipos desconocidos.
 - **Sincronización**: cada idea y el conjunto de hashtags llevan una marca `mod`. Gana la marca más reciente. Fuera de la versión publicada no hay nube: todo es local.
@@ -84,31 +111,35 @@ Las ideas base tienen ids de texto (`"1"`…`"90"`); las propias empiezan por `c
 
 | Archivo | Responsabilidad |
 |---|---|
-| `datos.js` | Cargar, validar y congelar los JSON; publicar `BT.SECCIONES`, `BT.BINGO` y `BT.listo`. |
-| `app.js` | Todo el estado y la interfaz de Ideas: pintar, filtrar, ordenar, editar, importar/exportar, deshacer y sincronizar. |
-| `almacen.js` | Cambiar solo la fecha de una idea desde otra página, respetando las marcas de sincronización. |
-| `theme.js` | Tema claro/oscuro, botón flotante y `data-seccion` para el color de cada página. |
-| `bingo.js` / `bingo-iconos.js` | Tarjeta de Bingo, progreso y glifos decorativos. |
-| `datos-glosario.js` | Datos del glosario; el HTML solo los presenta. |
-| Script inline de cada HTML | Lógica específica de esa página (Calendario, Bio, Reseñas, Glosario, Sugerencias, Sobre mí, Consistencia). |
+| `js/nucleo/datos.js` | Cargar, validar y congelar los JSON; publicar `BT.SECCIONES`, `BT.BINGO` y `BT.listo`. |
+| `js/paginas/ideas/main.js` | Estado y interfaz de Ideas: pintar, filtrar, ordenar, editar, importar/exportar, deshacer y sincronizar. |
+| `js/paginas/ideas/estado.js` | Limpieza, validación y serialización del estado guardado. |
+| `js/paginas/ideas/constantes.js`, `util.js`, `almacenamiento.js`, `toc.js` | Claves y catálogos, funciones puras, acceso a `localStorage` y menú «En esta página». |
+| `js/paginas/calendario/main.js` | Rejilla mensual, detalle del día, meta/racha, eventos y respaldo del Calendario. |
+| `js/paginas/calendario/constantes.js`, `util.js` | Claves, listas, fechas bookish y ayudantes de fecha/DOM. |
+| `js/nucleo/almacen.js` | Cambiar solo la fecha de una idea desde otra página, respetando las marcas de sincronización. |
+| `js/nucleo/theme.js` | Tema claro/oscuro, botón flotante y `data-seccion` para el color de cada página. |
+| `js/bingo/bingo.js` / `js/bingo/bingo-iconos.js` | Tarjeta de Bingo, progreso y glifos decorativos. |
+| `js/datos/datos-glosario.js` | Datos del glosario; el HTML solo los presenta. |
+| `js/paginas/*.js` | Lógica específica del resto de páginas (Bio, Reseñas, Glosario, Sugerencias, Sobre mí y Consistencia). |
 
 ### Convenciones y comentarios
 
-- JavaScript en IIFE con `"use strict"`; se evita crear variables globales. Lo compartido va en `window.BT`.
+- JavaScript en módulos ES en Ideas y Calendario (cada página tiene una carpeta con `main.js` como entrada); el resto sigue en IIFE con `"use strict"`. Se evita crear variables globales; lo compartido va en `window.BT`.
 - Nombres y comentarios en español, en el mismo tono que la interfaz.
 - Cada archivo empieza con una cabecera que explica **qué hace, de qué depende y qué expone**.
 - Los bloques grandes se separan con banners `// ---- … ----` o `/* ---------- … ---------- */`.
 - Los comentarios explican el **porqué** de la lógica no evidente (validaciones, orden, sincronización, accesibilidad). No se comentan líneas obvias.
-- Al añadir un campo a una idea hay que actualizarlo también en `CAMPOS` y en la limpieza de `app.js`; si no, no viajará a la nube ni al respaldo.
+- Al añadir un campo a una idea hay que actualizarlo también en `CAMPOS` y en la limpieza de `js/paginas/ideas/main.js` y `js/paginas/ideas/estado.js`; si no, no viajará a la nube ni al respaldo.
 - No cambiar ids, selectores, claves de `localStorage` ni el orden de los datos sin revisar todas las páginas que los usan.
 
 ---
 
 ## Cómo funciona
 
-### Ideas de post (`ideas_post_90.html` + `app.js`)
+### Ideas de post (`ideas.html` + `js/paginas/ideas/main.js`)
 
-La lista base de 90 ideas vive en `datos-ideas.json` (se carga con `datos.js` en `window.BT.SECCIONES`), organizada en 8 secciones más una novena, «Mis ideas», para las tuyas. Cada idea tiene un formato sugerido (Post, Carrusel o Reel) y una marca de origen: ★ plantillas clásicas, ◆ tendencias.
+La lista base de 90 ideas vive en `datos/datos-ideas.json` (se carga con `js/nucleo/datos.js` en `window.BT.SECCIONES`), organizada en 8 secciones más una novena, «Mis ideas», para las tuyas. Cada idea tiene un formato sugerido (Post, Carrusel o Reel) y una marca de origen: ★ plantillas clásicas, ◆ tendencias.
 
 Por cada idea puedes:
 
@@ -133,9 +164,9 @@ Herramientas generales:
 - **Progreso y respaldo**: exportar a JSON (respaldo), CSV o calendario `.ics`; importar un respaldo; desmarcar todas las hechas; y un botón **Deshacer** tras un reinicio o una importación.
 - **Aviso de respaldo**: la app avisa si nunca has exportado o si pasaron 30 días con cambios sin respaldar.
 
-### Calendario (`calendario_ideas_90.html`)
+### Calendario (`calendario.html` + `js/paginas/calendario/main.js`)
 
-Lee los datos de Ideas (`localStorage`) y `datos-ideas.json`, y dibuja un calendario mensual (lunes a domingo). Escribe en Ideas solo la fecha, mediante `almacen.js`.
+Lee los datos de Ideas (`localStorage`) y `datos/datos-ideas.json`, y dibuja un calendario mensual (lunes a domingo). Escribe en Ideas solo la fecha, mediante `js/nucleo/almacen.js`.
 
 - **Detalle del día**: va justo bajo la rejilla; en móvil, al tocar un día la página baja hasta él. Cada publicación tiene campo de fecha, «Quitar fecha» y, si está vencida, «Mover a hoy» y «+7 días». Cambiar o quitar una fecha, o borrar un evento, ofrece un botón **Deshacer**.
 - **Teclado**: las flechas mueven el día seleccionado (un solo día entra en el orden de tabulación). Los cambios de día y de mes se anuncian con un aviso breve para lectores de pantalla.
@@ -151,11 +182,11 @@ Lee los datos de Ideas (`localStorage`) y `datos-ideas.json`, y dibuja un calend
 - Se puede cargar un respaldo JSON de Ideas **solo para verlo**.
 - El menú «En esta página» marca la sección visible.
 
-### Reseñas (`resenia.html`)
+### Reseñas (`resena.html`)
 
 Plantilla de reseña con índice de enlaces internos. Permite alternar entre cuatro vistas: **completa**, **corta** de 5 puntos (gancho y calificación, de qué trata, lo mejor, lo que no funcionó y veredicto), **guiones** para Reels/TikTok y **prompts para IA**. Desde cada vista se puede copiar el texto plano; la versión completa también se puede imprimir o guardar en PDF.
 
-### Glosario (`glosario.html` + `datos-glosario.js`)
+### Glosario (`glosario.html` + `js/datos/datos-glosario.js`)
 
 Glosario bookish inglés → español con **304 términos** en **13 categorías**, agrupadas en 5 bloques (de lo básico a lo específico):
 
@@ -182,11 +213,11 @@ Las categorías y los términos van de los más usados a los menos. Cada términ
 
 Formulario con validación nativa del navegador, que se envía con un POST normal a FormSubmit con su **captcha activado**. En el script hay una constante `FORM_URL`: pega ahí la dirección con código aleatorio que da FormSubmit (`https://formsubmit.co/el/CODIGO`), **nunca tu correo**. Protecciones extra: campo trampa `_honey` y rechazo de envíos en menos de 3 s. Tras enviar, FormSubmit vuelve a la página con `?enviado=1` y se muestra el mensaje de éxito. Con `FORM_URL` vacía el formulario se oculta y se muestra un aviso con enlaces a las redes (no se simula el envío). No se muestra ningún correo en la página.
 
-### Sobre mí (`sobre_mi.html`)
+### Sobre mí (`sobre-mi.html`)
 
 Presentación, enlaces a TikTok, Instagram y YouTube, y donaciones por Mercado Pago (alias con botón de copiar) y Cafecito. PayPal está retirado hasta tener un enlace PayPal.me, para no exponer un correo personal.
 
-### Tema claro / oscuro (`theme.js`)
+### Tema claro / oscuro (`js/nucleo/theme.js`)
 
 Sigue la preferencia del dispositivo y permite cambiarla con un botón flotante. La elección se guarda en el navegador y se sincroniza entre pestañas.
 
@@ -235,7 +266,7 @@ La capacidad `downloads` también es propia de la versión publicada; en ella se
 
 - **HTML5** semántico: `<details>`, `<dialog>`, `<progress>`, formularios con validación nativa.
 - **CSS3** sin preprocesadores: variables CSS, Grid, Flexbox, `prefers-color-scheme`, `prefers-reduced-motion`, estilos de impresión (`@media print`) y áreas seguras de iOS (`env(safe-area-inset-*)`).
-- **JavaScript** puro (IIFE con `"use strict"`; estilo mayormente ES5, pero `app.js` y el calendario usan también `const`/`let`, `Promise` y otras APIs modernas), sin frameworks ni librerías ni paso de compilación.
+- **JavaScript** puro (módulos ES en Ideas y Calendario; IIFE con `"use strict"` en el resto; `const`/`let`, `Promise` y otras APIs modernas), sin frameworks ni librerías ni paso de compilación.
 - **APIs del navegador**: `localStorage`, `Blob` y `URL.createObjectURL` (descargas), `FileReader` (importar), Clipboard API con respaldo `execCommand`, `ResizeObserver`, `TextEncoder`.
 - **Formatos de exportación**: JSON, CSV (con protección contra inyección de fórmulas) e iCalendar (`.ics`, con plegado de líneas a 75 bytes).
 - **Tipografías**: serifa del sistema («Iowan Old Style» / Palatino / Georgia) para el texto y **Courier Prime** (SIL OFL, autohospedada en la carpeta `fonts/`, subconjunto latino) para etiquetas, con «American Typewriter» / Courier New como respaldo. No se carga ninguna fuente de servidores externos.
@@ -243,7 +274,7 @@ La capacidad `downloads` también es propia de la versión publicada; en ella se
 
 ## Diseño
 
-Estética de **librería antigua (cottagecore)**: papel con grano generado con un filtro SVG, dobles filetes, versalitas y tipografía de máquina de escribir. Paleta de papel crema, tinta berenjena, burdeos y dorado, con un color de «tela de encuadernación» por sección. Todo está en las variables de `:root` de `base.css` (`light-dark(claro, oscuro)`).
+Estética de **librería antigua (cottagecore)**: papel con grano generado con un filtro SVG, dobles filetes, versalitas y tipografía de máquina de escribir. Paleta de papel crema, tinta berenjena, burdeos y dorado, con un color de «tela de encuadernación» por sección. Todo está en las variables de `:root` de `css/base.css` (`light-dark(claro, oscuro)`).
 
 ## Accesibilidad
 
@@ -258,21 +289,37 @@ Estética de **librería antigua (cottagecore)**: papel con grano generado con u
 
 ## Cómo usarla
 
-1. Deja todos los archivos juntos en la misma carpeta, junto con la subcarpeta `fonts/` (`ideas_post_90.html` necesita `base.css`, `ideas.css`, `toc.css`, `theme.js`, `datos.js`, `datos-ideas.json` y `app.js`; `calendario_ideas_90.html` necesita `base.css`, `calendario.css`, `toc.css`, `theme.js`, `datos.js`, `datos-ideas.json`, `almacen.js` y el script inline de la página; `glosario.html` necesita `base.css`, `glosario.css`, `toc.css`, `theme.js` y `datos-glosario.js`).
+1. Mantén la estructura de carpetas (`css/`, `js/`, `datos/`, `fonts/`) junto a los HTML. Por ejemplo, `ideas.html` necesita `css/base.css`, `css/paginas/ideas.css`, `css/toc.css`, `js/nucleo/theme.js`, `js/nucleo/datos.js`, `datos/datos-ideas.json` y la carpeta `js/paginas/ideas/`; `calendario.html` necesita `css/base.css`, `css/paginas/calendario.css`, `css/toc.css`, `js/nucleo/theme.js`, `js/nucleo/datos.js`, `datos/datos-ideas.json`, `js/nucleo/almacen.js` y la carpeta `js/paginas/calendario/`; `glosario.html` necesita `css/base.css`, `css/paginas/glosario.css`, `css/toc.css`, `js/nucleo/theme.js`, `js/datos/datos-glosario.js` y `js/paginas/glosario.js`.
 2. Abre `index.html` en el navegador, o sube la carpeta a cualquier hosting estático.
-3. **No requiere instalación ni servidor propio**, pero sí debe abrirse desde un servidor (el hosting o uno local) para que `fetch` pueda leer los JSON. Con doble clic (`file://`) funcionan la portada, Reseñas, Bio, Glosario, Sugerencias y Sobre mí; Ideas, Calendario y Bingo necesitan servidor para cargar sus datos.
+3. **No requiere instalación ni servidor propio**, pero sí debe abrirse desde un servidor (el hosting o uno local) para que `fetch` pueda leer los JSON y para que el navegador cargue los módulos ES de Ideas y Calendario. Con doble clic (`file://`) funcionan la portada, Reseñas, Bio, Glosario, Sugerencias y Sobre mí; Ideas, Calendario y Bingo necesitan servidor.
+
+### Publicar y SEO
+
+Antes de publicar, sustituye **`TU-DOMINIO.com`** por tu dominio real. Aparece en:
+
+- el `canonical`, `og:url`, `hreflang` y el JSON-LD de los 10 HTML;
+- `robots.txt` (línea `Sitemap:`);
+- `sitemap.xml` (las 9 `<loc>`).
+
+Puedes hacerlo de una vez con un buscar y reemplazar en toda la carpeta. Después:
+
+1. Sube también `robots.txt` y `sitemap.xml` a la raíz del hosting.
+2. Da de alta el sitio en Google Search Console y envía `https://TU-DOMINIO.com/sitemap.xml`.
+3. Si cambias una URL o añades una página, actualiza su `canonical`, el `sitemap.xml` y el menú de todos los HTML.
+
+Cada página ya incluye `title` y `meta description` únicos, `robots`, `canonical`, Open Graph, Twitter Card, `hreflang="es"` + `x-default` y JSON-LD (`WebPage`/`WebSite` + `BreadcrumbList`; `ProfilePage` en Sobre mí). `sugerencias.html` es la única con `noindex`.
 
 ## Cómo modificarla
 
-- **Agregar o cambiar ideas base**: edita `datos-ideas.json`. Cada idea necesita `id`, `texto` y `formato`. Los `id` son lo que usa el progreso guardado: **no los renumeres ni los reutilices**; añade las nuevas al final (91, 92…) y no cambies el orden de las secciones.
-- **Una sola fuente de ideas**: tanto Ideas como Calendario leen `datos-ideas.json`, así que no hay nada más que actualizar. `datos-ideas.js` es un archivo heredado que no se carga: no lo edites.
-- **Agregar términos al glosario**: edita `datos-glosario.js`. Dentro de la categoría que corresponda, añade una fila `[inglés, español, explicación, imprescindible, ejemplo]`: la explicación y el ejemplo pueden ir vacíos (`""`) y el cuarto valor es `1` para marcar un imprescindible. El `id` (el ancla) se genera solo a partir del inglés. Para que una fila con varios términos separados por « · » se divida en fichas, añade su texto inglés a la lista `SPLIT`. Una categoría nueva se añade a la lista `C` y a un bloque de `GLOSARIO_GRUPOS`; los imprescindibles de acceso rápido están en `GLOSARIO_DESTACADOS` y los enlaces «Ver también» en `GLOSARIO_VER_TAMBIEN`. `glosario.html` no hay que tocarlo: lo construye todo desde los datos.
-- **Cambiar estados o pasos de producción**: modifica `ESTADOS` y `PASOS` en `app.js` y los colores correspondientes en `base.css`.
-- **Retos del bingo**: edita `datos-bingo.json` (exactamente 24 retos; el espacio libre se coloca en el centro). Si el JSON no carga, `bingo.js` usa su lista de respaldo. Los iconos se asignan por palabras clave en `bingo-iconos.js`.
-- **Menú principal**: está copiado en cada HTML. Al añadir una página, actualiza el `<nav class="menu">` en todas (y la tarjeta de `index.html`).
-- **Colores**: están en las variables de `:root` al inicio de `base.css`.
-- **Formulario de sugerencias**: pega en `FORM_URL` la dirección con código aleatorio de FormSubmit (no el correo).
-- **Versiones coherentes**: `app.js` comprueba al iniciar que el HTML tenga todos los elementos que necesita. Si copias un archivo nuevo sin el otro, muestra un aviso en lugar de fallar en silencio. Tu progreso no se toca.
+- **Agregar o cambiar ideas base**: edita `datos/datos-ideas.json`. Cada idea necesita `id`, `texto` y `formato`. Los `id` son lo que usa el progreso guardado: **no los renumeres ni los reutilices**; añade las nuevas al final (91, 92…) y no cambies el orden de las secciones.
+- **Una sola fuente de ideas**: tanto Ideas como Calendario leen `datos/datos-ideas.json`, así que no hay nada más que actualizar.
+- **Agregar términos al glosario**: edita `js/datos/datos-glosario.js`. Dentro de la categoría que corresponda, añade una fila `[inglés, español, explicación, imprescindible, ejemplo]`: la explicación y el ejemplo pueden ir vacíos (`""`) y el cuarto valor es `1` para marcar un imprescindible. El `id` (el ancla) se genera solo a partir del inglés. Para que una fila con varios términos separados por « · » se divida en fichas, añade su texto inglés a la lista `SPLIT`. Una categoría nueva se añade a la lista `C` y a un bloque de `GLOSARIO_GRUPOS`; los imprescindibles de acceso rápido están en `GLOSARIO_DESTACADOS` y los enlaces «Ver también» en `GLOSARIO_VER_TAMBIEN`. `glosario.html` y `js/paginas/glosario.js` no hay que tocarlos: lo construyen todo desde los datos.
+- **Cambiar estados o pasos de producción**: modifica `ESTADOS` y `PASOS` en `js/paginas/ideas/constantes.js` y los colores correspondientes en `css/base.css`.
+- **Retos del bingo**: edita `datos/datos-bingo.json` (exactamente 24 retos; el espacio libre se coloca en el centro). Si el JSON no carga, `js/bingo/bingo.js` usa su lista de respaldo. Los iconos se asignan por palabras clave en `js/bingo/bingo-iconos.js`.
+- **Menú principal**: está copiado en cada HTML. Al añadir una página, actualiza el `<nav class="menu">` en todas (y la tarjeta de `index.html`). Añade también su nombre a `PAGINAS` en `js/nucleo/theme.js` para el color de sección.
+- **Colores**: están en las variables de `:root` al inicio de `css/base.css`.
+- **Formulario de sugerencias**: pega en `FORM_URL` (en `js/paginas/sugerencias.js`) la dirección con código aleatorio de FormSubmit (no el correo).
+- **Versiones coherentes**: `js/paginas/ideas/main.js` comprueba al iniciar que el HTML tenga todos los elementos que necesita. Si copias un archivo nuevo sin el otro, muestra un aviso en lugar de fallar en silencio. Tu progreso no se toca.
 
 ## Límites conocidos
 
@@ -286,7 +333,7 @@ Estética de **librería antigua (cottagecore)**: papel con grano generado con u
 - El Calendario solo lee el `localStorage` del dispositivo: en un segundo dispositivo aparece vacío hasta abrir Ideas (que es quien sincroniza con la nube).
 - Una fecha cambiada desde el Calendario se sube a la nube cuando se carga Ideas. Si Ideas ya estaba abierta en otra pestaña, no se sube hasta recargarla o pulsar «Sincronizar ahora».
 - Requiere navegadores recientes: `light-dark()` y `:has()` no tienen respaldo en versiones antiguas.
-- `base.css` redefine algunos selectores (`h1`, `body`, `button`, `.guia`…) en una segunda capa; funciona, pero conviene unificarlos algún día.
+- `css/base.css` redefine algunos selectores (`h1`, `body`, `button`, `.guia`…) en una segunda capa; funciona, pero conviene unificarlos algún día.
 - El formulario de Sugerencias muestra un aviso en lugar del formulario hasta configurar `FORM_URL`.
 - Privacidad: ningún archivo debe contener correos personales. Si la web se publica, revisa también el historial de versiones anteriores, que pudo exponerlo.
 - «Sobre mí» no tiene foto todavía (hay un comentario en el HTML con la etiqueta lista).

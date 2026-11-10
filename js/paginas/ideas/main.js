@@ -1,28 +1,26 @@
 /* ==========================================================================
-   app.js · Lógica de la página de Ideas (ideas_post_90.html).
+   main.js · Entrada de la página de Ideas (ideas.html).
 
    Qué hace: pinta las 90 ideas base más las ideas propias y guarda en
    localStorage el estado de cada una (publicada, favorita, estado, fecha,
    redes, checklist de producción, libro, hashtags y notas). También exporta e
    importa respaldos y, en la versión publicada, sincroniza con la nube.
 
-   Orden de carga: datos.js (que carga datos-ideas.json en window.BT.SECCIONES)
-   debe ejecutarse ANTES que este archivo. Si datos.js falla, iniciar() muestra
-   un aviso en lugar de romper la página.
+   Orden de carga: js/nucleo/datos.js (que carga datos/datos-ideas.json en
+   window.BT.SECCIONES) debe ejecutarse ANTES que este archivo. Si datos.js
+   falla, iniciar() muestra un aviso en lugar de romper la página.
 
    Organización interna (buscar los banners «// ---- ... ----»):
-     1. Comprobación de versión HTML/JS y constantes.
-     2. Utilidades y lectura/escritura de localStorage.
-     3. Limpieza y validación del estado guardado.
-     4. Marcas de modificación (mod) para sincronizar.
-     5. Referencias al DOM y avisos.
-     6. Construcción de la lista de ideas y secciones.
-     7. Contadores, avisos de libros repetidos y recordatorio de respaldo.
-     8. Deshacer, conjuntos de hashtags, filtros y orden.
-     9. Cambios en las ideas y celebración al publicar.
-    10. Descargas (JSON, CSV e ICS) e importación.
-    11. Diálogos, copiar y crear/editar/borrar/restaurar ideas.
-    12. Sincronización entre pestañas y con la nube.
+     1. Comprobación de versión HTML/JS y carga de los datos base.
+     2. Marcas de modificación (mod) para sincronizar.
+     3. Referencias al DOM y avisos.
+     4. Construcción de la lista de ideas y secciones.
+     5. Contadores, avisos de libros repetidos y recordatorio de respaldo.
+     6. Deshacer, conjuntos de hashtags, filtros y orden.
+     7. Cambios en las ideas y celebración al publicar.
+     8. Descargas (JSON, CSV e ICS) e importación.
+     9. Diálogos, copiar y crear/editar/borrar/restaurar ideas.
+    10. Sincronización entre pestañas y con la nube.
 
    Modelo de estado (lo que se guarda en localStorage["ideas_post_90_v1"]):
      {
@@ -36,12 +34,30 @@
    empiezan por "c" (ver CUSTOM_RE). El estado se limpia SIEMPRE al leerlo para
    que un archivo dañado no pueda inyectar datos inesperados.
 
-   Casi todo vive dentro de iniciar() porque necesita window.BT.SECCIONES ya
-   cargado; por eso el archivo se organiza con funciones internas, no con
-   módulos.
+   Los módulos vecinos separan lo reutilizable: constantes.js (claves y
+   catálogos), util.js (funciones puras), almacenamiento.js (localStorage) y
+   estado.js (limpieza y serialización). Este archivo es la entrada: arranca la
+   interfaz y conserva el estado en memoria. Casi todo vive dentro de iniciar()
+   porque necesita window.BT.SECCIONES ya cargado.
    ========================================================================== */
-(function () {
-  "use strict";
+import "./toc.js";
+import {
+  KEY, KEY_META, KEY_DESHACER, KEY_ANTIGUA_HECHAS, KEY_ANTIGUA_DATOS,
+  DIAS_RESPALDO, TITULO_DETALLE, MAX_NOTA, MAX_LIBRO, MAX_HASHTAGS,
+  MAX_SETS, MAX_NOMBRE_SET, ESTADOS, INTERMEDIOS, FORMATOS, MAX_TEXTO,
+  MAX_SECCION, CUSTOM_RE, FECHA_MIN, FECHA_MAX, PASOS, CLAVES_PASOS,
+  REDES, CLAVES_REDES
+} from "./constantes.js";
+import {
+  normalizar, esFechaISO, fechaAceptable, isoLocal, el, etiquetaEstado,
+  partirTags, tagsATexto, marcaValida, tienePropio
+} from "./util.js";
+import { leer, escribir, borrar, almacenamientoDisponible } from "./almacenamiento.js";
+import {
+  limpiarDato as limpiarDatoBase,
+  limpiarEstado as limpiarEstadoBase,
+  limpiarSets, estadoVacio, idPropioValido, serializarEstado
+} from "./estado.js";
 
   // Los datos los carga datos.js (que va ANTES de este archivo): se espera a que terminen.
   // Si fallan, iniciar() muestra el cartel rojo.
@@ -59,7 +75,7 @@
   function iniciar() {
 
   // ---- Comprobación: el HTML y este archivo tienen que ser de la misma versión ----
-  // Lista de ids que app.js espera encontrar en ideas_post_90.html. Si falta
+  // Lista de ids que main.js espera encontrar en ideas.html. Si falta
   // alguno, más abajo se muestra un aviso en lugar de fallar a mitad de carga.
   const REQUERIDOS = [
     "lista", "mensaje", "recordatorio", "sync-estado", "sync-ahora", "contador", "favoritas", "total", "progreso",
@@ -80,61 +96,16 @@
     aviso0.style.cssText = "padding:1rem;margin:1rem 0;border:2px solid #c0392b;font:1rem/1.5 system-ui,sans-serif";
     aviso0.textContent = "No se pudo cargar la lista: faltan archivos o están desactualizados (falta " +
       faltan.slice(0, 3).join(", ") + (faltan.length > 3 ? " y " + (faltan.length - 3) + " más" : "") +
-      "). Abre la página desde un servidor (no con file://) y descarga de nuevo los archivos (ideas_post_90.html, datos.js, datos-ideas.json, base.css, ideas.css, toc.css y app.js) y déjalos juntos en la misma carpeta, " +
+      "). Abre la página desde un servidor (no con file://) y descarga de nuevo los archivos (ideas.html, js/nucleo/datos.js, datos/datos-ideas.json, css/base.css, css/paginas/ideas.css, css/toc.css y la carpeta js/paginas/ideas/) conservando la estructura de carpetas, " +
       "sustituyendo los anteriores. Tu progreso guardado no se ha tocado.";
     const destino = document.getElementById("lista") || document.body;
     destino.insertBefore(aviso0, destino.firstChild);
     return;
   }
 
-  // ---- Datos: las 90 ideas viven en datos-ideas.json (se carga antes que este archivo) ----
+  // ---- Datos: las 90 ideas viven en datos/datos-ideas.json (se carga antes que este archivo) ----
   const SECCIONES = (window.BT && window.BT.SECCIONES) || [];
 
-  // Claves de localStorage. Las dos «ANTIGUA» son de versiones anteriores de la
-  // app y solo se leen para migrar; nunca se borran.
-  const KEY = "ideas_post_90_v1";
-  const KEY_META = "ideas_post_90_meta";
-  const KEY_DESHACER = "ideas_post_90_deshacer";
-  const KEY_ANTIGUA_HECHAS = "ideas_post_90_marcadas";
-  const KEY_ANTIGUA_DATOS = "ideas_post_90_datos";
-  const DIAS_RESPALDO = 30;   // se avisa una vez al mes si hay cambios sin respaldar
-  const TITULO_DETALLE = "Libro, hashtags y notas";
-  const MAX_NOTA = 5000, MAX_LIBRO = 200, MAX_HASHTAGS = 500;
-  const MAX_SETS = 30, MAX_NOMBRE_SET = 40;
-
-  // "publicada" equivale a la casilla "hecha"; "idea" es el estado por defecto.
-  const ESTADOS = [
-    ["idea", "Idea"],
-    ["grabando", "Grabando"],
-    ["editando", "Editando"],
-    ["programada", "Programada"],
-    ["publicada", "Publicada"],
-    ["descartada", "Descartada"]
-  ];
-  // Estados que se guardan en datos[id].estado ("publicada" es la casilla "hecha")
-  const INTERMEDIOS = ["grabando", "editando", "programada", "descartada"];
-  const FORMATOS = ["Post", "Carrusel", "Reel"];
-  const MAX_TEXTO = 300;
-  const MAX_SECCION = 60;   // largo máximo del nombre de una sección nueva
-  const CUSTOM_RE = /^c[a-z0-9]{6,24}$/;   // ids de las ideas que creas tú
-  // Rango de fechas aceptado en todos los campos (evita años absurdos o textos).
-  const FECHA_MIN = "2000-01-01", FECHA_MAX = "2100-12-31";
-  // Comprueba formato AAAA-MM-DD, que la fecha exista (no 2024-02-31) y el rango.
-  function fechaAceptable(v) {
-    return /^\d{4}-\d{2}-\d{2}$/.test(v) && fechaReal(v) && v >= FECHA_MIN && v <= FECHA_MAX;
-  }
-  // Pasos de producción de cada idea (checklist)
-  const PASOS = [
-    ["guion", "Guion"],
-    ["grabar", "Grabar o foto"],
-    ["editar", "Editar"],
-    ["caption", "Caption"],
-    ["programar", "Programar"]
-  ];
-  const CLAVES_PASOS = PASOS.map(function (p) { return p[0]; });
-  // Redes donde se piensa publicar cada idea (puede ser más de una)
-  const REDES = [["instagram", "Instagram"], ["tiktok", "TikTok"], ["youtube", "YouTube"]];
-  const CLAVES_REDES = REDES.map(function (r) { return r[0]; });
 
   // Ideas base (las 90 originales): su texto, formato, sección y posición de origen.
   const baseInfo = Object.create(null);
@@ -147,222 +118,14 @@
   });
   let todas = [];   // ideas activas (sin borrar); se reconstruye en sincronizarEstructura()
 
+  // La limpieza y la serialización viven en estado.js; aquí se fijan la base
+  // de ideas y el número de secciones de esta página.
+  function limpiarDato(d, hecha) { return limpiarDatoBase(d, hecha, SECCIONES.length); }
+  function limpiarEstado(obj) { return limpiarEstadoBase(obj, baseInfo, SECCIONES.length); }
+  function serializar() { return serializarEstado(state); }
+
   function tituloSeccion(t) { return String(t).replace(/\s*\(\d+\)\s*$/, ""); }
 
-  // ---- Utilidades ----
-  // Lectura/escritura de localStorage siempre con try/catch: si el navegador
-  // bloquea el almacenamiento (modo privado, permisos), la app sigue funcionando
-  // en memoria y avisa al usuario.
-  function leer(key) {
-    try {
-      const raw = localStorage.getItem(key);
-      return raw ? JSON.parse(raw) : null;
-    } catch (err) {
-      return null;
-    }
-  }
-
-  function escribir(key, valor) {
-    try {
-      localStorage.setItem(key, JSON.stringify(valor));
-      return true;
-    } catch (err) {
-      console.error("No se pudo guardar en localStorage:", err);
-      return false;
-    }
-  }
-
-  function borrar(key) {
-    try { localStorage.removeItem(key); } catch (err) { /* sin acción */ }
-  }
-
-  // Prueba rápida: algunos navegadores permiten leer pero no escribir.
-  function almacenamientoDisponible() {
-    try {
-      localStorage.setItem("__prueba", "1");
-      localStorage.removeItem("__prueba");
-      return true;
-    } catch (err) {
-      return false;
-    }
-  }
-
-  // Normaliza para buscar: quita tildes, pasa a minúsculas y unifica espacios.
-  function normalizar(txt) {
-    return String(txt).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
-  }
-
-  // Comprueba que una cadena se pueda interpretar como fecha (para metadatos).
-  function esFechaISO(s) {
-    return typeof s === "string" && !isNaN(Date.parse(s));
-  }
-
-  // ¿La fecha existe de verdad? Date «corrige» días fuera de rango; aquí se
-  // compara el resultado con los números originales para detectarlo.
-  function fechaReal(s) {
-    const p = s.split("-").map(Number);
-    const d = new Date(Date.UTC(p[0], p[1] - 1, p[2]));
-    return d.getUTCFullYear() === p[0] && d.getUTCMonth() === p[1] - 1 && d.getUTCDate() === p[2];
-  }
-
-  function pad(n) { return (n < 10 ? "0" : "") + n; }
-  // Fecha local (no UTC) en formato AAAA-MM-DD, la que usan los <input type="date">.
-  function isoLocal(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
-
-  // Pequeño helper para crear elementos: { text } asigna texto y el resto, atributos.
-  function el(tag, props) {
-    const n = document.createElement(tag);
-    if (props) {
-      Object.keys(props).forEach(function (k) {
-        if (k === "text") { n.textContent = props[k]; } else { n.setAttribute(k, props[k]); }
-      });
-    }
-    return n;
-  }
-
-  // Texto visible del estado ("publicada", "grabando"...).
-  function etiquetaEstado(valor) {
-    for (let i = 0; i < ESTADOS.length; i++) { if (ESTADOS[i][0] === valor) return ESTADOS[i][1]; }
-    return valor;
-  }
-
-  // ---- Hashtags: se guardan como "#uno #dos", sin repetir ----
-  function partirTags(txt) {
-    const vistos = Object.create(null);
-    const out = [];
-    String(txt).split(/[\s,]+/).forEach(function (t) {
-      if (!t) return;
-      if (t.charAt(0) !== "#") t = "#" + t;
-      if (t.length < 2) return;
-      const k = t.toLowerCase();
-      if (vistos[k]) return;
-      vistos[k] = true;
-      out.push(t);
-    });
-    return out;
-  }
-
-  function tagsATexto(tokens, max) {
-    let s = "";
-    for (let i = 0; i < tokens.length; i++) {
-      const n = s ? s + " " + tokens[i] : tokens[i];
-      if (n.length > max) break;
-      s = n;
-    }
-    return s;
-  }
-
-  // ---- Estado ----
-  // { hechas: {id: true},
-  //   datos: {id: {fav, estado, fecha, libro, hashtags, nota, pasos}},
-  //   sets: [{nombre, tags}],
-  //   mod: {id: marca de tiempo}, modSets: marca de tiempo }   (mod* sirven para sincronizar)
-  //
-  // limpiarDato() y limpiarSets() son la «aduana» de los datos: todo lo que
-  // llega de localStorage, de un respaldo importado o de la nube pasa por aquí.
-  // Devuelven solo los campos conocidos, con tipo y longitud válidos; así un
-  // archivo manipulado no puede romper la app ni colar datos raros.
-  function limpiarDato(d, hecha) {
-    const limpio = {};
-    if (!d || typeof d !== "object") return limpio;
-    if (d.fav === true) limpio.fav = true;
-    if (!hecha && typeof d.estado === "string" && INTERMEDIOS.indexOf(d.estado) !== -1) limpio.estado = d.estado;
-    if (typeof d.fecha === "string" && fechaAceptable(d.fecha)) limpio.fecha = d.fecha;
-    if (typeof d.libro === "string" && d.libro.trim()) limpio.libro = d.libro.slice(0, MAX_LIBRO);
-    if (typeof d.hashtags === "string" && d.hashtags.trim()) limpio.hashtags = d.hashtags.slice(0, MAX_HASHTAGS);
-    if (typeof d.nota === "string" && d.nota) limpio.nota = d.nota.slice(0, MAX_NOTA);
-    if (Array.isArray(d.pasos)) {
-      const p = CLAVES_PASOS.filter(function (k) { return d.pasos.indexOf(k) !== -1; });
-      if (p.length) limpio.pasos = p;
-    }
-    if (Array.isArray(d.redes)) {
-      const rs = CLAVES_REDES.filter(function (k) { return d.redes.indexOf(k) !== -1; });
-      if (rs.length) limpio.redes = rs;
-    }
-    // Edición de ideas: texto/formato/sección propios, orden de prioridad y borrado
-    if (typeof d.texto === "string" && d.texto.trim()) limpio.texto = d.texto.replace(/\s+/g, " ").trim().slice(0, MAX_TEXTO + 40);
-    if (typeof d.formato === "string" && FORMATOS.indexOf(d.formato) !== -1) limpio.formato = d.formato;
-    if (typeof d.sec === "number" && d.sec >= 0 && d.sec < SECCIONES.length && Math.floor(d.sec) === d.sec) limpio.sec = d.sec;
-    // Sección creada por la persona: se guarda su nombre en cada idea que pertenece a ella
-    if (typeof d.secNombre === "string") {
-      const sn = d.secNombre.replace(/\s+/g, " ").trim().slice(0, MAX_SECCION);
-      if (sn) limpio.secNombre = sn;
-    }
-    if (typeof d.orden === "number" && isFinite(d.orden)) limpio.orden = d.orden;
-    if (d.propia === true) limpio.propia = true;
-    if (d.borrada === true) limpio.borrada = true;
-    if (limpio.secNombre) delete limpio.sec;
-    return limpio;
-  }
-
-  // Valida y normaliza los conjuntos de hashtags: nombre único, sin duplicados
-  // (comparando sin tildes ni mayúsculas) y con los tags en formato «#uno #dos».
-  function limpiarSets(arr) {
-    const out = [];
-    const vistos = Object.create(null);
-    if (!Array.isArray(arr)) return out;
-    arr.forEach(function (s) {
-      if (out.length >= MAX_SETS || !s || typeof s !== "object") return;
-      const nombre = typeof s.nombre === "string" ? s.nombre.replace(/\s+/g, " ").trim().slice(0, MAX_NOMBRE_SET) : "";
-      const tags = typeof s.tags === "string" ? tagsATexto(partirTags(s.tags), MAX_HASHTAGS) : "";
-      const k = normalizar(nombre);
-      if (!nombre || !tags || vistos[k]) return;
-      vistos[k] = true;
-      out.push({ nombre: nombre, tags: tags });
-    });
-    return out;
-  }
-
-  function marcaValida(v) { return typeof v === "number" && isFinite(v) && v > 0 ? v : 0; }
-
-  function tienePropio(obj, k) { return Object.prototype.hasOwnProperty.call(obj, k); }
-
-  // Una idea propia es válida si tiene el formato de id esperado, está marcada como propia y tiene texto (o está borrada).
-  function idPropioValido(id, limpio) {
-    return CUSTOM_RE.test(id) && !!limpio && limpio.propia === true && (!!limpio.texto || limpio.borrada === true);
-  }
-
-  // Reconstruye un estado válido a partir de un objeto cualquiera (localStorage,
-  // respaldo o nube). Devuelve null si no tiene forma de estado. Descarta ids
-  // desconocidos, campos inválidos y marcas que no sean números positivos.
-  function limpiarEstado(obj) {
-    if (!obj || typeof obj !== "object" || Array.isArray(obj)) return null;
-    const candidatas = Object.create(null);
-    const hechas = {};
-    const datos = {};
-    const mod = {};
-    if (Array.isArray(obj.hechas)) {
-      obj.hechas.forEach(function (id) {
-        id = String(id);
-        if (id.length <= 40) candidatas[id] = true;
-      });
-    }
-    if (obj.datos && typeof obj.datos === "object" && !Array.isArray(obj.datos)) {
-      Object.keys(obj.datos).forEach(function (id) {
-        if (id.length > 40 || !(baseInfo[id] || CUSTOM_RE.test(id))) return;
-        const limpio = limpiarDato(obj.datos[id], !!candidatas[id]);
-        if (!baseInfo[id] && !idPropioValido(id, limpio)) return;
-        if (Object.keys(limpio).length) datos[id] = limpio;
-      });
-    }
-    Object.keys(candidatas).forEach(function (id) {
-      if (baseInfo[id] || tienePropio(datos, id)) hechas[id] = true;
-    });
-    if (obj.mod && typeof obj.mod === "object" && !Array.isArray(obj.mod)) {
-      Object.keys(obj.mod).forEach(function (id) {
-        if ((baseInfo[id] || tienePropio(datos, id)) && marcaValida(obj.mod[id])) mod[id] = obj.mod[id];
-      });
-    }
-    return { hechas: hechas, datos: datos, sets: limpiarSets(obj.sets), mod: mod, modSets: marcaValida(obj.modSets) };
-  }
-
-  function estadoVacio() { return { hechas: {}, datos: {}, sets: [], mod: {}, modSets: 0 }; }
-
-  // Forma que se guarda en localStorage y en los respaldos JSON. «version: 1»
-  // permite reconocer respaldos de esta versión al importar.
-  function serializar() {
-    return { version: 1, hechas: Object.keys(state.hechas), datos: state.datos, sets: state.sets, mod: state.mod, modSets: state.modSets };
-  }
 
   const KEY_CORRUPTO = "ideas_post_90_corrupto";
   let guardadoBloqueado = false;   // true si hay datos ilegibles y no se pudo copiar
@@ -2532,4 +2295,3 @@
   iniciarCapacidades();
 
   }   // fin de iniciar()
-})();

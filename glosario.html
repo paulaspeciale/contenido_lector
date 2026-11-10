@@ -12,6 +12,7 @@
 <meta name="robots" content="index,follow,max-image-preview:large">
 <link rel="canonical" href="https://TU-DOMINIO.com/glosario.html">
 <link rel="alternate" hreflang="es" href="https://TU-DOMINIO.com/glosario.html">
+<link rel="alternate" hreflang="x-default" href="https://TU-DOMINIO.com/glosario.html">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="es_ES">
 <meta property="og:site_name" content="Contenido BookTok">
@@ -23,23 +24,23 @@
 <meta name="twitter:description" content="Más de 300 términos bookish explicados en español: siglas (TBR, DNF, ARC), tropes románticos, géneros, spice level y jerga de BookTok y Bookstagram.">
 <link rel="preload" href="fonts/courier-prime-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebPage", "url": "https://TU-DOMINIO.com/glosario.html", "name": "Glosario bookish inglés-español: TBR, DNF, tropes, spice y más", "description": "Más de 300 términos bookish explicados en español: siglas (TBR, DNF, ARC), tropes románticos, géneros, spice level y jerga de BookTok y Bookstagram.", "inLanguage": "es"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://TU-DOMINIO.com/"}, {"@type": "ListItem", "position": 2, "name": "Glosario", "item": "https://TU-DOMINIO.com/glosario.html"}]}]}</script>
-<link rel="stylesheet" href="base.css">
-<link rel="stylesheet" href="glosario.css">
-<link rel="stylesheet" href="toc.css">
-<script src="theme.js"></script>
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/paginas/glosario.css">
+<link rel="stylesheet" href="css/toc.css">
+<script src="js/nucleo/theme.js"></script>
 </head>
 <body>
 <nav class="menu" aria-label="Principal">
 <a href="index.html">Inicio</a>
-<a href="resenia.html">Reseñas</a>
-<a href="ideas_post_90.html">Ideas</a>
-<a href="calendario_ideas_90.html">Calendario</a>
+<a href="resena.html">Reseñas</a>
+<a href="ideas.html">Ideas</a>
+<a href="calendario.html">Calendario</a>
 <a href="glosario.html" aria-current="page">Glosario</a>
 <a href="bio.html">Bio</a>
 <a href="consistencia.html">Feed</a>
 <a href="bingo.html">Bingo</a>
 <a href="sugerencias.html">Sugerencias</a>
-<a href="sobre_mi.html">Sobre mí</a>
+<a href="sobre-mi.html">Sobre mí</a>
 </nav>
 <header class="encabezado" id="inicio">
 <h1>Glosario bookish inglés-español</h1>
@@ -84,210 +85,7 @@
 <footer>
   <p>&copy; Diseñado e ideado por Paula Speciale, con la ayuda de Claude</p>
 </footer>
-<script src="datos-glosario.js"></script>
-<script>
-/* ==========================================================================
-   Glosario · lógica de glosario.html.
-
-   Construye toda la página desde datos-glosario.js (no hay que tocar el HTML
-   al agregar términos):
-     - Imprescindibles, bloques, categorías y fichas.
-     - Buscador (sin tildes ni mayúsculas), filtros por categoría y
-       «Solo imprescindibles», y orden A–Z o por popularidad.
-     - «Ver los 8 restantes» por categoría y enlaces directos por hash
-       (#tbr abre su categoría y resalta el término).
-   No guarda nada en localStorage.
-   ========================================================================== */
-(function () {
-  "use strict";
-  const B = window.BT || {}, CATS = B.GLOSARIO_CATS || [], GR = B.GLOSARIO_GRUPOS || [], VER = B.GLOSARIO_VER_TAMBIEN || {};
-  const LIM = 8;   // términos visibles por categoría antes de «Ver los restantes»
-  function norm(t) { return String(t == null ? "" : t).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim(); }
-  function el(tag, cls, txt) { const n = document.createElement(tag); if (cls) n.className = cls; if (txt !== undefined) n.textContent = txt; return n; }
-  const $ = function (id) { return document.getElementById(id); };
-  const raiz = $("categorias"), toc = $("toc-cats"), selCat = $("f-cat"), selOrd = $("f-orden"), buscar = $("buscar"), soloTop = $("f-top");
-  let dlg = $("dialogo-copiar"), filas = [], porId = {}, cats = [], grupos = [], imp = null;
-  if (!CATS.length) { $("total-glosario").textContent = "No se pudo cargar el glosario (falta datos-glosario.js)."; return; }
-  const porCat = {}; CATS.forEach(function (c) { porCat[c.id] = c; });
-  (B.GLOSARIO || []).forEach(function (t) { porId[t.id] = t; });
-
-  // Añade un enlace al menú lateral «En esta página».
-  function tocLink(href, n, txt) {
-    const li = el("li"), a = el("a"); a.href = href;
-    a.appendChild(el("span", "ni", n)); a.appendChild(document.createTextNode(txt));
-    li.appendChild(a); toc.appendChild(li); return li;
-  }
-
-  // Imprescindibles
-  const dest = (B.GLOSARIO_DESTACADOS || []).filter(function (id) { return porId[id]; });
-  if (dest.length) {
-    imp = el("section", "cat imp"); imp.id = "imprescindibles";
-    const hi = el("h2"); hi.appendChild(el("span", "n", "★")); hi.appendChild(document.createTextNode("Imprescindibles")); imp.appendChild(hi);
-    imp.appendChild(el("p", "intro", "Si solo vas a aprender unos pocos, empieza por estos. Toca uno para ir a su ficha."));
-    const ci = el("ul", "chips-imp");
-    dest.forEach(function (id) {
-      const t = porId[id], li = el("li"), a = el("a", "chip-term"); a.href = "#" + id; a.setAttribute("data-ir", id);
-      a.appendChild(el("span", "en", t.termino.length > 20 ? t.termino.split(" / ")[0] : t.termino)); a.appendChild(el("span", "es", t.es));
-      li.appendChild(a); ci.appendChild(li);
-    });
-    imp.appendChild(ci); raiz.appendChild(imp);
-    tocLink("#imprescindibles", "★", "Imprescindibles");
-  }
-
-  GR.forEach(function (g, gi) {
-    const gs = el("section", "grupo"); gs.id = g.id; gs.setAttribute("data-g", g.id);
-    const h = el("h2"); h.appendChild(document.createTextNode(g.titulo)); gs.appendChild(h);
-    gs.appendChild(el("p", "intro", g.intro));
-    const o = document.createElement("optgroup"); o.label = g.titulo; selCat.appendChild(o);
-    const gref = { g: g, s: gs, cats: [], li: tocLink("#" + g.id, (gi + 1) + ".", g.titulo) };
-    g.cats.forEach(function (cid) {
-      const c = porCat[cid]; if (!c) return;
-      const op = el("option", "", c.titulo); op.value = c.id; o.appendChild(op);
-      const d = el("details", "cat"); d.id = c.id; d.open = c.id !== "spice" && c.id !== "cw";
-      const sum = el("summary"); sum.appendChild(el("h3", "", c.titulo));
-      const cnt = el("span", "cuenta-seccion"); sum.appendChild(cnt); d.appendChild(sum);
-      d.appendChild(el("p", "intro", c.intro));
-      const ul = el("ul", "terminos"); d.appendChild(ul);
-      const x = { c: c, d: d, ul: ul, cnt: cnt, rows: [], exp: false, mas: el("button", "btn-mas", "") };
-      x.mas.type = "button"; x.mas.setAttribute("data-mas", c.id); d.appendChild(x.mas);
-      c.items.forEach(function (t, k) {
-        const compacto = !t.def && !t.ejemplo;
-        const li2 = el("li", "termino" + (t.top ? " top" : "") + (compacto ? " compacto" : "")); li2.id = t.id;
-        li2.appendChild(el("p", "en", t.termino));
-        li2.appendChild(el("p", "es", t.es));
-        if (t.def) li2.appendChild(el("p", "def", t.def));
-        if (t.ejemplo) li2.appendChild(el("p", "ejemplo", "«" + t.ejemplo + "»"));
-        const rel = (VER[t.id] || []).filter(function (r) { return porId[r]; });
-        if (rel.length) {
-          const pv = el("p", "ver", "Ver también: ");
-          rel.forEach(function (r, j) {
-            if (j) pv.appendChild(document.createTextNode(" · "));
-            const a = el("a", "", porId[r].termino); a.href = "#" + r; a.setAttribute("data-ir", r); pv.appendChild(a);
-          });
-          li2.appendChild(pv);
-        }
-        const pie = el("div", "pie");
-        if (t.top) pie.appendChild(el("span", "estrella", "★ Imprescindible"));
-        const b = el("button", "btn-chico", "Copiar"); b.type = "button"; b.setAttribute("data-copiar", t.id);
-        b.setAttribute("aria-label", "Copiar " + t.termino); pie.appendChild(b);
-        li2.appendChild(pie); ul.appendChild(li2);
-        const f = { t: t, li: li2, i: k, x: x, txt: norm([t.termino, t.es, t.def, t.ejemplo].join(" ")) };
-        x.rows.push(f); filas.push(f);
-      });
-      gs.appendChild(d); gref.cats.push(x); cats.push(x);
-    });
-    raiz.appendChild(gs); grupos.push(gref);
-  });
-
-  // Reordena las fichas dentro de cada categoría (A–Z o por popularidad original).
-  function ordenar() {
-    const az = selOrd.value === "az";
-    cats.forEach(function (x) {
-      x.rows.sort(function (a, b) { return az ? norm(a.t.termino).localeCompare(norm(b.t.termino)) : a.i - b.i; });
-      x.rows.forEach(function (f) { x.ul.appendChild(f.li); });
-    });
-  }
-
-  // Aplica búsqueda + filtros y decide qué fichas se ven. Con cualquier filtro
-  // activo se muestran todos los resultados y se abren sus categorías.
-  function aplicar() {
-    let q = norm(buscar.value), cat = selCat.value, top = soloTop.checked, vis = 0;
-    const hay = !!q || cat !== "todas" || top;
-    cats.forEach(function (x) {
-      let pasan = 0, shown = 0, lim = (hay || x.exp) ? 1e9 : LIM;
-      x.rows.forEach(function (f) {
-        const ok = (cat === "todas" || f.t.categoria === cat) && (!top || f.t.top) && (!q || f.txt.indexOf(q) !== -1);
-        if (ok) pasan++;
-        const mostrar = ok && shown < lim; if (mostrar) shown++;
-        f.li.hidden = !mostrar;
-      });
-      vis += pasan;
-      x.d.hidden = pasan === 0;
-      if (hay && pasan > 0) x.d.open = true;
-      x.cnt.textContent = pasan + " / " + x.c.items.length;
-      x.mas.hidden = hay || pasan <= LIM;
-      x.mas.textContent = x.exp ? "Ver menos" : "Ver los " + (pasan - LIM) + " restantes";
-    });
-    grupos.forEach(function (g) {
-      const v = g.cats.some(function (x) { return !x.d.hidden; });
-      g.s.hidden = !v; g.li.hidden = !v;
-    });
-    if (imp) { imp.hidden = hay; toc.firstChild.hidden = hay; }
-    $("vacio").hidden = vis !== 0;
-    $("resultados-glosario").textContent = "Mostrando " + vis + " de " + filas.length + " términos.";
-  }
-  $("total-glosario").textContent = filas.length + " términos en " + CATS.length + " categorías";
-  let timer; buscar.addEventListener("input", function () { clearTimeout(timer); timer = setTimeout(aplicar, 150); });
-  selCat.addEventListener("change", aplicar); soloTop.addEventListener("change", aplicar);
-  selOrd.addEventListener("change", function () { ordenar(); aplicar(); });
-  ordenar(); aplicar();
-
-  // Copia con respaldo (execCommand) para navegadores sin Clipboard API.
-  function copiar(texto) {
-    return new Promise(function (res) {
-      function resp() {
-        try {
-          const ta = document.createElement("textarea"); ta.value = texto; ta.setAttribute("readonly", "");
-          ta.style.cssText = "position:fixed;top:0;left:0;opacity:0"; document.body.appendChild(ta);
-          ta.select(); ta.setSelectionRange(0, texto.length);
-          const ok = !!(document.execCommand && document.execCommand("copy")); ta.remove(); res(ok);
-        } catch (e) { res(false); }
-      }
-      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(texto).then(function () { res(true); }, resp); else resp();
-    });
-  }
-
-  // Lleva a un término: si está oculto por un filtro, lo limpia, abre su
-  // categoría y lo resalta unos segundos. Devuelve false si el id no existe.
-  function irA(id) {
-    const f = filas.filter(function (x) { return x.t.id === id; })[0];
-    if (!f) return false;
-    if (f.li.hidden) {
-      if (buscar.value || selCat.value !== "todas" || soloTop.checked) { buscar.value = ""; selCat.value = "todas"; soloTop.checked = false; }
-      f.x.exp = true;
-      aplicar();
-    }
-    f.x.d.open = true;
-    f.li.scrollIntoView({ block: "center" }); f.li.classList.add("destacada");
-    setTimeout(function () { f.li.classList.remove("destacada"); }, 2500);
-    return true;
-  }
-
-  $("glosario").addEventListener("click", function (e) {
-    const t = e.target.closest ? e.target : null; if (!t) return;
-    const ir = t.closest("a[data-ir]");
-    if (ir) { e.preventDefault(); irA(ir.getAttribute("data-ir")); return; }
-    const m = t.closest("button[data-mas]");
-    if (m) {
-      const x = cats.filter(function (c) { return c.c.id === m.getAttribute("data-mas"); })[0];
-      if (x) { x.exp = !x.exp; aplicar(); if (!x.exp) x.d.scrollIntoView({ block: "start" }); }
-      return;
-    }
-    const b = t.closest("button[data-copiar]");
-    if (!b) return;
-    const f = filas.filter(function (z) { return z.t.id === b.getAttribute("data-copiar"); })[0];
-    if (!f) return;
-    const texto = f.t.termino + " = " + f.t.es + (f.t.def ? ". " + f.t.def : "");
-    copiar(texto).then(function (ok) {
-      if (ok) {
-        $("copiado").textContent = ""; setTimeout(function () { $("copiado").textContent = "Copiado al portapapeles."; }, 30);
-        const o = b.getAttribute("data-texto") || b.textContent; b.setAttribute("data-texto", o); b.textContent = "¡Copiado!";
-        clearTimeout(b._t); b._t = setTimeout(function () { b.textContent = o; }, 1800);
-      } else {
-        $("copiar-texto").value = texto;
-        try { dlg.showModal(); } catch (er) { dlg.setAttribute("open", ""); }
-        $("copiar-texto").select();
-      }
-    });
-  });
-  $("copiar-cerrar").addEventListener("click", function () { try { dlg.close(); } catch (e) { dlg.removeAttribute("open"); } });
-
-  function irAlHash() {
-    let id = ""; try { id = decodeURIComponent(location.hash.slice(1)); } catch (e) { return; }
-    if (!irA(id)) { const d = porCat[id] && $(id); if (d && d.tagName === "DETAILS") { d.open = true; d.scrollIntoView(); } }
-  }
-  window.addEventListener("hashchange", irAlHash); irAlHash();
-})();
-</script>
+<script src="js/datos/datos-glosario.js"></script>
+<script src="js/paginas/glosario.js"></script>
 </body>
 </html>

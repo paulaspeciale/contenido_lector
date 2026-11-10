@@ -1,0 +1,10 @@
+# robots.txt · Contenido BookTok
+# Sustituye TU-DOMINIO.com por tu dominio real antes de publicar.
+
+User-agent: *
+Allow: /
+
+# sugerencias.html es una página de contacto: se marca noindex en el HTML,
+# no se bloquea aquí (bloquearla impediría leer esa directiva).
+
+Sitemap: https://TU-DOMINIO.com/sitemap.xml

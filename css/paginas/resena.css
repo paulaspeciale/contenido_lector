@@ -1,7 +1,7 @@
 /* ==========================================================================
-   resenia.css · Plantilla de reseña: índice, tabla de valoración, botones de
+   resena.css · Plantilla de reseña: índice, tabla de valoración, botones de
    versión (completa, corta, guiones y prompts) y ejemplo.
-   Requiere base.css. La lógica está en el <script> de resenia.html.
+   Requiere base.css. La lógica está en js/paginas/resena.js.
    ========================================================================== */
 
 /* ---------- Rótulos y tabla de valoración ---------- */
