@@ -46,7 +46,9 @@
 
 .cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; margin-top: .75rem; }
 
-.dia.fuera { background: transparent; opacity: .45; }
+/* Días de otro mes: se atenúan, pero el número sigue siendo un botón y debe
+   leerse (a .45 se quedaba en 2.6:1). */
+.dia.fuera { background: transparent; opacity: .7; }
 
 .dia.hoy .n { background: var(--acento); color: var(--sobre-acento); border-radius: 999px; }
 
@@ -73,7 +75,9 @@
 
 .ev.f-Reel { color: var(--f-reel); }
 
-.ev.hecha { text-decoration: line-through; opacity: .65; }
+/* Las ideas publicadas se marcan con el tachado y el sello, sin bajar la
+   opacidad: a .65 el texto de 12px se quedaba en ~3:1. */
+.ev.hecha { text-decoration: line-through; }
 
 .mas { font-size: .72rem; color: var(--suave); }
 
@@ -138,7 +142,9 @@
 
 #msg-fecha-wrap { margin-top: .5rem; text-align: center; }
 #msg-deshacer { min-height: 2.5rem; padding: .3rem .8rem; }
-#detalle:focus { outline: none; }
+/* El foco del contenedor no se pinta (es una región, no un control), pero el
+   foco visible global se conserva para los campos y botones de dentro. */
+#detalle:focus:not(:focus-visible) { outline: none; }
 
 /* Ideas vencidas: fecha pasada y sin publicar (las publicadas y descartadas nunca se marcan) */
 .dia.tiene-venc { border-color: var(--aviso); }
@@ -162,7 +168,7 @@
 
 .meta-estado { flex: 1 1 12rem; font: 400 1rem/1.4 var(--serif); }
 
-.meta-estado.cumplida { color: var(--est-publicada); font-weight: 700; }
+.meta-estado.cumplida { color: var(--est-publicada-tinta); font-weight: 700; }
 
 .meta-semanal progress { max-width: none; margin: .6rem 0 .3rem; }
 
@@ -219,6 +225,47 @@
 .aviso-resp { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .5rem .75rem; margin-top: .6rem; padding: .6rem .8rem; border: 1px dashed var(--aviso); color: var(--texto); }
 
 .aviso-resp button { min-height: 2.5rem; padding: .3rem .8rem; }
+
+/* ---------- Calendario y detalle en dos columnas ----------
+   Desde 64rem el detalle del día deja de ir debajo y pasa a una columna fija a
+   la derecha, con scroll propio. El calendario conserva las 7 columnas y las
+   fichas de evento pasan a dos líneas con recorte. */
+@media (min-width: 64rem) {
+  .cal-cuerpo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 22rem;
+    align-items: start;
+    gap: 0 2rem;
+  }
+
+  .cal-detalle {
+    position: sticky;
+    top: var(--tope);
+    align-self: start;
+    max-height: calc(100dvh - var(--tope) - 1rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    padding-left: 1.1rem;
+    border-left: 1px dotted var(--borde);
+  }
+
+  .ev {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    white-space: normal;
+    line-height: 1.25;
+    overflow: hidden;
+    text-overflow: clip;
+  }
+}
+
+/* En pantallas muy estrechas cada píxel de celda cuenta. */
+@media (max-width: 30rem) {
+  .cal-grid { gap: 1px; }
+}
 
 /* ---------- Impresión ---------- */
 @media print {

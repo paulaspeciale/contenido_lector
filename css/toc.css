@@ -3,8 +3,9 @@
 
    - .toc: barra/panel con los enlaces de sección.
    - .toc-ideas: variante con subsecciones plegables de la página de Ideas.
-   En pantallas anchas (min-width: 80rem) se fija a la derecha del contenido;
-   en móvil queda como panel plegable dentro de la página. Requiere base.css.
+   En pantallas anchas se fija a la derecha del contenido (desde 80rem en las
+   páginas de lectura y desde 100rem en las de app); por debajo queda como panel
+   plegable dentro de la página. Requiere base.css.
    ========================================================================== */
 
 #inicio { scroll-margin-top: 1rem; }
@@ -50,14 +51,25 @@
 
 .toc a[aria-current="location"] { color: var(--acento); font-weight: 600; border-bottom-color: var(--acento); }
 
-/* ---------- Menú fijo en pantallas anchas ---------- */
+/* ---------- Menú fijo en pantallas anchas ----------
+   El rail se coloca a la derecha del bloque de contenido, que está centrado y
+   limitado por --ancho-pagina. Se fija solo cuando sobra sitio de verdad:
+
+   - páginas de lectura (44rem): desde 80rem (el rail ocupa 12.5rem);
+   - páginas de app (68rem): desde 100rem. A 1280px (80rem) el contenido de
+     68rem más el rail no caben y el TOC se solaparía con la página. */
+
 @media (min-width: 80rem) {
-  .toc {
+  body:not(.pagina-app) .toc {
     position: fixed;
     top: calc(var(--tope) + 5.5rem);
-    left: calc(50% + 25rem + 1.5rem);
+    left: calc(50% + var(--ancho-pagina) * .5 + 1.5rem);
     z-index: 25;
-    width: 12.5rem;
+    width: var(--rail-toc);
+    max-height: calc(100dvh - var(--tope) - 7rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
     margin: 0;
     padding: .8rem 0 .8rem 1rem;
     border: 0;
@@ -66,17 +78,43 @@
     background: transparent;
     box-shadow: none;
   }
-  .toc-titulo { margin-bottom: .4rem; }
-  .toc ol { display: block; }
-  .toc li + li { margin-top: .1rem; }
-  .toc a {
+}
+
+@media (min-width: 100rem) {
+  body.pagina-app .toc {
+    position: fixed;
+    top: calc(var(--tope) + 5.5rem);
+    left: calc(50% + var(--ancho-pagina) * .5 + 1.5rem);
+    z-index: 25;
+    width: var(--rail-toc);
+    max-height: calc(100dvh - var(--tope) - 7rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    margin: 0;
+    padding: .8rem 0 .8rem 1rem;
+    border: 0;
+    border-left: 1px dotted var(--suave);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+}
+
+/* Los enlaces pasan a columna solo cuando el TOC es un rail fijo, con el
+   mismo umbral que la posición. */
+@media (min-width: 80rem) {
+  body:not(.pagina-app) .toc-titulo { margin-bottom: .4rem; }
+  body:not(.pagina-app) .toc ol { display: block; }
+  body:not(.pagina-app) .toc li + li { margin-top: .1rem; }
+  body:not(.pagina-app) .toc a {
     position: relative;
     display: flex;
     min-height: 2.25rem;
     border-bottom: 0;
     font-size: .88rem;
   }
-  .toc a[aria-current="location"]::before {
+  body:not(.pagina-app) .toc a[aria-current="location"]::before {
     content: "";
     position: absolute;
     left: -1.04rem;
@@ -85,7 +123,30 @@
     width: 3px;
     background: var(--acento);
   }
-  .toc a:hover { text-decoration: underline; text-underline-offset: .2em; }
+  body:not(.pagina-app) .toc a:hover { text-decoration: underline; text-underline-offset: .2em; }
+}
+
+@media (min-width: 100rem) {
+  body.pagina-app .toc-titulo { margin-bottom: .4rem; }
+  body.pagina-app .toc ol { display: block; }
+  body.pagina-app .toc li + li { margin-top: .1rem; }
+  body.pagina-app .toc a {
+    position: relative;
+    display: flex;
+    min-height: 2.25rem;
+    border-bottom: 0;
+    font-size: .88rem;
+  }
+  body.pagina-app .toc a[aria-current="location"]::before {
+    content: "";
+    position: absolute;
+    left: -1.04rem;
+    top: .4rem;
+    bottom: .4rem;
+    width: 3px;
+    background: var(--acento);
+  }
+  body.pagina-app .toc a:hover { text-decoration: underline; text-underline-offset: .2em; }
 }
 
 @media print {
@@ -132,13 +193,13 @@
 .toc .ni { flex: none; font: 400 .78rem var(--maquina); color: var(--acento); }
 
 @media (min-width: 80rem) {
-  .toc-ideas {
-    max-height: calc(100vh - var(--tope) - 7rem);
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    scrollbar-width: thin;
-  }
-  .toc-ideas summary { min-height: 0; pointer-events: none; cursor: default; }
-  .toc-ideas summary::after { display: none; }
-  .toc-ideas ol ol a { min-height: 2rem; }
+  body:not(.pagina-app) .toc-ideas summary { min-height: 0; pointer-events: none; cursor: default; }
+  body:not(.pagina-app) .toc-ideas summary::after { display: none; }
+  body:not(.pagina-app) .toc-ideas ol ol a { min-height: 2rem; }
+}
+
+@media (min-width: 100rem) {
+  body.pagina-app .toc-ideas summary { min-height: 0; pointer-events: none; cursor: default; }
+  body.pagina-app .toc-ideas summary::after { display: none; }
+  body.pagina-app .toc-ideas ol ol a { min-height: 2rem; }
 }

@@ -16,7 +16,7 @@
 .cat > h2 .cuenta-seccion { margin-left: auto; font: 400 .78rem var(--maquina); font-variant: normal; color: var(--suave); white-space: nowrap; }
 .cat > .intro { margin: .5rem 0 .9rem; font-size: .95rem; }
 
-.terminos { display: grid; grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr)); gap: .75rem; margin: 0; padding: 0; list-style: none; }
+.terminos { display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: .75rem; margin: 0; padding: 0; list-style: none; }
 .termino { display: flex; flex-direction: column; gap: .3rem; padding: .8rem .9rem .75rem; border: 1px solid var(--borde); border-left: .35rem solid var(--borde); border-radius: .15rem; background: var(--superficie); scroll-margin-top: 1rem; }
 .termino.top { border-left-color: var(--acento); box-shadow: var(--marco); }
 .termino.destacada { outline: 3px solid var(--acento); outline-offset: 2px; }
@@ -32,11 +32,13 @@
 
 /* ---------- Bloques, plegado y fichas compactas ---------- */
 .grupo { --tono: var(--acento); margin-top: 2.5rem; scroll-margin-top: 1rem; }
-.grupo[data-g="g1"] { --tono: var(--est-programada); }
+/* El tono tiñe bordes y también números y estrellas de texto: se usa la
+   variante de tinta, que sí cumple 4.5:1. */
+.grupo[data-g="g1"] { --tono: var(--est-programada-tinta); }
 .grupo[data-g="g2"] { --tono: var(--corazon); }
-.grupo[data-g="g3"] { --tono: var(--est-editando); }
-.grupo[data-g="g4"] { --tono: var(--est-grabando); }
-.grupo[data-g="g5"] { --tono: var(--est-publicada); }
+.grupo[data-g="g3"] { --tono: var(--est-editando-tinta); }
+.grupo[data-g="g4"] { --tono: var(--est-grabando-tinta); }
+.grupo[data-g="g5"] { --tono: var(--est-publicada-tinta); }
 .grupo > h2 { margin: 0; padding: .5rem .8rem; border-left: .5rem solid var(--tono); background: var(--superficie); font: 400 1.3rem/1.3 var(--serif); font-variant: small-caps; letter-spacing: .08em; }
 .grupo > .intro { margin: .4rem 0 0 .2rem; font-size: .92rem; }
 .grupo .termino.top { border-left-color: var(--tono); }

@@ -29,7 +29,8 @@
 <link rel="stylesheet" href="css/toc.css">
 <script src="js/nucleo/theme.js"></script>
 </head>
-<body>
+<body class="pagina-app">
+<a class="saltar" href="#contenido">Saltar al contenido</a>
 <nav class="menu" aria-label="Principal">
 <a href="index.html">Inicio</a>
 <a href="resena.html">Reseñas</a>
@@ -64,7 +65,7 @@
 </ol>
 </details>
 </nav>
-<main>
+<main id="contenido" tabindex="-1">
 
 <details class="guia" id="guia">
 <summary>Cómo leer esta lista</summary>
@@ -77,6 +78,7 @@
 </ul>
 </details>
 
+<div class="ideas-cuerpo">
 <div class="barra" id="barra">
 <div class="barra-fila">
 <input type="search" id="buscar" placeholder="Buscar idea, libro o nota" aria-label="Buscar" autocomplete="off">
@@ -146,6 +148,8 @@
 <p id="sorpresa" aria-live="polite"></p>
 </div>
 
+<div class="ideas-principal">
+
 <details class="herramientas" id="respaldo">
 <summary>Progreso y respaldo</summary>
 <div class="herramientas-cuerpo">
@@ -195,6 +199,8 @@
 
 <div id="lista"></div>
 <noscript><p>Esta página necesita JavaScript para mostrar la lista de ideas.</p></noscript>
+</div>
+</div>
 
 <dialog id="dialogo" aria-labelledby="dialogo-texto">
 <p id="dialogo-texto"></p>

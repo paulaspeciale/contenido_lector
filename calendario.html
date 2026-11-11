@@ -29,7 +29,8 @@
 <link rel="stylesheet" href="css/toc.css">
 <script src="js/nucleo/theme.js"></script>
 </head>
-<body>
+<body class="pagina-app">
+<a class="saltar" href="#contenido">Saltar al contenido</a>
 <nav class="menu" aria-label="Principal">
 <a href="index.html">Inicio</a>
 <a href="resena.html">Reseñas</a>
@@ -59,7 +60,9 @@
 <li><a href="#ayuda-datos">Ver un respaldo</a></li>
 </ol>
 </nav>
-<main>
+<main id="contenido" tabindex="-1">
+<div class="cal-cuerpo">
+<div class="cal-lado">
 <section id="calendario" aria-label="Calendario mensual">
 <div class="cal-nav">
 <button type="button" id="mes-ant" aria-label="Mes anterior">‹</button>
@@ -71,8 +74,13 @@
 </section>
 
 <p id="anuncio" class="solo-lector" role="status" aria-live="polite"></p>
+</div>
+
+<div class="cal-detalle">
 <section id="detalle" aria-label="Detalle del día" tabindex="-1"></section>
 <p class="ayuda" id="msg-fecha-wrap" role="status"><span id="msg-fecha"></span> <button type="button" id="msg-deshacer" hidden>Deshacer</button></p>
+</div>
+</div>
 
 <section id="meta" class="meta-semanal" aria-label="Meta semanal">
 <div class="meta-fila">

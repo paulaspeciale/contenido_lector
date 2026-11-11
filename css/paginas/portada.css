@@ -30,6 +30,11 @@
   border-bottom: .45rem solid var(--madera);
 }
 
+/* La estantería gana presencia en cuanto sobra ancho. */
+@media (min-width: 48rem) {
+  .lomos { max-width: 26rem; }
+}
+
 .lomos span {
   flex: 0 1 var(--w, 1.4rem);
   height: var(--h, 6rem);
@@ -95,6 +100,12 @@
 
 /* ---------- Tarjetas: cada una con el color de su sección ---------- */
 .tarjetas { grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }
+
+/* Con el ancho de app ya caben tres tarjetas por fila: se fijan para que no
+   queden columnas desiguales al crecer la ventana. */
+@media (min-width: 68rem) {
+  .tarjetas { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
 
 .tarjetas li { --c: var(--acento); }
 

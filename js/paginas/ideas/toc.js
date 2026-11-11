@@ -41,7 +41,7 @@
   construirSecciones();
   document.addEventListener("secciones-cambiadas", function () { construirSecciones(); actualizar(); });
 
-  const mq = window.matchMedia ? window.matchMedia("(min-width: 80rem)") : null;
+  const mq = window.matchMedia ? window.matchMedia("(min-width: 100rem)") : null;
   function ancho() { return !!(mq && mq.matches); }
 
   // En pantalla ancha el menú está siempre abierto; en móvil es un panel plegable

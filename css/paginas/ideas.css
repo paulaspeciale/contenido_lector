@@ -129,7 +129,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
   gap: .6rem .75rem;
-  max-height: 55vh;
+  max-height: 55dvh;
   overflow-y: auto;
   padding: .75rem 0 .25rem;
 }
@@ -170,10 +170,12 @@ details[data-sec][open] > summary::before { content: "\2766\FE0E"; }
 
 details[data-sec] > summary > h2 {
   flex: 1;
+  min-width: 0;
   margin: 0;
   font: 400 1.12rem/1.3 var(--serif);
   font-variant: small-caps;
   letter-spacing: .07em;
+  overflow-wrap: break-word;
 }
 
 .cuenta {
@@ -206,6 +208,7 @@ details[data-sec] > summary > h2 {
 
 .idea {
   --cinta: var(--est-idea);
+  min-width: 0;
   padding: 1rem 0 .9rem 1rem;
   border-bottom: 1px dotted var(--suave);
   border-left: .4rem solid var(--cinta);
@@ -271,14 +274,15 @@ details[data-sec] > summary > h2 {
   color: var(--acento);
 }
 
-.idea.hecha .texto, .idea.hecha .meta { opacity: .6; }
-
+/* La opacidad no sirve para atenuar texto pequeño: a .6 el texto de 12px
+   bajaba a ~2.5:1. Lo hecho se marca con el tachado y el sello «Publicada». */
 .idea.hecha .texto {
   text-decoration: line-through;
   text-decoration-thickness: 1px;
 }
 
-.idea[data-est="descartada"] .texto, .idea[data-est="descartada"] .meta { opacity: .55; }
+/* Descartada: se atenúa con la tinta suave (5.57:1), no con opacidad. */
+.idea[data-est="descartada"] .texto { color: var(--suave); }
 
 /* Casilla "hecha": círculo con ✓ (distinta del corazón de favorita) */
 input[data-id] {
@@ -314,7 +318,7 @@ input[data-id]:checked::before { transform: scale(1); }
 /* Estado y fecha */
 .campos {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: .25rem .75rem;
   margin-top: .5rem;
 }
@@ -686,3 +690,49 @@ progress.mini {
 }
 
 .extra-cuerpo textarea { min-height: 6.5rem; }
+
+/* ---------- Rail de filtros en dos columnas ----------
+   A partir de 64rem la barra deja de estar arriba y pasa a ser una columna
+   fija a la izquierda de la lista: los filtros siguen a mano sin robar altura
+   al contenido. La medida de las fichas no cambia; solo se estrecha la lista. */
+@media (min-width: 64rem) {
+  .ideas-cuerpo {
+    display: grid;
+    grid-template-columns: 18rem minmax(0, 1fr);
+    align-items: start;
+    gap: 0 2rem;
+  }
+
+  .ideas-cuerpo > .barra {
+    top: var(--tope);
+    margin-top: 1rem;
+    padding: 0 1.1rem 1rem 0;
+    border-bottom: 0;
+    border-right: 1px dotted var(--borde);
+    max-height: calc(100dvh - var(--tope) - 1.5rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    background: var(--fondo);
+  }
+
+  /* El botón «Filtros» ya no hace falta: el panel está siempre desplegado. */
+  #btn-filtros { display: none; }
+
+  .ideas-cuerpo .panel {
+    max-height: none;
+    overflow: visible;
+    padding-top: .6rem;
+  }
+
+  /* En móvil el panel arranca con [hidden]; en el rail se muestra siempre. */
+  #panel-filtros[hidden] { display: grid !important; }
+
+  /* Sin barra horizontal arriba, los títulos se pegan al borde y las anclas
+     dejan de descontar la altura de la barra (que aquí es una columna). */
+  details[data-sec] > summary { top: var(--tope); }
+  .idea { scroll-margin-top: calc(var(--tope) + 3.5rem); }
+  #guia, #respaldo, #conjuntos, #lista, details[data-sec] {
+    scroll-margin-top: calc(var(--tope) + .5rem);
+  }
+}

@@ -17,7 +17,8 @@
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 3px;
-  margin-top: 1rem;
+  max-width: 34rem;
+  margin: 1rem auto 0;
   padding: 3px;
   border: 2px solid var(--texto);
   background: var(--texto);

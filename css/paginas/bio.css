@@ -67,7 +67,7 @@
   text-transform: uppercase;
 }
 
-.pm-dest { display: flex; gap: 1rem; margin-top: 1rem; }
+.pm-dest { display: flex; flex-wrap: wrap; gap: .6rem 1rem; margin-top: 1rem; }
 
 .pm-dest div { text-align: center; font: 400 .68rem/1.3 var(--maquina); letter-spacing: .04em; text-transform: uppercase; }
 
@@ -104,6 +104,25 @@
 
 /* Lista numerada de las siete piezas */
 .piezas { display: grid; gap: .6rem; margin: 1rem 0 0; padding: 0; list-style: none; counter-reset: pieza; }
+
+/* Desde 64rem la maqueta del perfil se queda a la izquierda, pegada al
+   desplazamiento, y la lista de las siete piezas ocupa la columna derecha. */
+@media (min-width: 64rem) {
+  #piezas {
+    display: grid;
+    grid-template-columns: 24rem minmax(0, 1fr);
+    align-items: start;
+    column-gap: 2rem;
+  }
+  #piezas > h2,
+  #piezas > p { grid-column: 1 / -1; }
+  #piezas > .perfil {
+    grid-column: 1;
+    position: sticky;
+    top: calc(var(--tope) + 1rem);
+  }
+  #piezas > .piezas { grid-column: 2; }
+}
 
 .piezas li {
   counter-increment: pieza;
@@ -215,7 +234,7 @@ table.limites td.num { font-family: var(--maquina); white-space: nowrap; }
 
 .cuenta-num small { font: 400 .75rem var(--maquina); letter-spacing: .04em; color: var(--suave); }
 
-#c-estado[data-estado="ok"] { color: var(--est-publicada); }
+#c-estado[data-estado="ok"] { color: var(--est-publicada-tinta); }
 #c-estado[data-estado="dudoso"] { color: var(--aviso); }
 #c-estado[data-estado="exceso"] { color: var(--corazon); font-weight: 700; }
 
@@ -248,7 +267,7 @@ table.limites td.num { font-family: var(--maquina); white-space: nowrap; }
 
 .resumen-bios .rb-n { font: 400 .78rem var(--maquina); white-space: nowrap; color: var(--suave); }
 
-.resumen-bios .rb-n[data-estado="ok"] { color: var(--est-publicada); }
+.resumen-bios .rb-n[data-estado="ok"] { color: var(--est-publicada-tinta); }
 .resumen-bios .rb-n[data-estado="dudoso"] { color: var(--aviso); }
 .resumen-bios .rb-n[data-estado="exceso"] { color: var(--corazon); font-weight: 700; }
 
