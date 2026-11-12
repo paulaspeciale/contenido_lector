@@ -8,6 +8,7 @@
 .filtros { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: .6rem .75rem; margin-top: 1rem; }
 .filtros .campo:first-child, .filtros .check { grid-column: 1 / -1; }
 #resultados-glosario { margin-top: .5rem; text-align: center; }
+.filtros-estado { margin-top: .25rem; text-align: center; }
 
 /* ---------- Categorías y fichas de términos ---------- */
 .cat { margin-top: 2.25rem; scroll-margin-top: 1rem; }
@@ -64,6 +65,9 @@ details.cat > .intro { margin: .5rem 0 .8rem; font-size: .93rem; }
 
 .termino .ver { margin: .15rem 0 0; font-size: .8rem; color: var(--suave); }
 .termino .ver a { color: var(--acento); }
+
+.cat-enlaces { margin: .9rem 0 0; font-size: .85rem; color: var(--suave); }
+.cat-enlaces a { color: var(--acento); }
 
 .imp > h2 { border-bottom-color: var(--acento); }
 .chips-imp { display: grid; grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr)); gap: .5rem; margin: 0; padding: 0; list-style: none; }

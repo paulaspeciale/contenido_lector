@@ -17,7 +17,7 @@
   function norm(t) { return String(t == null ? "" : t).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim(); }
   function el(tag, cls, txt) { const n = document.createElement(tag); if (cls) n.className = cls; if (txt !== undefined) n.textContent = txt; return n; }
   const $ = function (id) { return document.getElementById(id); };
-  const raiz = $("categorias"), toc = $("toc-cats"), selCat = $("f-cat"), selOrd = $("f-orden"), buscar = $("buscar"), soloTop = $("f-top");
+  const raiz = $("categorias"), toc = $("toc-cats"), selCat = $("f-cat"), selOrd = $("f-orden"), buscar = $("buscar"), soloTop = $("f-top"), btnLimpiar = $("limpiar-filtros");
   let dlg = $("dialogo-copiar"), filas = [], porId = {}, cats = [], grupos = [], imp = null;
   if (!CATS.length) { $("total-glosario").textContent = "No se pudo cargar el glosario (falta datos-glosario.js)."; return; }
   const porCat = {}; CATS.forEach(function (c) { porCat[c.id] = c; });
@@ -28,6 +28,20 @@
     const li = el("li"), a = el("a"); a.href = href;
     a.appendChild(el("span", "ni", n)); a.appendChild(document.createTextNode(txt));
     li.appendChild(a); toc.appendChild(li); return li;
+  }
+
+  // Cierre de cada categoría: el glosario enseña el término y estas dos
+  // herramientas lo ponen en uso. Sin números en el texto para no quedar
+  // desfasado cuando crezcan las ideas o la plantilla.
+  function enlacesCategoria() {
+    const p = el("p", "cat-enlaces");
+    p.appendChild(document.createTextNode("Para escribirlo: "));
+    const a1 = el("a", "", "plantilla de reseña"); a1.href = "resena.html";
+    p.appendChild(a1);
+    p.appendChild(document.createTextNode(" · Para publicarlo: "));
+    const a2 = el("a", "", "ideas de posts"); a2.href = "ideas.html";
+    p.appendChild(a2);
+    return p;
   }
 
   // Imprescindibles
@@ -62,10 +76,11 @@
       const ul = el("ul", "terminos"); d.appendChild(ul);
       const x = { c: c, d: d, ul: ul, cnt: cnt, rows: [], exp: false, mas: el("button", "btn-mas", "") };
       x.mas.type = "button"; x.mas.setAttribute("data-mas", c.id); d.appendChild(x.mas);
+      d.appendChild(enlacesCategoria());
       c.items.forEach(function (t, k) {
         const compacto = !t.def && !t.ejemplo;
         const li2 = el("li", "termino" + (t.top ? " top" : "") + (compacto ? " compacto" : "")); li2.id = t.id;
-        li2.appendChild(el("p", "en", t.termino));
+        li2.appendChild(el("h4", "en", t.termino));
         li2.appendChild(el("p", "es", t.es));
         if (t.def) li2.appendChild(el("p", "def", t.def));
         if (t.ejemplo) li2.appendChild(el("p", "ejemplo", "«" + t.ejemplo + "»"));
@@ -126,12 +141,17 @@
     });
     if (imp) { imp.hidden = hay; toc.firstChild.hidden = hay; }
     $("vacio").hidden = vis !== 0;
+    btnLimpiar.hidden = !hay;
     $("resultados-glosario").textContent = "Mostrando " + vis + " de " + filas.length + " términos.";
   }
   $("total-glosario").textContent = filas.length + " términos en " + CATS.length + " categorías";
   let timer; buscar.addEventListener("input", function () { clearTimeout(timer); timer = setTimeout(aplicar, 150); });
   selCat.addEventListener("change", aplicar); soloTop.addEventListener("change", aplicar);
   selOrd.addEventListener("change", function () { ordenar(); aplicar(); });
+  btnLimpiar.addEventListener("click", function () {
+    buscar.value = ""; selCat.value = "todas"; soloTop.checked = false;
+    aplicar(); buscar.focus();
+  });
   ordenar(); aplicar();
 
   // Copia con respaldo (execCommand) para navegadores sin Clipboard API.
