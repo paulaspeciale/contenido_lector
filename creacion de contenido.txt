@@ -1,0 +1,99 @@
+Glosario	Searchable	304 términos, ejemplos, copiar	No enseña a usarlo en posts; no hay falsos amigos ni jerga regional
+Reseñas	Searchable	22 secciones, guiones, prompts	No hay versión exprés ni ejemplos de “buena respuesta”; no es adaptativa
+Bio	Searchable	Límites, contador, checklist, dudas entre fuentes	Casi todos los ejemplos son romantasy; faltan errores frecuentes
+Feed	Searchable	10 pasos, probador 60-30-10	Solo Instagram; no cubre TikTok/YouTube ni “sin estética”
+Ideas	Both	90 ideas, estados, fechas, checklist	No hay ideas de YouTube, contenido útil ni temporada; falta intro
+Calendario	Utility	Fechas, eventos, racha	No explica sus tres capas; fechas bookish ocultas y argentinas
+Bingo	Shareable/seasonal	Tarjeta interactiva, progreso local	Promete descarga y compartir que no existen
+Sobre mí / Sugerencias	Trust	Voz personal	Emojis excesivos; “próximamente”; sin privacidad ni licencia
+
+
+
+Publicar sin bloqueo — planificación y producción.
+Ideas (hub, 120)
+├─ Calendario
+├─ Plantillas de posts (TBR, wrap-up, haul, tag, recomendación)
+├─ Reutiliza tu contenido
+├─ Contenido con restricciones (sin cara, sin comprar, con móvil)
+└─ Bingo de creadores
+2. Reseñar con criterio — escritura y formatos.
+Plantilla de reseña (hub)
+├─ Reseña exprés (5 minutos)
+├─ Reseña de saga / comparativa
+├─ Guiones y prompts (ya existen)
+└─ Captions y ganchos
+3. Entender la jerga bookish — el activo más searchable.
+Glosario (hub, 304)
+├─ Falsos amigos (spicy, trope/cliché, romance, novel/novella)
+├─ Jerga regional (España / Latinoamérica)
+├─ Tropes vs. clichés
+└─ Cómo usar el glosario en tus posts
+4. Hacer crecer la cuenta — perfil, feed y colaboraciones.
+Bio (hub) + Feed (hub)
+├─ Métricas sin obsesión
+├─ ARCs y colaboraciones
+└─ BookTok vs. Bookstagram vs. BookTube
+
+
+Glosario v2	304 términos con ejemplos, falsos amigos y jerga regional; además enseña a usarlo en posts.
+Reseñas v2	22 secciones + exprés + guiones + prompts + checklist legal; ninguna guía en español reúne las cuatro.
+Ideas v2	120 ideas con formato, estado, fecha, checklist y etiquetas de restricción; es una herramienta, no una lista.
+Plantillas de posts	Plantillas rellenables para los cinco formatos que más se publican y que el sitio no cubre.
+Bio v2	Límites + contador + checklist + errores + dudas entre fuentes; resuelve la contradicción de las guías.
+Fechas bookish	Calendario anual con ideas de publicación para cada fecha, con España y Latinoamérica etiquetadas.
+Empieza aquí	Plan de 7 días que usa las herramientas del sitio, no otro artículo genérico.
+Feed v2	10 pasos + probador 60-30-10 + adaptación a TikTok/YouTube y a quien no quiere salir en cámara.
+Restricciones	Ideas y formatos para sin cara, sin comprar, con móvil y en 20 minutos.
+Bingo de creadores	25 retos de contenido con progreso local; el bingo deja de ser solo lectura.
+
+- Semana 1, bloqueante: compra el dominio, sustituye TU-DOMINIO.com en canonical, hreflang, og:url y schema, y da de alta Search Console + sitemap.
+- Schema: DefinedTermSet en Glosario, FAQPage en la portada (cuando añadas el FAQ), HowTo en las plantillas.
+- Enlaces internos: glosario → ideas, reseñas → ideas, bio → feed, calendario → fechas bookish, portada → empieza aquí. Es la forma más barata de subir páginas por página.
+- Títulos: añade «gratis» y «en español» solo donde sea natural. Ejemplo: «Glosario bookish inglés-español: TBR, DNF, tropes y spice (gratis)».
+- Frescura: «Última revisión: mes/año» en todas las guías. Los límites de Instagram/TikTok cambian; revísalos cada trimestre.
+- Información ganadora: antes de escribir una página nueva, completa «esto aporta X que no tiene el top 3». Si no puedes, no la escribas.
+
+Fase 0 — Publicación real (semana 1, 3 h) · bloqueante
+Nada de lo demás funciona si el sitio no está indexado bajo un dominio propio.
+- Comprar dominio y activar HTTPS.
+- Sustituir TU-DOMINIO.com en las 10 páginas (canonical, hreflang es/x-default, og:url, schema), en sitemap.xml, robots.txt y README.md.
+- Añadir sugerencias.html al sitemap y actualizar lastmod.
+- Alta en Search Console, envío del sitemap, inspección de las 10 URLs.
+Hecho cuando: las 10 URLs responden con el dominio real y Search Console las acepta sin errores.
+Fase 1 — Reparar promesas rotas (semana 1-2, 4 h)
+- Bingo: dos caminos.
+- (a) Implementar descarga de la tarjeta (canvas → PNG) + navigator.share con fallback a copiar enlace.
+- (b) Cambiar el copy y quitar la promesa.
+- Recomiendo (a): sin redes, el bingo es el activo más compartible que tienes, y es lo único que un lector puede enseñar a otra persona.
+- Revisar enlaces internos y anclas rotas en las 10 páginas.
+- Auditar el copy que promete funciones: descargar, guardar, exportar, compartir.
+Hecho cuando: ninguna promesa del texto queda sin función detrás.
+Fase 2 — Glosario como puerta de entrada (semanas 2-4, 18 h)
+Es tu mejor activo de búsqueda: 304 términos en 13 categorías. Hoy es una sola página que carga todo.
+- Estructura: una sección indexable por categoría, con encabezados que contengan el término y no solo el nombre de la categoría.
+- Definiciones con sinónimos regionales (España/LatAm) y variantes de búsqueda ("HEA", "happy ever after", "final feliz").
+- Bloque de términos relacionados + enlaces a ideas.html y resena.html desde cada categoría.
+- Datos estructurados DefinedTermSet si se separa en páginas.
+- Solo después: ampliar términos.
+Hecho cuando: alguien que busca "qué es romantasy" o "qué significa HEA" puede aterrizar en una URL concreta, no en un muro de 304 entradas.
+Fase 3 — Reseñas: de plantilla a contenido (semanas 5-6, 12 h)
+resena.html es una plantilla de 22 secciones con guiones y prompts. Es útil, pero no hay nada que leer.
+- Publicar 3 reseñas modelo reales usando la propia plantilla, una por subgénero: romantasy, romance contemporáneo, dark romance.
+- Schema Review/Book en cada una.
+- Enlazarlas desde el glosario y desde ideas.
+Hecho cuando: el sitio responde "qué leer", no solo "cómo reseñar".
+Fase 4 — Ideas y descargables (semanas 7-8, 12 h)
+- datos/datos-ideas.json: de 90 a 120 ideas, manteniendo las 8 secciones. La exportación y los estados ya existen.
+- Convertir resena, bio y consistencia en descargables (CSS de impresión a PDF). Refuerza el valor y da un motivo para guardar el enlace.
+- Revisar microcopy de filtros y estados vacíos.
+Fase 5 — Fechas bookish regionalizadas (semana 9, 8 h)
+- js/paginas/calendario/constantes.js está muy centrado en Argentina.
+- Separar España/LatAm, etiquetar cada fecha con región y tipo.
+- Añadir fechas del nicho (lanzamientos, semanas temáticas de romance) además de ferias.
+Fase 6 — Conversión (semanas 10-11, 10 h)
+- index.html: FAQ (hoy no existe) + ruta "empieza aquí" de 3 pasos + propuesta de valor más específica que "lectores creadores".
+- sobre-mi.html: las donaciones ya están (Cafecito activo; PayPal pendiente en un comentario). Capa silenciosa: bloque al final de las páginas de valor, nunca modal.
+- sugerencias.html: comprobar que el formulario tiene destino real y no solo un mailto.
+Fase 7 — Auditoría y medición (semana 12, 5 h)
+- Enlaces, accesibilidad, títulos y descripciones únicos, sitemap final.
+- Línea base en Search Console: impresiones, clics, consultas. Sin analytics invasivo.

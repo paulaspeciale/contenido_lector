@@ -76,8 +76,18 @@
 
 .bingo-acciones { margin-top: 1rem; }
 
+.bingo-aviso {
+  margin: .5rem auto 0;
+  max-width: 34rem;
+  text-align: center;
+  font: 400 .85rem/1.5 var(--maquina);
+  color: var(--suave);
+}
+
+.bingo-aviso:empty { display: none; }
+
 @media print {
-  .bingo-acciones, #bingo-prog { display: none !important; }
+  .bingo-acciones, .bingo-aviso, #bingo-prog { display: none !important; }
   .bingo-casilla[aria-pressed="true"] { background: #ddd; color: #000; }
 }
 

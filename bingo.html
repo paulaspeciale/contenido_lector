@@ -53,11 +53,14 @@
 </section>
 
 <div id="bingo-grid" class="bingo-grid" role="group" aria-label="Tarjeta de bingo"></div>
-<p class="ayuda">La casilla del centro es un espacio libre y ya cuenta. Tu progreso se guarda en este navegador.</p>
+<p class="ayuda">La casilla del centro es un espacio libre y ya cuenta. Tu progreso se guarda en este navegador. Cuando quieras, descarga la tarjeta como imagen para compartirla.</p>
 
 <div class="botones centrado bingo-acciones">
+<button type="button" id="bingo-descargar" class="primario">Descargar tarjeta</button>
+<button type="button" id="bingo-compartir" hidden>Compartir progreso</button>
 <button type="button" id="bingo-reiniciar">Desmarcar todas</button>
 </div>
+<p id="bingo-aviso" class="bingo-aviso" role="status" aria-live="polite"></p>
 <noscript><p>Esta página necesita JavaScript para mostrar la tarjeta.</p></noscript>
 
 <dialog id="dialogo" aria-labelledby="dialogo-texto">
@@ -74,5 +77,6 @@
 <script src="js/nucleo/datos.js" data-usa="bingo"></script>
 <script src="js/bingo/bingo.js"></script>
 <script src="js/bingo/bingo-iconos.js"></script>
+<script src="js/bingo/bingo-exportar.js"></script>
 </body>
 </html>

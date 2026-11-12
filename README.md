@@ -15,7 +15,7 @@ Diseñada e ideada por Paula Speciale, con la ayuda de Claude.
 | `ideas.html` | Ideas | Gestor de 90 ideas de post, con estados, fechas, checklist de producción, hashtags y notas. |
 | `calendario.html` | Calendario | Calendario mensual con las ideas que tienen fecha. |
 | `glosario.html` | Glosario | Glosario bookish inglés-español (más de 300 términos en 13 categorías): buscador, filtros, imprescindibles, ejemplos y botón de copiar. |
-| `bingo.html` | Bingo | Tarjeta «Bingo lector 2027» de 5×5 (24 retos y un espacio libre central). Marca los retos cumplidos, avisa de líneas completas y guarda el progreso en el navegador. |
+| `bingo.html` | Bingo | Tarjeta «Bingo lector 2027» de 5×5 (24 retos y un espacio libre central). Marca los retos cumplidos, avisa de líneas completas, guarda el progreso en el navegador y permite descargarla como PNG o compartirla. |
 | `bio.html` | Bio | Guía para optimizar la bio de Instagram, TikTok y YouTube: límites por red, fórmulas para copiar, contador de caracteres con borradores y checklist. |
 | `consistencia.html` | Feed | Guía de 10 pasos para un feed de Instagram consistente, con probador de paleta 60-30-10. |
 | `sugerencias.html` | Sugerencias | Formulario para enviar ideas o comentarios. |
@@ -26,7 +26,7 @@ Archivos compartidos:
 - `css/base.css`: variables, tema, tipografía, controles, menú, pie y bloques de lectura. Se carga siempre primero.
 - `css/paginas/portada.css`, `ideas.css`, `calendario.css`, `resena.css`, `glosario.css`, `bingo.css`, `bio.css`, `simples.css`: estilos propios de cada página (portada, Ideas, Calendario, Reseñas, Glosario, Bingo, Bio y las páginas simples).
 - `css/toc.css`: menú «En esta página» (Ideas, Calendario, Glosario y Bio).
-- `js/bingo/bingo.js` y `js/bingo/bingo-iconos.js`: lógica de la tarjeta y sus iconos decorativos.
+- `js/bingo/bingo.js`, `js/bingo/bingo-iconos.js` y `js/bingo/bingo-exportar.js`: lógica de la tarjeta, sus iconos decorativos y la descarga o el uso compartido como imagen.
 - `js/datos/datos-glosario.js`: los términos del glosario (`window.BT.GLOSARIO`).
 - `js/nucleo/theme.js`: botón de tema claro / oscuro.
 - `fonts/`: carpeta con `courier-prime-latin-400-normal.woff2` y `courier-prime-latin-700-normal.woff2` (los carga `css/base.css`; sin ella se usa Courier New).
@@ -60,11 +60,11 @@ La web es estática: no hay compilación, frameworks ni servidor propio. Cada p�
 │  │  ├─ calendario/  main.js, constantes.js, util.js
 │  │  └─ bio.js, resena.js, glosario.js, sugerencias.js, consistencia.js,
 │  │                  sobre-mi.js
-│  ├─ bingo/          bingo.js, bingo-iconos.js
+│  ├─ bingo/          bingo.js, bingo-iconos.js, bingo-exportar.js
 │  └─ datos/          datos-glosario.js
 ├─ datos/             datos-ideas.json, datos-bingo.json
 ├─ robots.txt         rastreo permitido + enlace al sitemap
-├─ sitemap.xml        9 páginas indexables
+├─ sitemap.xml        10 páginas indexables
 ├─ fonts/             Courier Prime (SIL OFL)
 └─ README.md
 ```
@@ -76,7 +76,7 @@ La web es estática: no hay compilación, frameworks ni servidor propio. Cada p�
 3. **`js/nucleo/datos.js`** (solo Ideas, Calendario y Bingo), con `data-usa` indicando qué JSON necesita:
    - `data-usa="ideas"`: `datos/datos-ideas.json` → `window.BT.SECCIONES`.
    - `data-usa="bingo"`: `datos/datos-bingo.json` → `window.BT.BINGO`.
-4. **`js/paginas/ideas/main.js`** (Ideas, módulo ES), **`js/nucleo/almacen.js` + `js/paginas/calendario/main.js`** (Calendario, módulo ES) o **`js/bingo/bingo.js` + `js/bingo/bingo-iconos.js`** (Bingo).
+4. **`js/paginas/ideas/main.js`** (Ideas, módulo ES), **`js/nucleo/almacen.js` + `js/paginas/calendario/main.js`** (Calendario, módulo ES) o **`js/bingo/bingo.js` + `js/bingo/bingo-iconos.js` + `js/bingo/bingo-exportar.js`** (Bingo).
 5. Glosario, Bio, Reseñas, Sugerencias, Sobre mí y Consistencia no usan `js/nucleo/datos.js`: cada una carga su script de `js/paginas/` al final del HTML (el Glosario además carga `js/datos/datos-glosario.js`).
 
 `js/nucleo/datos.js` expone `window.BT.listo`, una promesa que **siempre** se resuelve con `{ ok, errores }`. Ninguna página debe quedarse esperando: si un JSON falla, se muestra un aviso y se usa lo que haya (por ejemplo, `js/bingo/bingo.js` tiene una lista de retos de respaldo).
@@ -119,7 +119,7 @@ Las ideas base tienen ids de texto (`"1"`…`"90"`); las propias empiezan por `c
 | `js/paginas/calendario/constantes.js`, `util.js` | Claves, listas, fechas bookish y ayudantes de fecha/DOM. |
 | `js/nucleo/almacen.js` | Cambiar solo la fecha de una idea desde otra página, respetando las marcas de sincronización. |
 | `js/nucleo/theme.js` | Tema claro/oscuro, botón flotante y `data-seccion` para el color de cada página. |
-| `js/bingo/bingo.js` / `js/bingo/bingo-iconos.js` | Tarjeta de Bingo, progreso y glifos decorativos. |
+| `js/bingo/bingo.js` / `js/bingo/bingo-iconos.js` / `js/bingo/bingo-exportar.js` | Tarjeta de Bingo, progreso, glifos decorativos y exportación a PNG. |
 | `js/datos/datos-glosario.js` | Datos del glosario; el HTML solo los presenta. |
 | `js/paginas/*.js` | Lógica específica del resto de páginas (Bio, Reseñas, Glosario, Sugerencias, Sobre mí y Consistencia). |
 
