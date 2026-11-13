@@ -2,7 +2,7 @@
  "version": 1,
  "secciones": [
   {
-   "titulo": "1. PLANTILLAS \"UN LIBRO QUE...\" Y FAVORITOS (10)",
+   "titulo": "1. PLANTILLAS \"UN LIBRO QUE...\" Y FAVORITOS (14)",
    "ideas": [
     {
      "id": "1",
@@ -53,11 +53,31 @@
      "id": "10",
      "texto": "★ Mi libro de confort para un mal día y por qué [Reel]",
      "formato": "Reel"
+    },
+    {
+     "id": "91",
+     "texto": "★ Un libro que... me sorprendió en las últimas 50 páginas / me hizo desconfiar de todos / me reconcilió con un género [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "92",
+     "texto": "★ Mi top 3 de romantasy: el que recomiendo siempre, el que me rompió y el que leo para desconectar [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "93",
+     "texto": "Un libro que... me gustó más la segunda vez / me costó terminar pero valió la pena / no entendí el hype [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "94",
+     "texto": "★ Mis 5 parejas literarias favoritas y por qué funcionan (sin spoilers) [Carrusel]",
+     "formato": "Carrusel"
     }
    ]
   },
   {
-   "titulo": "2. PRESÉNTATE: ASÍ SOY COMO LECTORA (11)",
+   "titulo": "2. PRESÉNTATE: ASÍ SOY COMO LECTORA (15)",
    "ideas": [
     {
      "id": "11",
@@ -113,11 +133,31 @@
      "id": "21",
      "texto": "◆ Tour de mi estantería: 5 libros que dicen quién soy [Reel]",
      "formato": "Reel"
+    },
+    {
+     "id": "95",
+     "texto": "Mi rutina de fotos: cómo paso de la idea al post en 30 minutos [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "96",
+     "texto": "Un día en mi vida como bookstagrammer: lectura, fotos y edición [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "97",
+     "texto": "Mi espacio de trabajo bookish: luz, fondo y accesorios que uso [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "98",
+     "texto": "Mi evolución como creadora: primeras fotos vs. ahora [Carrusel]",
+     "formato": "Carrusel"
     }
    ]
   },
   {
-   "titulo": "3. GUSTOS Y PERSONALIDAD (12)",
+   "titulo": "3. GUSTOS Y PERSONALIDAD (15)",
    "ideas": [
     {
      "id": "22",
@@ -178,11 +218,26 @@
      "id": "33",
      "texto": "Libros que mi yo de hace 5 años no creería que leo [Carrusel]",
      "formato": "Carrusel"
+    },
+    {
+     "id": "99",
+     "texto": "Mis 3 autores de fantasía favoritos y por dónde empezar con cada uno [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "100",
+     "texto": "El trope que me hizo leer un género que evitaba [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "101",
+     "texto": "Mis 3 personajes femeninos favoritos de romantasy [Carrusel]",
+     "formato": "Carrusel"
     }
    ]
   },
   {
-   "titulo": "4. REACCIONES Y EMOCIONES (10)",
+   "titulo": "4. REACCIONES Y EMOCIONES (14)",
    "ideas": [
     {
      "id": "34",
@@ -233,11 +288,31 @@
      "id": "43",
      "texto": "La frase de un libro que me destrozó [Post]",
      "formato": "Post"
+    },
+    {
+     "id": "102",
+     "texto": "Reacción a un giro argumental que no vi venir (sin spoilers) [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "103",
+     "texto": "Los 3 finales que me habría gustado escribir de otra forma (sin spoilers) [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "104",
+     "texto": "Cómo se siente terminar una saga de 5 libros [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "105",
+     "texto": "El libro que necesité en un momento difícil [Post]",
+     "formato": "Post"
     }
    ]
   },
   {
-   "titulo": "5. ESTÉTICA PARA BOOKSTAGRAM (10)",
+   "titulo": "5. ESTÉTICA PARA BOOKSTAGRAM (13)",
    "ideas": [
     {
      "id": "44",
@@ -288,11 +363,26 @@
      "id": "53",
      "texto": "El regalo literario ideal [Post]",
      "formato": "Post"
+    },
+    {
+     "id": "106",
+     "texto": "Libro + bebida de temporada: café de otoño, chocolate caliente de invierno [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "107",
+     "texto": "Paleta de colores de mi mes: portadas que combinan con la estación [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "108",
+     "texto": "Foto de mi TBR con luz natural y una sola protagonista [Post]",
+     "formato": "Post"
     }
    ]
   },
   {
-   "titulo": "6. PARA INTERACTUAR CON LA COMUNIDAD (10)",
+   "titulo": "6. PARA INTERACTUAR CON LA COMUNIDAD (14)",
    "ideas": [
     {
      "id": "54",
@@ -343,11 +433,31 @@
      "id": "63",
      "texto": "◆ Mini reseña con puntuación y una frase gancho [Post]",
      "formato": "Post"
+    },
+    {
+     "id": "109",
+     "texto": "Encuesta: ¿qué trope prefieres, enemies to lovers o friends to lovers? [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "110",
+     "texto": "Respondo las dudas más frecuentes sobre el glosario: TBR, ARC y DNF [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "111",
+     "texto": "Pregunta seria: ¿puedes abandonar un libro sin culpa? [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "112",
+     "texto": "Responde a comentarios: los 3 libros que más me recomendáis [Reel]",
+     "formato": "Reel"
     }
    ]
   },
   {
-   "titulo": "7. RECOMENDACIONES CON TU SELLO PERSONAL (6)",
+   "titulo": "7. RECOMENDACIONES CON TU SELLO PERSONAL (10)",
    "ideas": [
     {
      "id": "64",
@@ -378,11 +488,31 @@
      "id": "69",
      "texto": "Libros que no puedo recomendar (y por qué) [Reel]",
      "formato": "Reel"
+    },
+    {
+     "id": "113",
+     "texto": "5 libros para salir de un bloqueo lector (cortos y adictivos) [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "114",
+     "texto": "3 libros para empezar en dark romance (con avisos de contenido) [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "115",
+     "texto": "3 libros para empezar en fantasía épica sin morir en el intento [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "116",
+     "texto": "Recomendación express: un libro, una frase, 15 segundos [Reel]",
+     "formato": "Reel"
     }
    ]
   },
   {
-   "titulo": "8. RETOS, RANKINGS Y TENDENCIAS (21)",
+   "titulo": "8. RETOS, RANKINGS Y TENDENCIAS (25)",
    "ideas": [
     {
      "id": "70",
@@ -487,6 +617,26 @@
     {
      "id": "90",
      "texto": "◆ Mi balance de compras vs. lecturas: cuántos libros compré este año y cuántos leí (con reto \"no compro más\") [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "117",
+     "texto": "Cómo elijo mi próxima lectura: mi método en 3 pasos [Reel]",
+     "formato": "Reel"
+    },
+    {
+     "id": "118",
+     "texto": "Mis predicciones de tendencias bookish para el próximo año [Carrusel]",
+     "formato": "Carrusel"
+    },
+    {
+     "id": "119",
+     "texto": "Mis 5 portadas favoritas del año y qué tienen en común [Post]",
+     "formato": "Post"
+    },
+    {
+     "id": "120",
+     "texto": "Un día leyendo solo libros de mi estantería (sin comprar nada) [Reel]",
      "formato": "Reel"
     }
    ]

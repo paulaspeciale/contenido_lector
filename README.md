@@ -12,7 +12,7 @@ Diseñada e ideada por Paula Speciale, con la ayuda de Claude.
 |---|---|---|
 | `index.html` | Inicio | Portada con presentación y tarjetas a cada sección. |
 | `resena.html` | Reseñas | Plantilla de reseña de 22 secciones, con versión completa, versión corta, guiones para Reels/TikTok y prompts para IA. |
-| `ideas.html` | Ideas | Gestor de 90 ideas de post, con estados, fechas, checklist de producción, hashtags y notas. |
+| `ideas.html` | Ideas | Gestor de 120 ideas de post, con estados, fechas, checklist de producción, hashtags y notas. |
 | `calendario.html` | Calendario | Calendario mensual con las ideas que tienen fecha. |
 | `glosario.html` | Glosario | Glosario bookish inglés-español (más de 300 términos en 13 categorías): buscador, filtros, imprescindibles, ejemplos y botón de copiar. |
 | `bingo.html` | Bingo | Tarjeta «Bingo lector 2027» de 5×5 (24 retos y un espacio libre central). Marca los retos cumplidos, avisa de líneas completas, guarda el progreso en el navegador y permite descargarla como PNG o compartirla. |
@@ -30,7 +30,7 @@ Archivos compartidos:
 - `js/datos/datos-glosario.js`: los términos del glosario (`window.BT.GLOSARIO`).
 - `js/nucleo/theme.js`: botón de tema claro / oscuro.
 - `fonts/`: carpeta con `courier-prime-latin-400-normal.woff2` y `courier-prime-latin-700-normal.woff2` (los carga `css/base.css`; sin ella se usa Courier New).
-- `datos/datos-ideas.json`: las 90 ideas base y sus secciones. `datos/datos-bingo.json`: los retos del Book Bingo. Ninguno se edita desde el navegador.
+- `datos/datos-ideas.json`: las 120 ideas base y sus secciones. `datos/datos-bingo.json`: los retos del Book Bingo. Ninguno se edita desde el navegador.
 - `js/nucleo/datos.js`: carga esos JSON con `fetch` y los deja en `window.BT.SECCIONES` y `window.BT.BINGO` (`BT.listo` es una promesa que se resuelve cuando terminan; cada página indica qué necesita con `data-usa`). Hace falta un hosting o servidor local: con doble clic (`file://`) los JSON no cargan.
 - `js/paginas/ideas/`: módulos de la página de Ideas (`main.js` como entrada, `constantes.js`, `util.js`, `almacenamiento.js`, `estado.js` y `toc.js`).
 - `js/paginas/calendario/`: módulos del Calendario (`main.js`, `constantes.js` y `util.js`).
@@ -105,7 +105,7 @@ La web es estática: no hay compilación, frameworks ni servidor propio. Cada p�
 }
 ```
 
-Las ideas base tienen ids de texto (`"1"`…`"90"`); las propias empiezan por `c` (`CUSTOM_RE`). Las secciones nuevas no se guardan en una lista aparte: cada idea guarda `secNombre` y las secciones se reconstruyen a partir de esos nombres.
+Las ideas base tienen ids de texto (`"1"`…`"120"`); las propias empiezan por `c` (`CUSTOM_RE`). Las secciones nuevas no se guardan en una lista aparte: cada idea guarda `secNombre` y las secciones se reconstruyen a partir de esos nombres.
 
 ### Responsabilidades por archivo
 
@@ -139,7 +139,7 @@ Las ideas base tienen ids de texto (`"1"`…`"90"`); las propias empiezan por `c
 
 ### Ideas de post (`ideas.html` + `js/paginas/ideas/main.js`)
 
-La lista base de 90 ideas vive en `datos/datos-ideas.json` (se carga con `js/nucleo/datos.js` en `window.BT.SECCIONES`), organizada en 8 secciones más una novena, «Mis ideas», para las tuyas. Cada idea tiene un formato sugerido (Post, Carrusel o Reel) y una marca de origen: ★ plantillas clásicas, ◆ tendencias.
+La lista base de 120 ideas vive en `datos/datos-ideas.json` (se carga con `js/nucleo/datos.js` en `window.BT.SECCIONES`), organizada en 8 secciones más una novena, «Mis ideas», para las tuyas. Cada idea tiene un formato sugerido (Post, Carrusel o Reel) y una marca de origen: ★ plantillas clásicas, ◆ tendencias.
 
 Por cada idea puedes:
 
@@ -188,7 +188,7 @@ Plantilla de reseña con índice de enlaces internos. Permite alternar entre cua
 
 ### Glosario (`glosario.html` + `js/datos/datos-glosario.js`)
 
-Glosario bookish inglés → español con **304 términos** en **13 categorías**, agrupadas en 5 bloques (de lo básico a lo específico):
+Glosario bookish inglés → español con **304 términos** en **13 categorías**, agrupadas en 5 bloques (de lo básico a lo específico). Los 304 tienen definición propia y enlaces «Ver también»:
 
 | Bloque | Categorías |
 |---|---|
@@ -198,7 +198,7 @@ Glosario bookish inglés → español con **304 términos** en **13 categorías*
 | Opinar y reseñar | Reacciones, jerga y valoración · Content warnings habituales |
 | Comunidad y estética | Comunidad y hábitos lectores · Ediciones y publicación · Estética para Bookstagram |
 
-Las categorías y los términos van de los más usados a los menos. Cada término tiene el inglés, la traducción al español y, según el caso, una explicación, un ejemplo de uso y enlaces «Ver también».
+Las categorías y los términos van de los más usados a los menos. Cada término tiene el inglés, la traducción al español y, según el caso, una explicación, un ejemplo de uso y enlaces «Ver también». Al final de cada categoría hay un cierre con «Para escribirlo: plantilla de reseña · Para publicarlo: ideas de posts».
 
 - **Imprescindibles**: 50 términos marcados como tal (borde de color y sello «Imprescindible») y una sección de accesos rápidos con los más usados.
 - **Búsqueda** sin distinguir tildes ni mayúsculas, que mira también la explicación y el ejemplo.

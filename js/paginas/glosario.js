@@ -15,6 +15,14 @@
   const B = window.BT || {}, CATS = B.GLOSARIO_CATS || [], GR = B.GLOSARIO_GRUPOS || [], VER = B.GLOSARIO_VER_TAMBIEN || {};
   const LIM = 8;   // términos visibles por categoría antes de «Ver los restantes»
   function norm(t) { return String(t == null ? "" : t).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim(); }
+
+  // La gente busca «qué es romantasy» o «qué significa HEA». Quitamos la
+  // fórmula de la pregunta para que la búsqueda llegue igual al término.
+  function normBusqueda(t) {
+    const n = norm(t);
+    const limpio = n.replace(/^(que (es|son|significa|significan)|significado de|definicion de|como se dice)\s+/, "");
+    return limpio || n;
+  }
   function el(tag, cls, txt) { const n = document.createElement(tag); if (cls) n.className = cls; if (txt !== undefined) n.textContent = txt; return n; }
   const $ = function (id) { return document.getElementById(id); };
   const raiz = $("categorias"), toc = $("toc-cats"), selCat = $("f-cat"), selOrd = $("f-orden"), buscar = $("buscar"), soloTop = $("f-top"), btnLimpiar = $("limpiar-filtros");
@@ -118,7 +126,7 @@
   // Aplica búsqueda + filtros y decide qué fichas se ven. Con cualquier filtro
   // activo se muestran todos los resultados y se abren sus categorías.
   function aplicar() {
-    let q = norm(buscar.value), cat = selCat.value, top = soloTop.checked, vis = 0;
+    let q = normBusqueda(buscar.value), cat = selCat.value, top = soloTop.checked, vis = 0;
     const hay = !!q || cat !== "todas" || top;
     cats.forEach(function (x) {
       let pasan = 0, shown = 0, lim = (hay || x.exp) ? 1e9 : LIM;

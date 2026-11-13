@@ -1,7 +1,7 @@
 /* ==========================================================================
    main.js · Entrada de la página de Ideas (ideas.html).
 
-   Qué hace: pinta las 90 ideas base más las ideas propias y guarda en
+   Qué hace: pinta las 120 ideas base más las ideas propias y guarda en
    localStorage el estado de cada una (publicada, favorita, estado, fecha,
    redes, checklist de producción, libro, hashtags y notas). También exporta e
    importa respaldos y, en la versión publicada, sincroniza con la nube.
@@ -103,11 +103,11 @@ import {
     return;
   }
 
-  // ---- Datos: las 90 ideas viven en datos/datos-ideas.json (se carga antes que este archivo) ----
+  // ---- Datos: las 120 ideas viven en datos/datos-ideas.json (se carga antes que este archivo) ----
   const SECCIONES = (window.BT && window.BT.SECCIONES) || [];
 
 
-  // Ideas base (las 90 originales): su texto, formato, sección y posición de origen.
+  // Ideas base (las 120 originales): su texto, formato, sección y posición de origen.
   const baseInfo = Object.create(null);
   const baseIds = [];
   SECCIONES.forEach(function (s, si) {
@@ -220,7 +220,7 @@ import {
   // ¿La idea tiene algo guardado (aunque sea solo la casilla «hecha»)?
   function tieneDatos(id) { return !!state.hechas[id] || !!state.datos[id]; }
 
-  // Todos los ids con los que se puede trabajar: las 90 base y las propias (también las borradas).
+  // Todos los ids con los que se puede trabajar: las 120 base y las propias (también las borradas).
   function todosLosIds(st) {
     const ids = baseIds.slice();
     Object.keys(st.datos).forEach(function (id) { if (!baseInfo[id]) ids.push(id); });
@@ -898,7 +898,7 @@ import {
       bCor.addEventListener("click", function () {
         let crudo = crudoDaniado;
         if (!crudo) { try { crudo = localStorage.getItem(claveCopia) || ""; } catch (err) { crudo = ""; } }
-        descargar("ideas_post_90_dañado.json", crudo, "application/json");
+        descargar("ideas_post_dañado.json", crudo, "application/json");
       });
       elRecordatorio.appendChild(bCor);
     }
@@ -1180,7 +1180,9 @@ import {
       visibles += vis;
     });
     vistaFecha.hidden = !modoFecha || visibles === 0;
-    elResultados.textContent = "Mostrando " + visibles + " de " + todas.length + " ideas.";
+    elResultados.textContent = visibles === 0 && hayFiltro
+      ? "No hay ideas con esos filtros. Prueba con otra búsqueda o pulsa «Limpiar filtros»."
+      : "Mostrando " + visibles + " de " + todas.length + " ideas.";
     const activos = (estadoF !== "todas" ? 1 : 0) + (formato !== "todos" ? 1 : 0) + (fechaF !== "todas" ? 1 : 0) +
       (prodF !== "todas" ? 1 : 0) + (redF !== "todas" ? 1 : 0) + (soloFav ? 1 : 0) + (elOrden.value !== "original" ? 1 : 0);
     btnFiltros.textContent = "Filtros" + (activos ? " (" + activos + ")" : "");
@@ -1456,7 +1458,7 @@ import {
     const ahora = new Date().toISOString();
     const payload = serializar();
     payload.exportado = ahora;
-    descargar("ideas_post_90_progreso.json", JSON.stringify(payload, null, 2), "application/json").then(function (ok) {
+    descargar("ideas_post_progreso.json", JSON.stringify(payload, null, 2), "application/json").then(function (ok) {
       if (!ok) return;
       meta.ultimoRespaldo = ahora;
       escribir(KEY_META, meta);
@@ -1478,7 +1480,7 @@ import {
         ].map(csv).join(","));
       });
     });
-    descargar("ideas_post_90_ideas.csv", "\uFEFF" + filas.join("\r\n") + "\r\n", "text/csv;charset=utf-8").then(function (ok) {
+    descargar("ideas_post_ideas.csv", "\uFEFF" + filas.join("\r\n") + "\r\n", "text/csv;charset=utf-8").then(function (ok) {
       if (ok) aviso("CSV exportado. Ojo: no sirve como respaldo; para eso usa el JSON.");
     });
   });
@@ -1509,7 +1511,7 @@ import {
     });
     out.push("END:VCALENDAR");
     if (!n) { aviso("No hay ideas con fecha para exportar al calendario."); return; }
-    descargar("ideas_post_90_calendario.ics", out.map(plegar).join("\r\n") + "\r\n", "text/calendar;charset=utf-8").then(function (ok) {
+    descargar("ideas_post_calendario.ics", out.map(plegar).join("\r\n") + "\r\n", "text/calendar;charset=utf-8").then(function (ok) {
       if (ok) aviso("Calendario exportado con " + n + " idea" + (n === 1 ? "" : "s") + ".");
     });
   });
