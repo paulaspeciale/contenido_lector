@@ -301,6 +301,8 @@ table.limites td.num { font-family: var(--maquina); white-space: nowrap; }
 }
 
 @media print {
-  .herr, #contador, #checklist, .btn-copiar, #toc { display: none !important; }
-  .piezas li, .ej, table.limites tr { break-inside: avoid; }
+  .herr, .btn-copiar, #toc { display: none !important; }
+  #ck-prog, #ck-total, .ck-cuenta, #ck-reiniciar, #ck-msg { display: none !important; }
+  .piezas li, .ej, table.limites tr, .ck-grupo { break-inside: avoid; }
+  h1, h2, h3 { break-after: avoid; }
 }

@@ -159,7 +159,13 @@ details.prompt { margin-top: .75rem; }
 }
 
 @media print {
-  .btn-gancho { display: none !important; }
-  .gancho { break-inside: avoid; }
-  .prompt-acciones { display: none !important; }
+  .btn-gancho, .prompt-acciones { display: none !important; }
+  .gancho, .prompt, .guion-ej, table.valoracion { break-inside: avoid; }
+  .prompt-texto {
+    max-height: none;
+    padding: 0;
+    overflow: visible;
+    border: 0;
+    background: #fff;
+  }
 }

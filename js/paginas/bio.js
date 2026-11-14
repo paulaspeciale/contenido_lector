@@ -373,4 +373,7 @@
   }
   window.addEventListener("scroll", espiar, { passive: true });
   espiar();
+
+  // ---------- Descargable: el navegador abre «Guardar como PDF» ----------
+  $("imprimir-bio").addEventListener("click", function () { window.print(); });
 })();

@@ -6,4 +6,6 @@
     // p[0] = id del <input type="color">; p[1] = variable CSS que actualiza.
     document.getElementById(p[0]).addEventListener("input",function(e){r.setProperty(p[1],e.target.value);});
   });
+  const imprimir = document.getElementById("imprimir-consistencia");
+  if (imprimir) imprimir.addEventListener("click", function(){ window.print(); });
 })();
