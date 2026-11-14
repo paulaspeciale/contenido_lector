@@ -204,11 +204,27 @@
 .det-evento-nuevo .campo { flex: 1 1 12rem; }
 
 /* Fechas bookish sugeridas */
+.cal-filtros { display: flex; flex-wrap: wrap; align-items: flex-end; gap: .45rem .8rem; margin-top: .6rem; }
+.cal-filtros .campo { flex: 0 1 11rem; }
+.cal-filtros .check { min-height: 2.5rem; }
+#bookish-resumen { margin-top: .35rem; }
+
+@media (max-width: 40rem) {
+  .cal-filtros .check { flex: 1 1 100%; }
+  .cal-filtros .campo { flex: 1 1 8rem; }
+}
+
 .sug-tag { align-self: flex-start; padding: 0 .3rem; font: 400 .68rem/1.4 var(--maquina); letter-spacing: .04em; color: var(--c-ideas); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
 
-.chip.sug-leg { color: var(--c-ideas); border-style: dotted; }
+.chip.sug-leg, .chip.sug-region, .chip.sug-tipo { color: var(--c-ideas); border-style: dotted; }
+
+.chip.sug-tipo { border-style: dashed; }
 
 .det-bookish { margin-bottom: .75rem; padding: .5rem .8rem; border: 1px dotted var(--c-ideas); background: color-mix(in srgb, var(--c-ideas) 8%, transparent); font-size: .95rem; }
+
+.det-bookish p { margin: .2rem 0 .35rem; }
+
+.det-bookish .meta { margin-top: .25rem; }
 
 @media (max-width: 40rem) { .sug-tag { font-size: 0; } .sug-tag::before { content: "✦"; font-size: .8rem; } }
 
@@ -269,7 +285,7 @@
 
 /* ---------- Impresión ---------- */
 @media print {
-  .cal-nav button, .botones.centrado, #leyenda .check, #msg-fecha-wrap,
+  .cal-nav button, .botones.centrado, .cal-filtros, #bookish-resumen, #leyenda .check, #msg-fecha-wrap,
   #ayuda-datos, .aviso-resp, .det-fecha, .det-anadir, .det-evento-nuevo,
   .btn-quitar, .btn-venc, .meta-semanal input { display: none !important; }
   .dia { min-height: 4.5rem; break-inside: avoid; }

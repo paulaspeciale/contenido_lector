@@ -19,9 +19,10 @@
    ========================================================================== */
 import {
   KEY, NOTA_SYNC, KEY_CFG, KEY_RESP, META_MAX, FORMATOS, ESTADOS, DOW, MESES,
-  NOMBRES_EST, REDES, BOOKISH, KEY_EV, TIPOS_EV, MAX_EV, MAX_TIT_EV
+  NOMBRES_EST, REDES, BOOKISH, REGIONES, TIPOS_BOOKISH, FILTROS_REGION, FILTROS_TIPO,
+  KEY_EV, TIPOS_EV, MAX_EV, MAX_TIT_EV
 } from "./constantes.js";
-import { tiene, pad, isoDe, deIso, fechaValida, el, partir, juevesMarzo } from "./util.js";
+import { tiene, pad, isoDe, deIso, fechaValida, el, partir, juevesMarzo, primerMartes } from "./util.js";
 
 (function (listo) {
   if (!listo) {
@@ -44,14 +45,37 @@ function arrancar() {
   });
 
 
-  // Fechas bookish: lista fija por mes-día. Solo sugerencias; no se guarda nada.
+  // Fechas bookish: lista fija por mes-día, más dos fechas móviles (el Día
+  // Mundial del Libro del Reino Unido y las novedades editoriales del primer
+  // martes). Solo son sugerencias: no se guarda nada. Los filtros de región y
+  // tipo se aplican después, así que una fecha puede quedar oculta.
   let verBookish = true;
-  // Primer jueves de marzo: Día Mundial del Libro en Reino Unido (fecha móvil)
+  let regionBookish = "todas";
+  let tipoBookish = "todos";
+  const BOOKISH_POR_MD = Object.create(null);
+  BOOKISH.forEach(function (b) { (BOOKISH_POR_MD[b.md] = BOOKISH_POR_MD[b.md] || []).push(b); });
+
+  function pasaFiltroBookish(b) {
+    if (regionBookish === "latam") {
+      if (b.region !== "latam" && b.region !== "argentina" && b.region !== "mexico") return false;
+    } else if (regionBookish !== "todas" && b.region !== regionBookish) {
+      return false;
+    }
+    return tipoBookish === "todos" || b.tipo === tipoBookish;
+  }
+
+  // Devuelve un array (puede haber más de una fecha el mismo día).
   function bookishDe(key) {
-    if (!verBookish) return null;
-    const md = key.slice(5);
-    if (BOOKISH[md]) return BOOKISH[md];
-    return md === juevesMarzo(Number(key.slice(0, 4))) ? ["Día Mundial del Libro (Reino Unido)", "Tu libro de infancia o un disfraz literario."] : null;
+    if (!verBookish) return [];
+    const md = key.slice(5), y = Number(key.slice(0, 4));
+    const lista = (BOOKISH_POR_MD[md] || []).slice();
+    if (md === juevesMarzo(y)) {
+      lista.push({ nombre: "Día Mundial del Libro (Reino Unido)", idea: "Tu libro de infancia o un disfraz literario.", region: "reino", tipo: "libro" });
+    }
+    if (md === primerMartes(y, Number(key.slice(5, 7)))) {
+      lista.push({ nombre: "Novedades editoriales", idea: "Revisa las novedades del mes y elige una para tu próxima reseña. Muchos lanzamientos en inglés salen los martes.", region: "global", tipo: "lanzamiento" });
+    }
+    return lista.filter(pasaFiltroBookish);
   }
 
   let hoyIso = isoDe(new Date());
@@ -63,6 +87,7 @@ function arrancar() {
   const elTitulo = document.getElementById("mes-titulo");
   const elDetalle = document.getElementById("detalle");
   const elResumen = document.getElementById("resumen-mes");
+  const elBookishResumen = document.getElementById("bookish-resumen");
   const elMsg = document.getElementById("msg");
   const btnVolver = document.getElementById("volver-mios");
   const elMsgFecha = document.getElementById("msg-fecha");
@@ -406,12 +431,14 @@ function arrancar() {
     const dias = new Date(vistaA, vistaM + 1, 0).getDate();
     const celdas = Math.ceil((off + dias) / 7) * 7;
     const ym = vistaA + "-" + pad(vistaM + 1), tabKey = sel && sel.slice(0, 7) === ym ? sel : ym + "-01";
+    let nBookishMes = 0;
     for (let i = 0; i < celdas; i++) {
       const f = new Date(vistaA, vistaM, 1 - off + i);
       const key = isoDe(f);
       const lista = mapa[key] || [];
       const evs = eventosDe(key);
       const bk = bookishDe(key);
+      if (bk.length && f.getMonth() === vistaM) nBookishMes++;
       const nv = lista.filter(function (it) { return it.venc; }).length;
       // Día libre: de hoy al domingo de esta semana, sin publicaciones (las descartadas no cuentan)
       const libre = semana.indexOf(key) !== -1 && key >= hoyIso && !activas(mapa, key).length;
@@ -420,10 +447,15 @@ function arrancar() {
       b.setAttribute("data-fecha", key);
       b.tabIndex = key === tabKey ? 0 : -1;
       b.setAttribute("aria-pressed", String(key === sel));
-      b.setAttribute("aria-label", etiquetaDia(f, lista.length) + (evs.length ? ", " + evs.length + " evento" + (evs.length === 1 ? "" : "s") : "") + (nv ? " (" + nv + " vencida" + (nv === 1 ? "" : "s") + ")" : "") + (libre ? ", día libre" : "") + (bk ? ", " + bk[0] : ""));
+      b.setAttribute("aria-label", etiquetaDia(f, lista.length) + (evs.length ? ", " + evs.length + " evento" + (evs.length === 1 ? "" : "s") : "") + (nv ? " (" + nv + " vencida" + (nv === 1 ? "" : "s") + ")" : "") + (libre ? ", día libre" : "") + (bk.length ? ", " + bk.map(function (x) { return x.nombre; }).join(", ") : ""));
       b.appendChild(el("span", "n", String(f.getDate())));
       if (libre) { const lt = el("span", "libre-tag", "libre"); lt.setAttribute("aria-hidden", "true"); b.appendChild(lt); }
-      if (bk) { const st = el("span", "sug-tag", "✦ " + bk[0]); st.setAttribute("aria-hidden", "true"); b.appendChild(st); }
+      if (bk.length) {
+        const st = el("span", "sug-tag", "✦ " + bk.map(function (x) { return x.nombre; }).join(" · "));
+        st.title = bk.map(function (x) { return x.nombre + " (" + REGIONES[x.region] + ")"; }).join("\n");
+        st.setAttribute("aria-hidden", "true");
+        b.appendChild(st);
+      }
       const cupo = Math.max(0, 2 - Math.min(lista.length, 2));
       lista.slice(0, 2).forEach(function (it) {
         const e = el("span", "ev f-" + it.formato + (it.est === "publicada" ? " hecha" : "") + (it.venc ? " vencida" : ""), it.texto);
@@ -475,7 +507,19 @@ function arrancar() {
     renderMeta(mapa, semana);
     renderRacha(mapa);
     renderAvisoResp();
+    renderResumenBookish(nBookishMes);
     renderDetalle(mapa);
+  }
+
+  // Texto bajo los filtros: cuántos días con fecha bookish se ven en el mes y con qué filtros.
+  function renderResumenBookish(nMes) {
+    const r = FILTROS_REGION.filter(function (f) { return f[0] === regionBookish; })[0];
+    const t = FILTROS_TIPO.filter(function (f) { return f[0] === tipoBookish; })[0];
+    if (!verBookish) {
+      elBookishResumen.textContent = "Fechas bookish ocultas.";
+      return;
+    }
+    elBookishResumen.textContent = "Días con fecha bookish este mes: " + nMes + " · " + (r ? r[1] : "Todas las regiones") + " · " + (t ? t[1] : "Todos los tipos") + ".";
   }
 
   // Lo que la persona está escribiendo en el detalle (título de evento, tipo, idea elegida) sobrevive a los render()
@@ -515,12 +559,16 @@ function arrancar() {
     const titulo = f.toLocaleDateString("es", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 elDetalle.appendChild(el("h3", "", titulo.charAt(0).toUpperCase() + titulo.slice(1)));
     const bkd = bookishDe(sel);
-    if (bkd) {
-      const pb = el("p", "det-bookish");
-      pb.appendChild(el("strong", "", "✦ " + bkd[0] + ". "));
-      pb.appendChild(document.createTextNode("Idea: " + bkd[1]));
+    bkd.forEach(function (bk) {
+      const pb = el("div", "det-bookish");
+      pb.appendChild(el("strong", "", "✦ " + bk.nombre));
+      pb.appendChild(el("p", "", "Idea: " + bk.idea));
+      const m = el("div", "meta");
+      m.appendChild(el("span", "chip sug-region", REGIONES[bk.region]));
+      m.appendChild(el("span", "chip sug-tipo", TIPOS_BOOKISH[bk.tipo]));
+      pb.appendChild(m);
       elDetalle.appendChild(pb);
-    }
+    });
     const lista = mapa[sel] || [];
     if (!lista.length) {
       elDetalle.appendChild(el("p", "vacio-msg", "No hay publicaciones este día."));
@@ -764,6 +812,22 @@ elDetalle.appendChild(el("h3", "", titulo.charAt(0).toUpperCase() + titulo.slice
       if (t && t.tagName === "DETAILS") t.open = true;
     });
   }
+  const elRegionBookish = document.getElementById("bookish-region");
+  const elTipoBookish = document.getElementById("bookish-tipo");
+  FILTROS_REGION.forEach(function (f) {
+    const o = el("option", "", f[1]);
+    o.value = f[0];
+    elRegionBookish.appendChild(o);
+  });
+  FILTROS_TIPO.forEach(function (f) {
+    const o = el("option", "", f[1]);
+    o.value = f[0];
+    elTipoBookish.appendChild(o);
+  });
+  elRegionBookish.value = regionBookish;
+  elTipoBookish.value = tipoBookish;
+  elRegionBookish.addEventListener("change", function () { regionBookish = elRegionBookish.value; render(); });
+  elTipoBookish.addEventListener("change", function () { tipoBookish = elTipoBookish.value; render(); });
   document.getElementById("ver-bookish").addEventListener("change", function (e) {
     verBookish = e.target.checked;
     render();

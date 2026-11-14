@@ -21,3 +21,6 @@ export function partir(t) {
 }
 
 export function juevesMarzo(y) { const d = new Date(y, 2, 1); return "03-" + pad(1 + ((4 - d.getDay() + 7) % 7)); }
+
+/* Primer martes del mes (m = 1..12), en formato «MM-DD». */
+export function primerMartes(y, m) { const d = new Date(y, m - 1, 1); return pad(m) + "-" + pad(1 + ((2 - d.getDay() + 7) % 7)); }

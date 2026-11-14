@@ -175,7 +175,7 @@ Lee los datos de Ideas (`localStorage`) y `datos/datos-ideas.json`, y dibuja un 
 - **Racha y cumplimiento** (solo lectura): semanas seguidas con al menos tantas publicadas como la meta (1 si no hay meta), mejor racha y porcentaje de ideas con fecha hasta hoy ya publicadas.
 - **Días libres**: de hoy al domingo, sin publicaciones.
 - **Eventos propios** (lanzamientos, plazos de ARC, colaboraciones): se añaden con el formulario del día (Enter funciona). Se guardan en `calendario_eventos`.
-- **Fechas bookish**: sugerencias fijas (incluye internacionales y el primer jueves de marzo, fecha móvil), se pueden ocultar.
+- **Fechas bookish**: 25 sugerencias fijas (días del libro, romance, comunidad, lanzamientos y temporada) más dos reglas móviles (el Día Mundial del Libro del Reino Unido y las novedades editoriales del primer martes de cada mes). Cada fecha lleva región y tipo, se pueden ocultar y se filtran por región (Global, España, LatAm, Argentina, México, EE. UU. y Reino Unido) y por tipo. Los filtros no se guardan.
 - **Aviso de respaldo**: si hay eventos o meta que nunca exportaste, o los cambiaste después del último respaldo, aparece un aviso con botón «Exportar ahora» (usa `calendario_respaldo`).
 - **Respaldo aparte**: «Exportar / Importar eventos y meta» (JSON propio, `tipo: "calendario"`); al importar se suman los eventos que falten. No entran en el JSON de Ideas.
 - «Hoy» se actualiza al pasar la medianoche y al volver a la pestaña.
