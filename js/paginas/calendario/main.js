@@ -447,12 +447,18 @@ function arrancar() {
       b.setAttribute("data-fecha", key);
       b.tabIndex = key === tabKey ? 0 : -1;
       b.setAttribute("aria-pressed", String(key === sel));
-      b.setAttribute("aria-label", etiquetaDia(f, lista.length) + (evs.length ? ", " + evs.length + " evento" + (evs.length === 1 ? "" : "s") : "") + (nv ? " (" + nv + " vencida" + (nv === 1 ? "" : "s") + ")" : "") + (libre ? ", día libre" : "") + (bk.length ? ", " + bk.map(function (x) { return x.nombre; }).join(", ") : ""));
+      const etiqueta = etiquetaDia(f, lista.length) + (evs.length ? ", " + evs.length + " evento" + (evs.length === 1 ? "" : "s") : "") + (nv ? " (" + nv + " vencida" + (nv === 1 ? "" : "s") + ")" : "") + (libre ? ", día libre" : "") + (bk.length ? ", " + bk.map(function (x) { return x.nombre; }).join(", ") : "");
       b.appendChild(el("span", "n", String(f.getDate())));
+      // El nombre accesible se compone del número visible y este contexto, en vez
+      // de un aria-label que dejaría fuera las etiquetas visibles del día.
+      b.appendChild(el("span", "solo-lector", etiqueta.slice(String(f.getDate()).length)));
       if (libre) { const lt = el("span", "libre-tag", "libre"); lt.setAttribute("aria-hidden", "true"); b.appendChild(lt); }
       if (bk.length) {
         const st = el("span", "sug-tag", "✦ " + bk.map(function (x) { return x.nombre; }).join(" · "));
-        st.title = bk.map(function (x) { return x.nombre + " (" + REGIONES[x.region] + ")"; }).join("\n");
+        st.title = bk.map(function (x) {
+          const region = REGIONES[x.region];
+          return x.nombre.indexOf("(" + region + ")") === -1 ? x.nombre + " (" + region + ")" : x.nombre;
+        }).join("\n");
         st.setAttribute("aria-hidden", "true");
         b.appendChild(st);
       }

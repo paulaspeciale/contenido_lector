@@ -50,6 +50,10 @@
    leerse (a .45 se quedaba en 2.6:1). */
 .dia.fuera { background: transparent; opacity: .7; }
 
+/* La opacidad de los días de otro mes deja la etiqueta bookish en 3.7:1; con el
+   color de texto vuelve a superar 4.5:1 sin tocar la jerarquía del día. */
+.dia.fuera .sug-tag { color: var(--texto); }
+
 .dia.hoy .n { background: var(--acento); color: var(--sobre-acento); border-radius: 999px; }
 
 .dia.sel { outline: 3px solid var(--acento); outline-offset: -3px; }
