@@ -18,7 +18,7 @@ Diseñada e ideada por Paula Speciale, con la ayuda de Claude.
 | `bingo.html` | Bingo | Tarjeta «Bingo lector 2027» de 5×5 (24 retos y un espacio libre central). Marca los retos cumplidos, avisa de líneas completas, guarda el progreso en el navegador y permite descargarla como PNG o compartirla. |
 | `bio.html` | Bio | Guía para optimizar la bio de Instagram, TikTok y YouTube: límites por red, fórmulas para copiar, contador de caracteres con borradores y checklist. |
 | `consistencia.html` | Feed | Guía de 10 pasos para un feed de Instagram consistente, con probador de paleta 60-30-10. |
-| `sugerencias.html` | Sugerencias | Formulario para enviar ideas o comentarios. |
+| `sugerencias.html` | Sugerencias | Formulario (se activa al configurar FormSubmit) y contacto por TikTok e Instagram. |
 | `sobre-mi.html` | Sobre mí | Presentación, redes, enlace a YouTube y formas de donar. |
 
 Archivos compartidos:
@@ -64,7 +64,7 @@ La web es estática: no hay compilación, frameworks ni servidor propio. Cada p�
 │  └─ datos/          datos-glosario.js
 ├─ datos/             datos-ideas.json, datos-bingo.json
 ├─ robots.txt         rastreo permitido + enlace al sitemap
-├─ sitemap.xml        10 páginas indexables
+├─ sitemap.xml        9 páginas indexables (Sugerencias queda fuera: `noindex`)
 ├─ fonts/             Courier Prime (SIL OFL)
 └─ README.md
 ```
