@@ -685,6 +685,24 @@ html { scroll-behavior: smooth; }
 /* Tarjetas con un filete de color en el borde superior */
 .guia, .formulario, .donacion, .herramientas, .toc { border-top: 2px solid var(--acento); }
 
+/* ---------- Apoyo silencioso al final de las páginas de valor ---------- */
+.apoyo {
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--borde);
+  text-align: center;
+  font-size: .92rem;
+  color: var(--suave);
+}
+
+.apoyo p { max-width: 48ch; margin: 0 auto; }
+
+.apoyo strong { color: var(--texto); font-weight: 400; }
+
+.apoyo a { color: var(--acento); }
+
+@media print { .apoyo { display: none !important; } }
+
 /* ==========================================================================
    Textura de librería antigua
    ========================================================================== */

@@ -98,6 +98,90 @@
 
 .cta-principal:active { transform: translateY(3px); box-shadow: none; }
 
+/* ---------- Ruta «Empieza aquí»: tres pasos numerados ---------- */
+.pasos {
+  display: grid;
+  gap: 1.15rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: paso;
+}
+
+.pasos li {
+  position: relative;
+  padding-left: 3rem;
+  counter-increment: paso;
+}
+
+.pasos li::before {
+  content: counter(paso);
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border: 1px solid var(--acento);
+  border-radius: 50%;
+  color: var(--acento);
+  font: 400 1rem/1 var(--maquina);
+}
+
+.pasos strong {
+  display: block;
+  font: 400 1.05rem/1.3 var(--serif);
+  font-variant: small-caps;
+  letter-spacing: .02em;
+}
+
+.pasos p {
+  max-width: var(--ancho-lectura);
+  margin: .3rem 0 0;
+  color: var(--suave);
+  font-size: .95rem;
+}
+
+/* ---------- Preguntas frecuentes ---------- */
+.faq {
+  display: grid;
+  gap: .5rem;
+  margin-top: 1rem;
+}
+
+.faq details {
+  border: 1px solid var(--borde);
+  border-radius: .15rem;
+  background: var(--superficie);
+}
+
+.faq details[open] { border-color: var(--acento); }
+
+.faq summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 2.75rem;
+  padding: .6rem .9rem;
+  font: 600 .98rem/1.4 var(--serif);
+}
+
+.faq summary::after {
+  content: "+";
+  color: var(--acento);
+  font: 400 1.15rem/1 var(--maquina);
+}
+
+.faq details[open] summary::after { content: "\2212"; }
+
+.faq p {
+  padding: 0 .9rem .9rem;
+  color: var(--suave);
+  font-size: .95rem;
+}
+
 /* ---------- Tarjetas: cada una con el color de su sección ---------- */
 .tarjetas { grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }
 
