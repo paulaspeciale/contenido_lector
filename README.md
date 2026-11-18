@@ -36,7 +36,8 @@ Archivos compartidos:
 - `js/paginas/ideas/`: módulos de la página de Ideas (`main.js` como entrada, `constantes.js`, `util.js`, `almacenamiento.js`, `estado.js` y `toc.js`).
 - `js/paginas/calendario/`: módulos del Calendario (`main.js`, `constantes.js` y `util.js`).
 - `js/nucleo/almacen.js`: escritura segura de datos de Ideas desde otras páginas (`guardarFecha`); lo usa el Calendario.
-- `js/paginas/`: scripts clásicos del resto de páginas (`bio.js`, `resena.js`, `glosario.js`, `sugerencias.js`, `consistencia.js`, `generadorprompt.js`, `sobre-mi.js`).
+- `js/nucleo/plan.js`: formato JSON del plan de contenido, extracción del bloque, validación, revisión y escritura segura de sus publicaciones en el calendario. Lo usa el generador; comparte con el Calendario las constantes de eventos y formatos.
+- `js/paginas/`: scripts clásicos del resto de páginas (`bio.js`, `resena.js`, `glosario.js`, `sugerencias.js`, `consistencia.js`, `generadorprompt.js`, `sobre-mi.js`). El generador carga `plan.js` con `import()` solo para la importación; si el navegador bloquea módulos, el prompt sigue funcionando.
 - `robots.txt`: permite el rastreo y enlaza el sitemap. `sitemap.xml`: las 10 páginas indexables (Sugerencias queda fuera porque lleva `noindex`).
 
 ---
@@ -55,7 +56,7 @@ La web es estática: no hay compilación, frameworks ni servidor propio. Cada p�
 │  ├─ toc.css
 │  └─ paginas/        estilos propios de cada página
 ├─ js/
-│  ├─ nucleo/         theme.js, datos.js, almacen.js
+│  ├─ nucleo/         theme.js, datos.js, almacen.js, plan.js
 │  ├─ paginas/
 │  │  ├─ ideas/       main.js, constantes.js, util.js, almacenamiento.js,
 │  │  │               estado.js, toc.js
@@ -64,7 +65,7 @@ La web es estática: no hay compilación, frameworks ni servidor propio. Cada p�
 │  │                  generadorprompt.js, sobre-mi.js
 │  ├─ bingo/          bingo.js, bingo-iconos.js, bingo-exportar.js
 │  └─ datos/          datos-glosario.js
-├─ datos/             datos-ideas.json, datos-bingo.json
+├─ datos/             datos-ideas.json, datos-bingo.json, ejemplo-plan-calendario.json
 ├─ robots.txt         rastreo permitido + enlace al sitemap
 ├─ sitemap.xml        10 páginas indexables (Sugerencias queda fuera: `noindex`)
 ├─ fonts/             Courier Prime (SIL OFL)
@@ -176,7 +177,7 @@ Lee los datos de Ideas (`localStorage`) y `datos/datos-ideas.json`, y dibuja un 
 - **Meta semanal**: cuenta las **publicadas** y muestra también las planificadas. Escribe 0 para quitarla. Se guarda en `calendario_config`.
 - **Racha y cumplimiento** (solo lectura): semanas seguidas con al menos tantas publicadas como la meta (1 si no hay meta), mejor racha y porcentaje de ideas con fecha hasta hoy ya publicadas.
 - **Días libres**: de hoy al domingo, sin publicaciones.
-- **Eventos propios** (lanzamientos, plazos de ARC, colaboraciones): se añaden con el formulario del día (Enter funciona). Se guardan en `calendario_eventos`.
+- **Eventos propios** (publicaciones importadas, lanzamientos, plazos de ARC, colaboraciones): se añaden con el formulario del día (Enter funciona) o desde el generador de prompt. Se guardan en `calendario_eventos`; las publicaciones del plan llevan además su formato (`Post`, `Carrusel` o `Reel`) y se marcan como «Publicación».
 - **Fechas bookish**: 25 sugerencias fijas (días del libro, romance, comunidad, lanzamientos y temporada) más dos reglas móviles (el Día Mundial del Libro del Reino Unido y las novedades editoriales del primer martes de cada mes). Cada fecha lleva región y tipo, se pueden ocultar y se filtran por región (Global, España, LatAm, Argentina, México, EE. UU. y Reino Unido) y por tipo. Los filtros no se guardan.
 - **Aviso de respaldo**: si hay eventos o meta que nunca exportaste, o los cambiaste después del último respaldo, aparece un aviso con botón «Exportar ahora» (usa `calendario_respaldo`).
 - **Respaldo aparte**: «Exportar / Importar eventos y meta» (JSON propio, `tipo: "calendario"`); al importar se suman los eventos que falten. No entran en el JSON de Ideas.
@@ -186,12 +187,14 @@ Lee los datos de Ideas (`localStorage`) y `datos/datos-ideas.json`, y dibuja un 
 
 ### Generador de prompt (`generadorprompt.html` + `js/paginas/generadorprompt.js`)
 
-Formulario con cuatro bloques (perfil, calendario, preferencias de lectura y objetivos) que arma en vivo un prompt para una IA. El prompt pide un plan completo: diagnóstico, posicionamiento, franquicias, reglas, identidad visual, producción, calendario semana a semana, historias, métricas, perfil y anexo de libros.
+Formulario con cuatro bloques (perfil, calendario, preferencias de lectura y objetivos) que arma en vivo un prompt para una IA. El prompt pide un plan completo: diagnóstico, posicionamiento, franquicias, reglas, identidad visual, producción, calendario semana a semana, historias, métricas, perfil y anexo de libros. Al final pide un **único bloque JSON** (`tipo: "plan-calendario"`, versión 1) con una entrada por publicación principal, para que la app pueda leerlo sin depender de la prosa.
 
 - **Campos vacíos**: se sustituyen por «[sin dato: propón tú y márcalo como supuesto]», para que la IA no invente datos y marque sus suposiciones.
 - **Ejemplo**: «El Archivo» carga una cuenta ficticia completa para ver el resultado. «Vaciar campos» vuelve a los valores por defecto.
 - **Copiar y descargar**: copia el prompt al portapapeles (con respaldo para navegadores sin Clipboard API) o lo descarga como `prompt-calendario.txt`.
-- **Privacidad**: todo se genera en el navegador; no se envía ni se guarda nada. Al recargar, los campos vuelven a su estado inicial.
+- **Añadir el plan al calendario**: carga el archivo `.json`, `.txt` o `.md` o pega el bloque JSON; elige la fecha del primer día y revisa la lista antes de confirmar. Se importan solo las publicaciones principales como eventos de tipo «Publicación» (fecha, título y formato). El gancho, el CTA y la producción se muestran en la revisión, pero no se guardan. Se omiten los duplicados por fecha y título y se respeta el límite de 200 eventos. «Desplazar el plan (semanas)» recoloca todas las fechas sin regenerar el prompt.
+- **Formato del plan**: el esquema, la extracción del JSON y la validación están en `js/nucleo/plan.js`; hay un ejemplo en `datos/ejemplo-plan-calendario.json`. Acepta `dia` (1 = primer día) o `fecha`; si vienen los dos y no coinciden, manda `dia`.
+- **Privacidad**: el prompt y los campos no se envían ni se guardan; solo quedan en este navegador los eventos que confirmes al importar. Al recargar, los campos vuelven a su estado inicial.
 - El texto fijo del prompt y los campos están en `js/paginas/generadorprompt.js`; el HTML solo recoge los datos y muestra el resultado.
 
 ### Reseñas (`resena.html`)
@@ -301,9 +304,9 @@ Estética de **librería antigua (cottagecore)**: papel con grano generado con u
 
 ## Cómo usarla
 
-1. Mantén la estructura de carpetas (`css/`, `js/`, `datos/`, `fonts/`) junto a los HTML. Por ejemplo, `ideas.html` necesita `css/base.css`, `css/paginas/ideas.css`, `css/toc.css`, `js/nucleo/theme.js`, `js/nucleo/datos.js`, `datos/datos-ideas.json` y la carpeta `js/paginas/ideas/`; `calendario.html` necesita `css/base.css`, `css/paginas/calendario.css`, `css/toc.css`, `js/nucleo/theme.js`, `js/nucleo/datos.js`, `datos/datos-ideas.json`, `js/nucleo/almacen.js` y la carpeta `js/paginas/calendario/`; `glosario.html` necesita `css/base.css`, `css/paginas/glosario.css`, `css/toc.css`, `js/nucleo/theme.js`, `js/datos/datos-glosario.js` y `js/paginas/glosario.js`; `generadorprompt.html` necesita `css/base.css`, `css/paginas/generadorprompt.css`, `js/nucleo/theme.js` y `js/paginas/generadorprompt.js`.
+1. Mantén la estructura de carpetas (`css/`, `js/`, `datos/`, `fonts/`) junto a los HTML. Por ejemplo, `ideas.html` necesita `css/base.css`, `css/paginas/ideas.css`, `css/toc.css`, `js/nucleo/theme.js`, `js/nucleo/datos.js`, `datos/datos-ideas.json` y la carpeta `js/paginas/ideas/`; `calendario.html` necesita `css/base.css`, `css/paginas/calendario.css`, `css/toc.css`, `js/nucleo/theme.js`, `js/nucleo/datos.js`, `datos/datos-ideas.json`, `js/nucleo/almacen.js` y la carpeta `js/paginas/calendario/`; `glosario.html` necesita `css/base.css`, `css/paginas/glosario.css`, `css/toc.css`, `js/nucleo/theme.js`, `js/datos/datos-glosario.js` y `js/paginas/glosario.js`; `generadorprompt.html` necesita `css/base.css`, `css/paginas/generadorprompt.css`, `js/nucleo/theme.js`, `js/nucleo/plan.js`, `js/paginas/generadorprompt.js` y `datos/ejemplo-plan-calendario.json` (solo para el enlace de ejemplo).
 2. Abre `index.html` en el navegador, o sube la carpeta a cualquier hosting estático.
-3. **No requiere instalación ni servidor propio**, pero sí debe abrirse desde un servidor (el hosting o uno local) para que `fetch` pueda leer los JSON y para que el navegador cargue los módulos ES de Ideas y Calendario. Con doble clic (`file://`) funcionan la portada, Reseñas, Bio, Glosario, Sugerencias y Sobre mí; Ideas, Calendario y Bingo necesitan servidor.
+3. **No requiere instalación ni servidor propio**, pero sí debe abrirse desde un servidor (el hosting o uno local) para que `fetch` pueda leer los JSON y para que el navegador cargue los módulos ES de Ideas y Calendario. Con doble clic (`file://`) funcionan la portada, Reseñas, Bio, Glosario, Sugerencias, Sobre mí y el prompt (sin la importación del plan); Ideas, Calendario, Bingo y la importación del plan necesitan servidor.
 
 ### Publicar y SEO
 
@@ -331,7 +334,7 @@ Cada página ya incluye `title` y `meta description` únicos, `robots`, `canonic
 - **Menú principal**: está copiado en cada HTML. Al añadir una página, actualiza el `<nav class="menu">` en todas (y la tarjeta de `index.html`). Añade también su nombre a `PAGINAS` en `js/nucleo/theme.js` para el color de sección.
 - **Colores**: están en las variables de `:root` al inicio de `css/base.css`.
 - **Formulario de sugerencias**: pega en `FORM_URL` (en `js/paginas/sugerencias.js`) la dirección con código aleatorio de FormSubmit (no el correo).
-- **Prompt del calendario**: los campos y el texto fijo están en `js/paginas/generadorprompt.js`; el HTML solo recoge los datos. Si añades un campo, actualiza también `CAMPOS` y revisa `limpiar` y `poner` (los `select` se eligen por texto o por valor).
+- **Prompt del calendario**: los campos y el texto fijo están en `js/paginas/generadorprompt.js`; el HTML solo recoge los datos. Si añades un campo, actualiza también `CAMPOS` y revisa `limpiar` y `poner` (los `select` se eligen por texto o por valor). El formato del plan y su importación están en `js/nucleo/plan.js`: si cambias el esquema JSON, actualiza a la vez el bloque del prompt, la validación y el ejemplo.
 - **Versiones coherentes**: `js/paginas/ideas/main.js` comprueba al iniciar que el HTML tenga todos los elementos que necesita. Si copias un archivo nuevo sin el otro, muestra un aviso en lugar de fallar en silencio. Tu progreso no se toca.
 
 ## Límites conocidos
@@ -349,5 +352,6 @@ Cada página ya incluye `title` y `meta description` únicos, `robots`, `canonic
 - `css/base.css` redefine algunos selectores (`h1`, `body`, `button`, `.guia`…) en una segunda capa; funciona, pero conviene unificarlos algún día.
 - El formulario de Sugerencias muestra un aviso en lugar del formulario hasta configurar `FORM_URL`.
 - El generador de prompt no guarda los campos: al recargar o cerrar la pestaña se pierden.
+- Al importar un plan, el calendario guarda solo fecha, título, formato y tipo de evento. El gancho, el CTA y la producción no se conservan en `localStorage`: quedan en el archivo original.
 - Privacidad: ningún archivo debe contener correos personales. Si la web se publica, revisa también el historial de versiones anteriores, que pudo exponerlo.
 - «Sobre mí» no tiene foto todavía (hay un comentario en el HTML con la etiqueta lista).

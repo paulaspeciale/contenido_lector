@@ -162,7 +162,11 @@ function arrancar() {
         const t = typeof e.titulo === "string" ? e.titulo.replace(/\s+/g, " ").trim().slice(0, MAX_TIT_EV) : "";
         if (!/^e[a-z0-9]{6,24}$/.test(id) || vistos[id] || !t || !fechaValida(e.fecha)) return;
         vistos[id] = true;
-        out.push({ id: id, fecha: e.fecha, titulo: t, tipo: tiene(TIPOS_EV, e.tipo) ? e.tipo : "otro" });
+        out.push({
+          id: id, fecha: e.fecha, titulo: t,
+          tipo: tiene(TIPOS_EV, e.tipo) ? e.tipo : "otro",
+          formato: FORMATOS.indexOf(e.formato) !== -1 ? e.formato : ""
+        });
       });
       return out;
     } catch (err) { return []; }
@@ -236,6 +240,7 @@ function arrancar() {
         const d = el("div", "det-evento");
         d.appendChild(el("p", "", ev.titulo));
         const m = el("div", "meta");
+        if (ev.formato) m.appendChild(el("span", "chip formato-" + ev.formato.toLowerCase(), ev.formato));
         m.appendChild(el("span", "chip evento-chip", TIPOS_EV[ev.tipo]));
         d.appendChild(m);
         const q = el("button", "btn-quitar", "Borrar evento");

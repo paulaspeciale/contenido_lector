@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <title>Generador de prompt para tu calendario de contenido</title>
-<meta name="description" content="Completa tus datos y obtén un prompt listo para pegar en ChatGPT, Claude o Gemini: calendario, franquicias, ganchos y métricas para tu cuenta literaria.">
+<meta name="description" content="Completa tus datos y obtén un prompt listo para pegar en ChatGPT, Claude o Gemini: calendario, franquicias, ganchos y métricas para tu cuenta literaria. Después puedes importar el plan JSON al calendario.">
 <meta name="theme-color" content="#efe6d6" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#211b24" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%9A%3C/text%3E%3C/svg%3E">
@@ -17,13 +17,13 @@
 <meta property="og:locale" content="es_ES">
 <meta property="og:site_name" content="Contenido BookTok">
 <meta property="og:title" content="Generador de prompt para tu calendario de contenido">
-<meta property="og:description" content="Completa tus datos y obtén un prompt listo para pegar en ChatGPT, Claude o Gemini: calendario, franquicias, ganchos y métricas para tu cuenta literaria.">
+<meta property="og:description" content="Completa tus datos y obtén un prompt listo para pegar en ChatGPT, Claude o Gemini: calendario, franquicias, ganchos y métricas para tu cuenta literaria. Después puedes importar el plan JSON al calendario.">
 <meta property="og:url" content="https://TU-DOMINIO.com/generadorprompt.html">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Generador de prompt para tu calendario de contenido">
-<meta name="twitter:description" content="Completa tus datos y obtén un prompt listo para pegar en ChatGPT, Claude o Gemini: calendario, franquicias, ganchos y métricas para tu cuenta literaria.">
+<meta name="twitter:description" content="Completa tus datos y obtén un prompt listo para pegar en ChatGPT, Claude o Gemini: calendario, franquicias, ganchos y métricas para tu cuenta literaria. Después puedes importar el plan JSON al calendario.">
 <link rel="preload" href="fonts/courier-prime-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebPage", "url": "https://TU-DOMINIO.com/generadorprompt.html", "name": "Generador de prompt para tu calendario de contenido", "description": "Completa tus datos y obtén un prompt listo para pegar en ChatGPT, Claude o Gemini: calendario, franquicias, ganchos y métricas para tu cuenta literaria.", "inLanguage": "es"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://TU-DOMINIO.com/"}, {"@type": "ListItem", "position": 2, "name": "Prompt", "item": "https://TU-DOMINIO.com/generadorprompt.html"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebPage", "url": "https://TU-DOMINIO.com/generadorprompt.html", "name": "Generador de prompt para tu calendario de contenido", "description": "Completa tus datos y obtén un prompt listo para pegar en ChatGPT, Claude o Gemini: calendario, franquicias, ganchos y métricas para tu cuenta literaria. Después puedes importar el plan JSON al calendario.", "inLanguage": "es"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://TU-DOMINIO.com/"}, {"@type": "ListItem", "position": 2, "name": "Prompt", "item": "https://TU-DOMINIO.com/generadorprompt.html"}]}]}</script>
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/paginas/generadorprompt.css">
 <script src="js/nucleo/theme.js"></script>
@@ -45,7 +45,7 @@
 </nav>
 <header class="encabezado">
 <h1>Generador de prompt para tu calendario</h1>
-<p class="intro">Completa lo que sepas y el prompt se arma solo. Lo que dejes vacío, la IA lo propondrá y lo marcará como supuesto.</p>
+<p class="intro">Completa lo que sepas y el prompt se arma solo. Lo que dejes vacío, la IA lo propondrá y lo marcará como supuesto. Al final, pega el bloque JSON que devuelva y añade sus publicaciones al calendario.</p>
 </header>
 <main id="contenido" tabindex="-1">
 <div class="generador-acciones no-print">
@@ -81,6 +81,7 @@
 <label class="campo">Duración<select id="dur"><option value="30">30 días</option><option value="60">60 días</option><option value="90" selected>90 días</option></select></label>
 <label class="campo">Publicaciones por semana<select id="pps"><option>3</option><option selected>5</option><option>7</option></select></label>
 <label class="campo">Mes y año de inicio<input type="text" id="inicio" placeholder="Noviembre 2026"></label>
+<label class="campo">Fecha exacta del primer día<input type="date" id="fechaInicio" min="2000-01-01" max="2100-12-31"></label>
 <label class="campo campo--ancho">Días fijos por tipo de pieza<textarea id="dias" rows="3" placeholder="lunes reseña, miércoles ranking, jueves personaje…"></textarea></label>
 <label class="campo campo--ancho">Mezcla de formatos<input type="text" id="mezcla" placeholder="mayoría Reels, algunos carruseles, historias de apoyo"></label>
 </div>
@@ -127,6 +128,24 @@
 <p id="msg" role="status" aria-live="polite"></p>
 </section>
 </div>
+
+<section class="generador-plan no-print" id="plan" aria-labelledby="plan-titulo">
+<h2 id="plan-titulo">Añadir el plan al calendario</h2>
+<p class="ayuda">Cuando la IA termine, copia el bloque JSON que aparece al final o guarda la respuesta como <code>.json</code>, <code>.txt</code> o <code>.md</code>. Carga el archivo o pégalo aquí: la app lo revisa antes de escribir nada. Solo se añaden las publicaciones principales; el gancho, el CTA y la producción se quedan en el archivo.</p>
+<div class="plan-campos">
+<label class="campo">Fecha del primer día<input type="date" id="plan-inicio" min="2000-01-01" max="2100-12-31"></label>
+<label class="campo">Desplazar el plan (semanas)<input type="number" id="plan-semanas" min="-52" max="52" step="1" value="0" inputmode="numeric"></label>
+<label class="campo campo--ancho">Archivo del plan (JSON, TXT o MD)<input type="file" id="plan-archivo" accept=".json,.txt,.md,application/json,text/plain,text/markdown"></label>
+<label class="campo campo--ancho">…o pega el JSON aquí<textarea id="plan-texto" rows="7" spellcheck="false" placeholder='{ "tipo": "plan-calendario", "version": 1, "inicio": "AAAA-MM-DD", "publicaciones": [ … ] }'></textarea></label>
+</div>
+<div class="plan-botones">
+<button type="button" class="primario" id="plan-revisar">Revisar plan</button>
+<a class="plan-ejemplo" href="datos/ejemplo-plan-calendario.json" download>Descargar un ejemplo</a>
+</div>
+<p id="plan-msg" class="ayuda" role="status" aria-live="polite"></p>
+<div id="plan-preview" class="plan-preview" role="region" aria-label="Revisión del plan" tabindex="-1" hidden></div>
+<p class="ayuda"><a id="plan-ir" href="calendario.html" hidden>Abrir el calendario</a></p>
+</section>
 
 <p class="generador-nota">Pega el prompt en un chat nuevo de Claude, ChatGPT o cualquier IA. Si falta algún dato, lo marcará como supuesto.</p>
 <noscript><p class="vacio-msg">Este generador necesita JavaScript para armar el prompt. Actívalo en tu navegador y recarga la página.</p></noscript>

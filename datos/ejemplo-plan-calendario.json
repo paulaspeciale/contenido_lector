@@ -1,0 +1,97 @@
+{
+  "tipo": "plan-calendario",
+  "version": 1,
+  "inicio": "2026-11-02",
+  "publicaciones": [
+    {
+      "dia": 1,
+      "fecha": "2026-11-02",
+      "titulo": "Expediente 01: ¿Vale la pena Alas de sangre?",
+      "formato": "Reel",
+      "gancho": "Si vas a gastarte 20 € en romantasy, mira esto antes.",
+      "cta": "Guarda el reel y cuéntame si lo has leído.",
+      "produccion": "Grabar en plano medio con el libro en la mano. Subtítulos quemados y tres cortes de ritmo."
+    },
+    {
+      "dia": 3,
+      "fecha": "2026-11-04",
+      "titulo": "Tropes que no me funcionan (y los que sí)",
+      "formato": "Carrusel",
+      "gancho": "No todo enemies to lovers merece la pena.",
+      "cta": "Vota en la encuesta de historias cuál te sobra.",
+      "produccion": "Seis placas con portadas y una frase por trope. Portada con fondo oscuro y tipografía grande."
+    },
+    {
+      "dia": 4,
+      "fecha": "2026-11-05",
+      "titulo": "Autopsia de una portada: Twisted Love",
+      "formato": "Post",
+      "gancho": "Esta portada vende mucho más de lo que parece.",
+      "cta": "Comenta qué portada analizamos la próxima semana.",
+      "produccion": "Foto cenital del libro sobre papel kraft. Editar con luz cálida y poco contraste."
+    },
+    {
+      "dia": 6,
+      "fecha": "2026-11-07",
+      "titulo": "Tres romances cortos para salir del bloqueo",
+      "formato": "Carrusel",
+      "gancho": "Si no puedes con un tomo de 700 páginas, empieza por aquí.",
+      "cta": "Comparte con la persona que necesita una lectura ligera.",
+      "produccion": "Placas con una sinopsis de dos líneas y nivel de spice. Cerrar con una pregunta."
+    },
+    {
+      "dia": 7,
+      "fecha": "2026-11-08",
+      "titulo": "¿Qué leo después de Divine Rivals?",
+      "formato": "Reel",
+      "gancho": "Tres opciones mejores que releer el mismo final por tercera vez.",
+      "cta": "Dime cuál eliges y lo reseño en enero.",
+      "produccion": "Grabar pasando páginas y mostrando tres portadas. Usar audio de tendencia con volumen bajo."
+    },
+    {
+      "dia": 8,
+      "fecha": "2026-11-09",
+      "titulo": "Mi sistema para elegir la próxima lectura",
+      "formato": "Reel",
+      "gancho": "Dejar de elegir por impulso me ahorró tres abandonos.",
+      "cta": "Guarda el método y aplícalo esta semana.",
+      "produccion": "Plano cenital de la libreta y el montón de pendientes. Mostrar los tres filtros en pantalla."
+    },
+    {
+      "dia": 10,
+      "fecha": "2026-11-11",
+      "titulo": "Ficha de personaje: Violet Sorrengail",
+      "formato": "Carrusel",
+      "gancho": "No es débil: está escrita para parecerlo.",
+      "cta": "Cuéntame qué personaje quieres en la próxima ficha.",
+      "produccion": "Cinco placas con cita, arco y decisiones. Usar el mismo marco que las fichas anteriores."
+    },
+    {
+      "dia": 12,
+      "fecha": "2026-11-13",
+      "titulo": "Contra-reseña: lo que no me creo de Iron Flame",
+      "formato": "Reel",
+      "gancho": "Me encanta la saga, pero esto no hay quien se lo crea.",
+      "cta": "Debate sin spoilers en comentarios: ¿estás de acuerdo?",
+      "produccion": "Grabar a cámara con aviso de spoilers en el primer segundo. Cortar cada objeción con un rótulo."
+    },
+    {
+      "dia": 14,
+      "fecha": "2026-11-15",
+      "titulo": "El libro que recomendaría a quien no lee fantasía",
+      "formato": "Post",
+      "gancho": "No empieces por el tomo más famoso: empieza por este.",
+      "cta": "Etiqueta a quien te pide recomendaciones todo el tiempo.",
+      "produccion": "Foto con el libro abierto en una escena clave y una nota manuscrita."
+    },
+    {
+      "dia": 15,
+      "fecha": "2026-11-16",
+      "titulo": "Balance de la semana: lo que sí funcionó",
+      "formato": "Post",
+      "gancho": "Tres publicaciones, dos errores y una decisión para la próxima semana.",
+      "cta": "Responde con tu propio balance en historias.",
+      "produccion": "Captura de métricas sin datos personales. Editar en blanco y negro para diferenciarlo."
+    }
+  ]
+}

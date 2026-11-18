@@ -90,6 +90,6 @@ export const BOOKISH = [
 ];
 
 export const KEY_EV = "calendario_eventos";   // clave propia: no forma parte del respaldo de Ideas
-export const TIPOS_EV = { lanzamiento: "Lanzamiento", arc: "Plazo de ARC", colaboracion: "Colaboración", otro: "Otro" };
+export const TIPOS_EV = { lanzamiento: "Lanzamiento", arc: "Plazo de ARC", colaboracion: "Colaboración", otro: "Otro", publicacion: "Publicación" };
 export const MAX_EV = 200;
 export const MAX_TIT_EV = 80;
