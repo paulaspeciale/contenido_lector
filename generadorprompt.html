@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Generador de prompt para calendario de contenido</title>
+<style>
+:root{
+  --fondo:#efe6d6;--sup:#f8f1e4;--texto:#2e2226;--suave:#66565b;--borde:#cdbfa8;--acento:#7a2e3b;--sobre:#f8f1e4;--oro:#b8923e;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--fondo:#211b24;--sup:#2d2530;--texto:#eee4d4;--suave:#c3b6b8;--borde:#4d4151;--acento:#e3b86a;--sobre:#241a1e;--oro:#e3b86a;}}
+:root[data-theme="dark"]{--fondo:#211b24;--sup:#2d2530;--texto:#eee4d4;--suave:#c3b6b8;--borde:#4d4151;--acento:#e3b86a;--sobre:#241a1e;--oro:#e3b86a;}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px);background:var(--fondo)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;min-height:100%;background:var(--fondo);color:var(--texto);font:1rem/1.6 Georgia,"Iowan Old Style",Palatino,serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--fondo);z-index:10}
+.wrap{max-width:70rem;margin:0 auto;padding:1.25rem max(1rem,env(safe-area-inset-left)) 3rem}
+h1{margin:0 0 .5rem;padding:.9rem .5rem;border-top:3px double var(--acento);border-bottom:3px double var(--acento);text-align:center;font:400 clamp(1.15rem,4.6vw,1.6rem)/1.3 Georgia,serif;letter-spacing:.06em}
+.intro{margin:0 auto 1.25rem;max-width:42rem;text-align:center;font-style:italic;color:var(--suave)}
+.cols{display:grid;gap:1.25rem;grid-template-columns:minmax(0,1fr)}
+@media(min-width:60rem){.cols{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}.salida{position:sticky;top:1rem}}
+fieldset{margin:0 0 1rem;padding:.4rem 1rem 1rem;border:1px solid var(--borde);border-top:2px solid var(--acento);background:var(--sup);border-radius:.15rem}
+legend{padding:0 .4rem;font:400 1.05rem Georgia,serif;font-variant:small-caps;letter-spacing:.07em;color:var(--acento)}
+label{display:flex;flex-direction:column;gap:.2rem;margin-top:.7rem;font:400 .85rem/1.35 "Courier New",Courier,monospace;color:var(--suave)}
+input[type=text],input[type=number],select,textarea{width:100%;min-height:2.75rem;padding:.5rem .65rem;border:1px solid var(--borde);border-radius:.15rem;background:var(--fondo);color:var(--texto);font:1rem/1.4 Georgia,serif}
+textarea{min-height:4.6rem;resize:vertical}
+.redes{display:flex;flex-wrap:wrap;gap:.4rem 1rem;margin-top:.7rem}
+.redes label{flex-direction:row;align-items:center;gap:.4rem;margin:0;min-height:2.5rem;color:var(--texto);font-size:.9rem}
+.redes input{width:1.25rem;height:1.25rem;accent-color:var(--acento)}
+button{min-height:2.75rem;padding:.5rem 1rem;border:1px solid var(--borde);border-radius:.15rem;background:transparent;color:var(--texto);font:600 .85rem "Courier New",monospace;cursor:pointer}
+button:hover{border-color:var(--acento)}
+button.pri{background:var(--acento);border-color:var(--acento);color:var(--sobre)}
+:focus-visible{outline:3px solid var(--acento);outline-offset:2px}
+.barra{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-bottom:.6rem}
+.cuenta{margin-left:auto;font:.8rem "Courier New",monospace;color:var(--suave)}
+#salida{min-height:26rem;font:.82rem/1.5 "Courier New",Courier,monospace;white-space:pre-wrap}
+@media(min-width:60rem){#salida{min-height:calc(100vh - 9rem)}}
+#msg{min-height:1.4rem;margin:.4rem 0 0;font:.85rem "Courier New",monospace;color:var(--suave)}
+.pie{margin-top:2rem;text-align:center;font:.75rem "Courier New",monospace;color:var(--suave)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Generador de prompt para tu calendario</h1>
+<p class="intro">Completa lo que sepas: el prompt se arma solo a la derecha. Lo que dejes vacío, la IA lo propondrá y lo marcará como supuesto.</p>
+<div class="barra"><button type="button" id="ejemplo">Cargar ejemplo (El Archivo)</button><button type="button" id="limpiar">Vaciar campos</button></div>
+
+<div class="cols">
+<form id="f" autocomplete="off" onsubmit="return false">
+<fieldset><legend>Perfil</legend>
+<label>Nombre de la cuenta<input type="text" id="marca"></label>
+<div class="redes" role="group" aria-label="Redes"><label><input type="checkbox" name="red" value="Instagram" checked> Instagram</label><label><input type="checkbox" name="red" value="TikTok" checked> TikTok</label><label><input type="checkbox" name="red" value="YouTube"> YouTube</label></div>
+<label>¿Muestras la cara?<select id="cara"><option>no, solo manos y voz</option><option>sí</option><option>solo voz</option><option>solo texto</option></select></label>
+<label>Tamaño actual<select id="tam"><option>0 seguidores</option><option>cuenta chica</option><option>cuenta mediana</option></select></label>
+<label>Horas disponibles por semana<input type="number" id="horas" min="1" max="40" value="5"></label>
+<label>Idioma y variante<select id="idioma"><option>español rioplatense con voseo</option><option>español neutro</option><option>español de España</option><option>español mexicano</option></select></label>
+</fieldset>
+
+<fieldset><legend>Calendario</legend>
+<label>Duración<select id="dur"><option value="30">30 días</option><option value="60">60 días</option><option value="90" selected>90 días</option></select></label>
+<label>Publicaciones por semana<select id="pps"><option>3</option><option selected>5</option><option>7</option></select></label>
+<label>Mes y año de inicio<input type="text" id="inicio" placeholder="Noviembre 2026"></label>
+<label>Días fijos por tipo de pieza<textarea id="dias" placeholder="lunes reseña, miércoles ranking, jueves personaje…"></textarea></label>
+<label>Mezcla de formatos<input type="text" id="mezcla" placeholder="mayoría Reels, algunos carruseles, historias de apoyo"></label>
+</fieldset>
+
+<fieldset><legend>Preferencias de lectura</legend>
+<label>Géneros<input type="text" id="gen"></label>
+<label>Tropos o subgéneros favoritos<input type="text" id="tropos"></label>
+<label>Autores o sagas prioritarios<textarea id="aut"></textarea></label>
+<label>Autores o géneros a evitar<input type="text" id="evitar"></label>
+<label>Libros leídos (pueden tener reseña)<textarea id="leidos"></textarea></label>
+<label>Libros pendientes (solo lista, guía o primera impresión)<textarea id="pend"></textarea></label>
+<label>Libros abandonados<input type="text" id="aband"></label>
+<label>Datos de tu registro lector<textarea id="datos" placeholder="libros leídos, pendientes, abandonados, géneros, calificaciones"></textarea></label>
+</fieldset>
+
+<fieldset><legend>Objetivos y enfoque</legend>
+<label>Objetivo principal<select id="obj"><option>seguidores</option><option>guardados</option><option>comunidad</option><option>ventas de afiliados</option><option>marca personal</option><option>colaboraciones con editoriales</option></select></label>
+<label>Objetivo secundario<input type="text" id="obj2"></label>
+<label>Enfoque o posicionamiento<input type="text" id="enfoque" placeholder="criterio y veredictos, reseñas sin spoilers, humor…"></label>
+<label>Público al que te diriges<input type="text" id="publico"></label>
+<label>Qué no quieres que parezca tu cuenta<input type="text" id="no"></label>
+<label>Cuentas de referencia<input type="text" id="ref"></label>
+<label>Tono<select id="tono"><option>directo y con criterio</option><option>cálido</option><option>humorístico</option></select></label>
+</fieldset>
+</form>
+
+<section class="salida" aria-label="Prompt generado">
+<div class="barra"><button type="button" class="pri" id="copiar">Copiar prompt</button><button type="button" id="bajar">Descargar .txt</button><span class="cuenta" id="cuenta"></span></div>
+<textarea id="salida" readonly aria-label="Prompt generado"></textarea>
+<p id="msg" role="status" aria-live="polite"></p>
+</section>
+</div>
+<p class="pie">Pega el prompt en un chat nuevo de Claude o de cualquier IA.</p>
+</div>
+<script>
+(function(){
+"use strict";
+var $=function(i){return document.getElementById(i)};
+var PEND="[sin dato: propón tú y márcalo como supuesto]";
+var ids=["marca","cara","tam","horas","idioma","dur","pps","inicio","dias","mezcla","gen","tropos","aut","evitar","leidos","pend","aband","datos","obj","obj2","enfoque","publico","no","ref","tono"];
+function v(i){var x=$(i).value.trim();return x||PEND}
+function redes(){var r=[].slice.call(document.querySelectorAll("input[name=red]:checked")).map(function(c){return c.value});return r.length?r.join(", "):PEND}
+
+var FIJO=[
+"# 2. QUÉ DEBES ENTREGAR (en este orden)",
+"",
+"1. Diagnóstico: qué errores comunes evita este plan (formatos saturados, posts sueltos, métricas de vanidad). Si te doy un plan anterior, compáralo en una tabla.",
+"2. Posicionamiento: una frase-promesa y 3 promesas concretas (por ejemplo ahorro, criterio, datos). Cada pieza debe cumplir al menos una.",
+"3. Franquicias: 3 a 5 formatos con nombre propio, estructura fija y frecuencia previsible. Tabla con nombre, qué es, formato y duración, frecuencia y función (conversión, alcance, comunidad, diferenciación). Opcional: una «temporada» o evento recurrente en historias.",
+"4. Reglas de contenido: 5 reglas operativas (ej. toda pieza termina en juicio o elección, un solo veredicto, aviso de spoilers en el primer segundo, no reseñar lo no leído).",
+"5. Identidad visual y de marca, adaptada a si muestro o no la cara: paleta con códigos HEX y uso, tipografías, puesta en escena, gesto o sonido que se repite como firma y nomenclatura de series (ej. «EXPEDIENTE N.º 07 · Título · Año»).",
+"6. Producción: sesiones de grabación y diseño al mes con duración y tareas, clips base reutilizables y reglas de guion (gancho en 2 segundos, una idea por pieza, cierre con veredicto, duración).",
+"7. Calendario completo, semana por semana. Cada semana con título temático y objetivo en una frase. Cada publicación con: día, franquicia y número, título, formato y duración, gancho (frase exacta), guion o estructura de placas, CTA y notas de producción.",
+"8. Historias: rutina diaria, las 2 o 3 con función obligatoria (encuesta, avance, votación) y cómo funciona el evento recurrente.",
+"9. Métricas: qué medir y cuándo (guardados, compartidos, visitas al perfil, seguidores nuevos) y reglas de decisión del tipo «si pasa X, hago Y».",
+"10. Perfil: bio de menos de 150 caracteres con promesa verificable, destacadas, posts fijados y regla de 1 de cada 5 piezas autoexplicativa para gente nueva.",
+"11. Después del plan: cómo planificar la temporada siguiente con los datos de esta.",
+"12. Anexo: tabla de libros con número, título, semana, ángulo de la reseña y pieza de alcance.",
+"",
+"# 3. REGLAS DE CALIDAD",
+"",
+"- Cada pieza debe resolver una decisión del lector (leer, comprar, empezar, seguir, regalar) o dar una razón para volver.",
+"- No inventes datos, cifras ni lecturas mías. Usa solo los que te di; si faltan, deja [DATO A COMPLETAR].",
+"- No hagas reseñas de libros que no leí ni afirmes colaboraciones que no existen.",
+"- Prioriza mis géneros y autores favoritos y respeta la lista de «evitar».",
+"- Reparte la variedad: no más de 2 piezas seguidas del mismo género o saga.",
+"- Los ganchos deben ser afirmaciones incómodas o instrucciones concretas, no preguntas genéricas.",
+"- Todo debe ser realizable con el tiempo semanal indicado.",
+"",
+"# 4. FORMATO DE SALIDA",
+"",
+"- Documento con títulos numerados como arriba y tablas para franquicias, paleta, sesiones y anexo.",
+"- Cada publicación con etiquetas en negrita: Formato, Gancho, Guion, CTA, Producción.",
+"- Si no cabe en una respuesta, entrégalo por partes (secciones 1–6, luego semanas de a cuatro, y cierre) y espera mi «continúa».",
+"- Antes de empezar, si falta algún dato esencial, haz como máximo 3 preguntas; si no, avanza con supuestos marcados."
+].join("\n");
+
+function armar(){
+  var dur=parseInt($("dur").value,10),pps=parseInt($("pps").value,10),sem=Math.ceil(dur/7),total=sem*pps;
+  var L=[
+"Actúa como estratega de contenido para creadores literarios (Bookstagram, BookTok, YouTube) y editor de calendarios editoriales. Quiero un plan de contenido completo, accionable y con criterio, no una lista de ideas sueltas.",
+"",
+"# 1. DATOS DE ENTRADA","",
+"## Perfil",
+"- Cuenta o marca: "+v("marca"),
+"- Redes: "+redes(),
+"- ¿Muestro la cara?: "+v("cara"),
+"- Tamaño actual: "+v("tam"),
+"- Tiempo disponible por semana: "+v("horas")+" horas",
+"- Idioma y variante: "+v("idioma"),"",
+"## Calendario",
+"- Duración: "+dur+" días ("+sem+" semanas)",
+"- Publicaciones por semana: "+pps+" (total: "+total+" publicaciones principales)",
+"- Inicio: "+v("inicio"),
+"- Días fijos por tipo de pieza: "+v("dias"),
+"- Mezcla de formatos: "+v("mezcla"),"",
+"## Preferencias de lectura",
+"- Géneros: "+v("gen"),
+"- Tropos o subgéneros favoritos: "+v("tropos"),
+"- Autores o sagas prioritarios: "+v("aut"),
+"- Autores o géneros a evitar: "+v("evitar"),
+"- Libros leídos (pueden tener reseña): "+v("leidos"),
+"- Libros pendientes (solo lista, guía o primera impresión identificada como tal): "+v("pend"),
+"- Libros abandonados: "+v("aband"),
+"- Datos de mi registro lector: "+v("datos"),"",
+"## Objetivos y enfoque",
+"- Objetivo principal: "+v("obj"),
+"- Objetivo secundario: "+v("obj2"),
+"- Enfoque o posicionamiento: "+v("enfoque"),
+"- Público: "+v("publico"),
+"- Qué no quiero que parezca mi cuenta: "+v("no"),
+"- Cuentas de referencia: "+v("ref"),
+"- Tono: "+v("tono"),"",
+FIJO];
+  var t=L.join("\n");
+  $("salida").value=t;
+  $("cuenta").textContent=t.length.toLocaleString("es")+" caracteres";
+}
+
+function msg(t){$("msg").textContent=t}
+$("f").addEventListener("input",armar);
+$("f").addEventListener("change",armar);
+
+$("copiar").addEventListener("click",function(){
+  var t=$("salida").value;
+  function viejo(){var s=$("salida");s.focus();s.select();s.setSelectionRange(0,t.length);var ok=false;try{ok=document.execCommand("copy")}catch(e){}msg(ok?"Prompt copiado.":"No se pudo copiar solo: ya quedó seleccionado, usa copiar del teléfono o Ctrl+C.")}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){msg("Prompt copiado.")},viejo)}else viejo();
+});
+
+$("bajar").addEventListener("click",function(){
+  try{var b=new Blob([$("salida").value],{type:"text/plain;charset=utf-8"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="prompt-calendario.txt";document.body.appendChild(a);a.click();a.remove();msg("Descarga iniciada.")}
+  catch(e){msg("La descarga no está disponible aquí: usa «Copiar prompt».")}
+});
+
+$("limpiar").addEventListener("click",function(){
+  ids.forEach(function(i){var e=$(i);if(e.tagName==="SELECT")e.selectedIndex=e.id==="dur"?2:(e.id==="pps"?1:0);else if(e.type==="number")e.value=5;else e.value=""});
+  [].forEach.call(document.querySelectorAll("input[name=red]"),function(c){c.checked=c.value!=="YouTube"});
+  armar();msg("Campos vaciados.");
+});
+
+function poner(i,val){var e=$(i);if(e.tagName==="SELECT"){for(var k=0;k<e.options.length;k++){if(e.options[k].text===val||e.options[k].value===val){e.selectedIndex=k;return}}}else e.value=val}
+$("ejemplo").addEventListener("click",function(){
+  var d={marca:"El Archivo",cara:"no, solo manos y voz",tam:"0 seguidores",horas:"5",idioma:"español rioplatense con voseo",dur:"90",pps:"5",inicio:"Noviembre 2026",
+  dias:"lunes expediente (reseña con veredicto), miércoles termómetro o autopsia (ranking o tropo), jueves ficha de personaje, sábado archivo o contra-reseña, domingo comunidad",
+  mezcla:"mayoría Reels, carruseles de alcance y tres eventos en historias",gen:"romantasy, romance contemporáneo, dark romance, paranormal, cozy",
+  tropos:"enemies to lovers, fake dating, slow burn, found family",aut:"Sarah J. Maas, Rebecca Yarros, Ali Hazelwood",evitar:"ninguno",
+  leidos:"Una corte de rosas y espinas, Alas de sangre, La hipótesis del amor, Twisted Love, Alas de hierro, Trono de cristal, Divine Rivals",
+  pend:"los que tenga en lista de pendientes",aband:"3 libros abandonados",datos:"273 libros registrados, 133 leídos, 39 pendientes, 3 abandonados",
+  obj:"seguidores",obj2:"guardados y compartidos",enfoque:"criterio: veredictos, datos propios y un dispositivo visual reconocible",
+  publico:"lectoras de romantasy que quieren saber si un libro vale la pena antes de comprarlo",no:"una biblioteca que solo muestra lo que tiene",ref:"",tono:"directo y con criterio"};
+  Object.keys(d).forEach(function(k){poner(k,d[k])});
+  armar();msg("Ejemplo cargado. Cámbialo por tus datos.");
+});
+
+armar();
+})();
+</script>
+</body>
+</html>
