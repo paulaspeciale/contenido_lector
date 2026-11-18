@@ -1,0 +1,166 @@
+/* ==========================================================================
+   generadorprompt.css · Estilos del generador de prompts.
+   Requiere base.css. La lógica está en js/paginas/generadorprompt.js.
+   La página usa el ancho de app (body.pagina-app): formulario a la izquierda y
+   prompt generado a la derecha, que se queda fijo al desplazarse.
+   ========================================================================== */
+
+/* ---------- Barra de acciones y aviso de privacidad ---------- */
+.generador-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem .75rem;
+  margin: 1.25rem 0 1rem;
+}
+
+.generador-acciones .ayuda { margin: 0 0 0 auto; }
+
+@media (max-width: 44rem) {
+  .generador-acciones .ayuda { margin-left: 0; }
+}
+
+/* ---------- Rejilla principal ---------- */
+.generador {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (min-width: 60rem) {
+  .generador {
+    grid-template-columns: minmax(0, 1.06fr) minmax(0, 1fr);
+    gap: 1.5rem;
+  }
+
+  .generador-salida { position: sticky; top: 1rem; }
+}
+
+/* ---------- Formulario ---------- */
+.generador-form { min-width: 0; }
+
+.generador fieldset {
+  margin: 0 0 1rem;
+  padding: .35rem 1rem 1rem;
+  border: 1px solid var(--borde);
+  border-top: 2px solid var(--acento);
+  border-radius: .15rem;
+  background: var(--superficie);
+}
+
+.generador legend {
+  padding: 0 .4rem;
+  color: var(--acento);
+  font: 400 1.05rem var(--serif);
+  font-variant: small-caps;
+  letter-spacing: .07em;
+}
+
+/* Rejilla interna: los campos cortos van a dos columnas y los textos largos
+   ocupan todo el ancho. */
+.generador .campos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12.5rem), 1fr));
+  gap: .8rem 1rem;
+  margin-top: .75rem;
+}
+
+.generador .campo { margin: 0; }
+
+.generador .campo--ancho { grid-column: 1 / -1; }
+
+.generador .etiqueta { margin: 0; }
+
+.generador .redes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.1rem;
+  margin-top: .2rem;
+}
+
+.generador .redes .check {
+  min-height: 2.75rem;
+  color: var(--texto);
+  font-size: .9rem;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.generador textarea { min-height: 4.6rem; }
+
+/* ---------- Panel del prompt ---------- */
+.generador-salida {
+  min-width: 0;
+  border: 1px solid var(--borde);
+  border-top: 2px solid var(--acento);
+  border-radius: .15rem;
+  background: var(--superficie);
+}
+
+.generador-salida-cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem .75rem;
+  padding: .7rem 1rem;
+  border-bottom: 1px dotted var(--borde);
+}
+
+.generador-salida-cabecera h2 {
+  margin: 0;
+  color: var(--acento);
+  font: 400 1.05rem/1.3 var(--serif);
+  font-variant: small-caps;
+  letter-spacing: .07em;
+}
+
+.generador-salida-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+  margin-left: auto;
+}
+
+.generador-contador {
+  color: var(--suave);
+  font: .78rem/1.4 var(--maquina);
+  white-space: nowrap;
+}
+
+#salida {
+  display: block;
+  width: 100%;
+  min-height: 26rem;
+  margin: 0;
+  padding: 1rem;
+  border: 0;
+  border-radius: 0 0 .15rem .15rem;
+  background: var(--fondo);
+  color: var(--texto);
+  font: .82rem/1.55 var(--maquina);
+  white-space: pre-wrap;
+  resize: vertical;
+}
+
+@media (min-width: 60rem) {
+  #salida { min-height: calc(100vh - 13rem); }
+}
+
+#msg {
+  margin: 0 1rem .75rem;
+  color: var(--suave);
+  font: .85rem/1.4 var(--maquina);
+}
+
+/* Se reserva el alto del aviso para que el panel no salte al copiar o bajar. */
+#msg:empty { display: block; min-height: 1.4rem; }
+
+/* ---------- Nota final ---------- */
+.generador-nota {
+  margin-top: 1rem;
+  text-align: center;
+  font: .8rem/1.5 var(--maquina);
+  color: var(--suave);
+}

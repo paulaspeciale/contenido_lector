@@ -79,6 +79,7 @@
   --c-sugerencias: light-dark(#8e2540, #f0909f);  /* burdeos rosado */
   --c-sobre-mi: light-dark(#7a5a0e, #e8c566);     /* mostaza */
   --c-bio: light-dark(#2a6670, #4a9aa6);          /* verde azulado */
+  --c-prompt: light-dark(#4e5b1f, #c9d78f);       /* verde oliva */
   --oro: light-dark(#b8923e, #e3b86a);
 
   /* Tipografía, papel y marco (definidos aquí arriba, antes de usarse) */
@@ -122,8 +123,8 @@ body {
   font: 1rem/1.55 var(--sans);
 }
 
-/* Las páginas con rejilla propia (calendario, ideas, glosario, bio, bingo y
-   portada) usan el ancho de app; el resto se queda en la medida de lectura. */
+/* Las páginas con rejilla propia (calendario, ideas, glosario, bio, bingo,
+   prompt y portada) usan el ancho de app; el resto se queda en la medida de lectura. */
 body.pagina-app { --ancho-pagina: var(--ancho-app); }
 
 p { margin: 0; }
@@ -681,6 +682,7 @@ html { scroll-behavior: smooth; }
 :root[data-seccion="sugerencias"] { --acento: var(--c-sugerencias); }
 :root[data-seccion="sobre-mi"] { --acento: var(--c-sobre-mi); }
 :root[data-seccion="bio"] { --acento: var(--c-bio); }
+:root[data-seccion="prompt"] { --acento: var(--c-prompt); }
 
 /* Tarjetas con un filete de color en el borde superior */
 .guia, .formulario, .donacion, .herramientas, .toc { border-top: 2px solid var(--acento); }

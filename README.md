@@ -14,6 +14,7 @@ Diseñada e ideada por Paula Speciale, con la ayuda de Claude.
 | `resena.html` | Reseñas | Plantilla de reseña de 22 secciones, con versión completa, versión corta, guiones para Reels/TikTok y prompts para IA. |
 | `ideas.html` | Ideas | Gestor de 120 ideas de post, con estados, fechas, checklist de producción, hashtags y notas. |
 | `calendario.html` | Calendario | Calendario mensual con las ideas que tienen fecha. |
+| `generadorprompt.html` | Prompt | Generador de prompt para pedirle a una IA un calendario de contenido completo: perfil, franquicias, ganchos, producción y métricas. |
 | `glosario.html` | Glosario | Glosario bookish inglés-español (más de 300 términos en 13 categorías): buscador, filtros, imprescindibles, ejemplos y botón de copiar. |
 | `bingo.html` | Bingo | Tarjeta «Bingo lector 2027» de 5×5 (24 retos y un espacio libre central). Marca los retos cumplidos, avisa de líneas completas, guarda el progreso en el navegador y permite descargarla como PNG o compartirla. |
 | `bio.html` | Bio | Guía para optimizar la bio de Instagram, TikTok y YouTube: límites por red, fórmulas para copiar, contador de caracteres con borradores y checklist. |
@@ -24,7 +25,7 @@ Diseñada e ideada por Paula Speciale, con la ayuda de Claude.
 Archivos compartidos:
 
 - `css/base.css`: variables, tema, tipografía, controles, menú, pie y bloques de lectura. Se carga siempre primero.
-- `css/paginas/portada.css`, `ideas.css`, `calendario.css`, `resena.css`, `glosario.css`, `bingo.css`, `bio.css`, `simples.css`: estilos propios de cada página (portada, Ideas, Calendario, Reseñas, Glosario, Bingo, Bio y las páginas simples).
+- `css/paginas/portada.css`, `ideas.css`, `calendario.css`, `resena.css`, `glosario.css`, `bingo.css`, `bio.css`, `generadorprompt.css`, `simples.css`: estilos propios de cada página (portada, Ideas, Calendario, Reseñas, Glosario, Bingo, Bio, Prompt y las páginas simples).
 - `css/toc.css`: menú «En esta página» (Ideas, Calendario, Glosario y Bio).
 - `js/bingo/bingo.js`, `js/bingo/bingo-iconos.js` y `js/bingo/bingo-exportar.js`: lógica de la tarjeta, sus iconos decorativos y la descarga o el uso compartido como imagen.
 - `js/datos/datos-glosario.js`: los términos del glosario (`window.BT.GLOSARIO`).
@@ -35,8 +36,8 @@ Archivos compartidos:
 - `js/paginas/ideas/`: módulos de la página de Ideas (`main.js` como entrada, `constantes.js`, `util.js`, `almacenamiento.js`, `estado.js` y `toc.js`).
 - `js/paginas/calendario/`: módulos del Calendario (`main.js`, `constantes.js` y `util.js`).
 - `js/nucleo/almacen.js`: escritura segura de datos de Ideas desde otras páginas (`guardarFecha`); lo usa el Calendario.
-- `js/paginas/`: scripts clásicos del resto de páginas (`bio.js`, `resena.js`, `glosario.js`, `sugerencias.js`, `consistencia.js`, `sobre-mi.js`).
-- `robots.txt`: permite el rastreo y enlaza el sitemap. `sitemap.xml`: las 9 páginas indexables (Sugerencias queda fuera porque lleva `noindex`).
+- `js/paginas/`: scripts clásicos del resto de páginas (`bio.js`, `resena.js`, `glosario.js`, `sugerencias.js`, `consistencia.js`, `generadorprompt.js`, `sobre-mi.js`).
+- `robots.txt`: permite el rastreo y enlaza el sitemap. `sitemap.xml`: las 10 páginas indexables (Sugerencias queda fuera porque lleva `noindex`).
 
 ---
 
@@ -46,8 +47,9 @@ La web es estática: no hay compilación, frameworks ni servidor propio. Cada p�
 
 ```text
 /
-├─ index.html, ideas.html, calendario.html, resena.html, glosario.html,
-│  bingo.html, bio.html, consistencia.html, sugerencias.html, sobre-mi.html
+├─ index.html, ideas.html, calendario.html, generadorprompt.html, resena.html,
+│  glosario.html, bingo.html, bio.html, consistencia.html, sugerencias.html,
+│  sobre-mi.html
 ├─ css/
 │  ├─ base.css
 │  ├─ toc.css
@@ -59,12 +61,12 @@ La web es estática: no hay compilación, frameworks ni servidor propio. Cada p�
 │  │  │               estado.js, toc.js
 │  │  ├─ calendario/  main.js, constantes.js, util.js
 │  │  └─ bio.js, resena.js, glosario.js, sugerencias.js, consistencia.js,
-│  │                  sobre-mi.js
+│  │                  generadorprompt.js, sobre-mi.js
 │  ├─ bingo/          bingo.js, bingo-iconos.js, bingo-exportar.js
 │  └─ datos/          datos-glosario.js
 ├─ datos/             datos-ideas.json, datos-bingo.json
 ├─ robots.txt         rastreo permitido + enlace al sitemap
-├─ sitemap.xml        9 páginas indexables (Sugerencias queda fuera: `noindex`)
+├─ sitemap.xml        10 páginas indexables (Sugerencias queda fuera: `noindex`)
 ├─ fonts/             Courier Prime (SIL OFL)
 └─ README.md
 ```
@@ -77,7 +79,7 @@ La web es estática: no hay compilación, frameworks ni servidor propio. Cada p�
    - `data-usa="ideas"`: `datos/datos-ideas.json` → `window.BT.SECCIONES`.
    - `data-usa="bingo"`: `datos/datos-bingo.json` → `window.BT.BINGO`.
 4. **`js/paginas/ideas/main.js`** (Ideas, módulo ES), **`js/nucleo/almacen.js` + `js/paginas/calendario/main.js`** (Calendario, módulo ES) o **`js/bingo/bingo.js` + `js/bingo/bingo-iconos.js` + `js/bingo/bingo-exportar.js`** (Bingo).
-5. Glosario, Bio, Reseñas, Sugerencias, Sobre mí y Consistencia no usan `js/nucleo/datos.js`: cada una carga su script de `js/paginas/` al final del HTML (el Glosario además carga `js/datos/datos-glosario.js`).
+5. Glosario, Bio, Reseñas, Sugerencias, Sobre mí, Consistencia y Prompt no usan `js/nucleo/datos.js`: cada una carga su script de `js/paginas/` al final del HTML (el Glosario además carga `js/datos/datos-glosario.js`).
 
 `js/nucleo/datos.js` expone `window.BT.listo`, una promesa que **siempre** se resuelve con `{ ok, errores }`. Ninguna página debe quedarse esperando: si un JSON falla, se muestra un aviso y se usa lo que haya (por ejemplo, `js/bingo/bingo.js` tiene una lista de retos de respaldo).
 
@@ -121,7 +123,7 @@ Las ideas base tienen ids de texto (`"1"`…`"120"`); las propias empiezan por `
 | `js/nucleo/theme.js` | Tema claro/oscuro, botón flotante y `data-seccion` para el color de cada página. |
 | `js/bingo/bingo.js` / `js/bingo/bingo-iconos.js` / `js/bingo/bingo-exportar.js` | Tarjeta de Bingo, progreso, glifos decorativos y exportación a PNG. |
 | `js/datos/datos-glosario.js` | Datos del glosario; el HTML solo los presenta. |
-| `js/paginas/*.js` | Lógica específica del resto de páginas (Bio, Reseñas, Glosario, Sugerencias, Sobre mí y Consistencia). |
+| `js/paginas/*.js` | Lógica específica del resto de páginas (Bio, Reseñas, Glosario, Sugerencias, Sobre mí, Consistencia y Prompt). |
 
 ### Convenciones y comentarios
 
@@ -181,6 +183,16 @@ Lee los datos de Ideas (`localStorage`) y `datos/datos-ideas.json`, y dibuja un 
 - «Hoy» se actualiza al pasar la medianoche y al volver a la pestaña.
 - Se puede cargar un respaldo JSON de Ideas **solo para verlo**.
 - El menú «En esta página» marca la sección visible.
+
+### Generador de prompt (`generadorprompt.html` + `js/paginas/generadorprompt.js`)
+
+Formulario con cuatro bloques (perfil, calendario, preferencias de lectura y objetivos) que arma en vivo un prompt para una IA. El prompt pide un plan completo: diagnóstico, posicionamiento, franquicias, reglas, identidad visual, producción, calendario semana a semana, historias, métricas, perfil y anexo de libros.
+
+- **Campos vacíos**: se sustituyen por «[sin dato: propón tú y márcalo como supuesto]», para que la IA no invente datos y marque sus suposiciones.
+- **Ejemplo**: «El Archivo» carga una cuenta ficticia completa para ver el resultado. «Vaciar campos» vuelve a los valores por defecto.
+- **Copiar y descargar**: copia el prompt al portapapeles (con respaldo para navegadores sin Clipboard API) o lo descarga como `prompt-calendario.txt`.
+- **Privacidad**: todo se genera en el navegador; no se envía ni se guarda nada. Al recargar, los campos vuelven a su estado inicial.
+- El texto fijo del prompt y los campos están en `js/paginas/generadorprompt.js`; el HTML solo recoge los datos y muestra el resultado.
 
 ### Reseñas (`resena.html`)
 
@@ -289,7 +301,7 @@ Estética de **librería antigua (cottagecore)**: papel con grano generado con u
 
 ## Cómo usarla
 
-1. Mantén la estructura de carpetas (`css/`, `js/`, `datos/`, `fonts/`) junto a los HTML. Por ejemplo, `ideas.html` necesita `css/base.css`, `css/paginas/ideas.css`, `css/toc.css`, `js/nucleo/theme.js`, `js/nucleo/datos.js`, `datos/datos-ideas.json` y la carpeta `js/paginas/ideas/`; `calendario.html` necesita `css/base.css`, `css/paginas/calendario.css`, `css/toc.css`, `js/nucleo/theme.js`, `js/nucleo/datos.js`, `datos/datos-ideas.json`, `js/nucleo/almacen.js` y la carpeta `js/paginas/calendario/`; `glosario.html` necesita `css/base.css`, `css/paginas/glosario.css`, `css/toc.css`, `js/nucleo/theme.js`, `js/datos/datos-glosario.js` y `js/paginas/glosario.js`.
+1. Mantén la estructura de carpetas (`css/`, `js/`, `datos/`, `fonts/`) junto a los HTML. Por ejemplo, `ideas.html` necesita `css/base.css`, `css/paginas/ideas.css`, `css/toc.css`, `js/nucleo/theme.js`, `js/nucleo/datos.js`, `datos/datos-ideas.json` y la carpeta `js/paginas/ideas/`; `calendario.html` necesita `css/base.css`, `css/paginas/calendario.css`, `css/toc.css`, `js/nucleo/theme.js`, `js/nucleo/datos.js`, `datos/datos-ideas.json`, `js/nucleo/almacen.js` y la carpeta `js/paginas/calendario/`; `glosario.html` necesita `css/base.css`, `css/paginas/glosario.css`, `css/toc.css`, `js/nucleo/theme.js`, `js/datos/datos-glosario.js` y `js/paginas/glosario.js`; `generadorprompt.html` necesita `css/base.css`, `css/paginas/generadorprompt.css`, `js/nucleo/theme.js` y `js/paginas/generadorprompt.js`.
 2. Abre `index.html` en el navegador, o sube la carpeta a cualquier hosting estático.
 3. **No requiere instalación ni servidor propio**, pero sí debe abrirse desde un servidor (el hosting o uno local) para que `fetch` pueda leer los JSON y para que el navegador cargue los módulos ES de Ideas y Calendario. Con doble clic (`file://`) funcionan la portada, Reseñas, Bio, Glosario, Sugerencias y Sobre mí; Ideas, Calendario y Bingo necesitan servidor.
 
@@ -297,9 +309,9 @@ Estética de **librería antigua (cottagecore)**: papel con grano generado con u
 
 Antes de publicar, sustituye **`TU-DOMINIO.com`** por tu dominio real. Aparece en:
 
-- el `canonical`, `og:url`, `hreflang` y el JSON-LD de los 10 HTML;
+- el `canonical`, `og:url`, `hreflang` y el JSON-LD de los 11 HTML;
 - `robots.txt` (línea `Sitemap:`);
-- `sitemap.xml` (las 9 `<loc>`).
+- `sitemap.xml` (las 10 `<loc>`).
 
 Puedes hacerlo de una vez con un buscar y reemplazar en toda la carpeta. Después:
 
@@ -319,6 +331,7 @@ Cada página ya incluye `title` y `meta description` únicos, `robots`, `canonic
 - **Menú principal**: está copiado en cada HTML. Al añadir una página, actualiza el `<nav class="menu">` en todas (y la tarjeta de `index.html`). Añade también su nombre a `PAGINAS` en `js/nucleo/theme.js` para el color de sección.
 - **Colores**: están en las variables de `:root` al inicio de `css/base.css`.
 - **Formulario de sugerencias**: pega en `FORM_URL` (en `js/paginas/sugerencias.js`) la dirección con código aleatorio de FormSubmit (no el correo).
+- **Prompt del calendario**: los campos y el texto fijo están en `js/paginas/generadorprompt.js`; el HTML solo recoge los datos. Si añades un campo, actualiza también `CAMPOS` y revisa `limpiar` y `poner` (los `select` se eligen por texto o por valor).
 - **Versiones coherentes**: `js/paginas/ideas/main.js` comprueba al iniciar que el HTML tenga todos los elementos que necesita. Si copias un archivo nuevo sin el otro, muestra un aviso en lugar de fallar en silencio. Tu progreso no se toca.
 
 ## Límites conocidos
@@ -335,5 +348,6 @@ Cada página ya incluye `title` y `meta description` únicos, `robots`, `canonic
 - Requiere navegadores recientes: `light-dark()` y `:has()` no tienen respaldo en versiones antiguas.
 - `css/base.css` redefine algunos selectores (`h1`, `body`, `button`, `.guia`…) en una segunda capa; funciona, pero conviene unificarlos algún día.
 - El formulario de Sugerencias muestra un aviso en lugar del formulario hasta configurar `FORM_URL`.
+- El generador de prompt no guarda los campos: al recargar o cerrar la pestaña se pierden.
 - Privacidad: ningún archivo debe contener correos personales. Si la web se publica, revisa también el historial de versiones anteriores, que pudo exponerlo.
 - «Sobre mí» no tiene foto todavía (hay un comentario en el HTML con la etiqueta lista).

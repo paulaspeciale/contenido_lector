@@ -196,6 +196,7 @@
 .tarjetas li.t-resenia { --c: var(--c-resenia); }
 .tarjetas li.t-ideas { --c: var(--c-ideas); }
 .tarjetas li.t-calendario { --c: var(--c-calendario); }
+.tarjetas li.t-prompt { --c: var(--c-prompt); }
 .tarjetas li.t-glosario { --c: var(--c-glosario); }
 .tarjetas li.t-bio, .tarjetas li.t-feed { --c: var(--c-bio); }
 .tarjetas li.t-bingo { --c: var(--c-bingo); }
